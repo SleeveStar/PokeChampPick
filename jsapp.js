@@ -48,6 +48,44 @@
         "조개껍질방울": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shell-bell.png",
         "하양허브": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/white-herb.png"
     };
+    const MEGA_STONE_SPRITES = {
+        "눈설왕나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/abomasite.png",
+        "보스로라나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/aggronite.png",
+        "독침붕나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/beedrillite.png",
+        "한카리아스나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/garchompite.png",
+        "갸라도스나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/gyaradosite.png",
+        "헤라크로스나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/heracronite.png",
+        "썬더볼트나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/manectite.png",
+        "강철톤나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/steelixite.png",
+        "앱솔나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/absolite.png",
+        "프테라나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/aerodactylite.png",
+        "후디나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/alakazite.png",
+        "파비코리나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/altarianite.png",
+        "전룡나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ampharosite.png",
+        "다부니나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/audinite.png",
+        "다크펫나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/banettite.png",
+        "거북왕나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/blastoisinite.png",
+        "폭타나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/cameruptite.png",
+        "리자몽나이트X": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charizardite-x.png",
+        "리자몽나이트Y": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charizardite-y.png",
+        "엘레이드나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/galladite.png",
+        "가디안나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/gardevoirite.png",
+        "팬텀나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/gengarite.png",
+        "얼음귀신나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/glalitite.png",
+        "헬가나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/houndoominite.png",
+        "캥카나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kangaskhanite.png",
+        "이어롭나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lopunnite.png",
+        "루카리오나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lucarionite.png",
+        "요가램나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/medichamite.png",
+        "피죤투나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pidgeotite.png",
+        "쁘사이저나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pinsirite.png",
+        "깜까미나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sablenite.png",
+        "핫삼나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/scizorite.png",
+        "샤크니아나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sharpedonite.png",
+        "야도란나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/slowbronite.png",
+        "마기라스나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tyranitarite.png",
+        "이상해꽃나이트": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/venusaurite.png"
+    };
     const MEGA_STONE_ITEMS = [
         "눈설왕나이트", "보스로라나이트", "독침붕나이트", "한카리아스나이트", "갸라도스나이트", "헤라크로스나이트", "썬더볼트나이트", "강철톤나이트", "앱솔나이트", "프테라나이트",
         "후디나이트", "파비코리나이트", "전룡나이트", "다부니나이트", "다크펫나이트", "거북왕나이트", "폭타나이트", "샹델라나이트", "리자몽나이트X", "리자몽나이트Y",
@@ -107,7 +145,7 @@
     const ITEM_DATA = Object.fromEntries(ITEM_OPTIONS.map((itemName) => {
         const kind = MEGA_STONE_ITEMS.includes(itemName) ? "mega" : (BERRY_ITEMS.includes(itemName) ? "berry" : "item");
         return [itemName, {
-            imageUrl: CORE_ITEM_SPRITES[itemName] || createGeneratedItemImage(itemName, kind)
+            imageUrl: CORE_ITEM_SPRITES[itemName] || MEGA_STONE_SPRITES[itemName] || createGeneratedItemImage(itemName, kind)
         }];
     }));
 
