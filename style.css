@@ -501,8 +501,8 @@ select:focus {
 .slot-item-image {
     width: 44px;
     height: 44px;
-    justify-self: end;
-    margin-left: 8px;
+    flex: 0 0 44px;
+    margin-right: 10px;
 }
 
 .party-slot.filled .slot-pokemon-image {
@@ -548,6 +548,8 @@ select:focus {
 
 .slot-moves {
     justify-self: start;
+    width: 100%;
+    min-width: 0;
 }
 
 .slot-stats {
@@ -557,12 +559,9 @@ select:focus {
 }
 
 .slot-item-corner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 44px;
-    align-items: flex-end;
-    justify-content: flex-start;
-    gap: 8px;
+    display: block;
     min-height: 44px;
+    width: 100%;
 }
 
 .slot-corner-meta {
@@ -577,6 +576,15 @@ select:focus {
     min-width: 0;
 }
 
+.slot-corner-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+
 .slot-corner-text span {
     font-size: 0.68rem;
     color: var(--text-dim);
@@ -584,10 +592,15 @@ select:focus {
 }
 
 .slot-corner-text strong {
+    display: block;
+    max-width: 100%;
     font-size: 0.74rem;
     color: var(--text);
     line-height: 1.2;
     font-weight: 700;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
     word-break: keep-all;
 }
 
@@ -1668,7 +1681,8 @@ select:focus {
     .slot-item-image {
         width: 36px;
         height: 36px;
-        margin-left: 6px;
+        flex-basis: 36px;
+        margin-right: 30px;
     }
 
     .slot-body {

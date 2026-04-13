@@ -532,10 +532,9 @@
                         </div>
                         <div class="slot-item-corner">
                             <div class="slot-corner-meta">
-                                <div class="slot-corner-text"><span>성격</span><strong>${getNatureLabel(member.nature) || "-"}</strong></div>
+                                <div class="slot-corner-text slot-corner-text-nature"><span>성격</span><div class="slot-corner-inline"><strong>${getNatureLabel(member.nature) || "-"}</strong>${renderItemImage(member.item, "item-image slot-item-image")}</div></div>
                                 <div class="slot-corner-text"><span>아이템</span><strong>${member.item || "-"}</strong></div>
                             </div>
-                            ${renderItemImage(member.item, "item-image slot-item-image")}
                         </div>
                     </div>
                     <div class="slot-art">
