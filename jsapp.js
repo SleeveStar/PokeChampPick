@@ -148,6 +148,26 @@
             imageUrl: CORE_ITEM_SPRITES[itemName] || MEGA_STONE_SPRITES[itemName] || createGeneratedItemImage(itemName, kind)
         }];
     }));
+    const TYPE_ICON_PATHS = {
+        normal: "types/Normal%20type.svg",
+        fire: "types/Fire%20type.svg",
+        water: "types/Water%20type.svg",
+        electric: "types/Electric%20type.svg",
+        grass: "types/Grass%20type.svg",
+        ice: "types/Ice%20type.svg",
+        fighting: "types/Fighting%20type.svg",
+        poison: "types/Poison%20type.svg",
+        ground: "types/Ground%20type.svg",
+        flying: "types/Flying%20type.svg",
+        psychic: "types/Psychic%20type.svg",
+        bug: "types/Bug%20type.svg",
+        rock: "types/Rock%20type.svg",
+        ghost: "types/Ghost%20type.svg",
+        dragon: "types/Dragon%20type.svg",
+        dark: "types/Dark%20type.svg",
+        steel: "types/Steel%20type.svg",
+        fairy: "types/Fairy%20type.svg"
+    };
 
     NATURES.forEach(([value, ko]) => {
         NATURE_VALUE_MAP.set(String(value || "").toLowerCase(), value);
@@ -355,6 +375,16 @@
         const alt = species ? species.koName : "포켓몬";
         return `<img class="${className}" src="${imageUrl}" data-fallback-src="${fallbackUrl}" alt="${alt}" loading="lazy" onerror="if(!this.dataset.fallbackApplied&&this.dataset.fallbackSrc&&this.src!==this.dataset.fallbackSrc){this.dataset.fallbackApplied='1';this.src=this.dataset.fallbackSrc;return;}this.onerror=null;this.src='${FALLBACK_IMAGE}'">`;
     }
+    function renderMoveLine(moveName, pokemon) {
+        if (!moveName) {
+            return `<div class="slot-move-line"><span class="slot-move-text">-</span></div>`;
+        }
+        const move = pokemon ? window.MoveData.resolveMoveForPokemon(pokemon, moveName) : null;
+        const type = move && move.type ? String(move.type).toLowerCase() : "";
+        const iconPath = TYPE_ICON_PATHS[type] || "";
+        const icon = iconPath ? `<img class="slot-move-type-icon" src="${iconPath}" alt="${window.TypeModule.toTypeLabel(type)} 타입" loading="lazy">` : "";
+        return `<div class="slot-move-line">${icon}<span class="slot-move-text">${moveName}</span></div>`;
+    }
     function getAvailableAbilities(pokemon) {
         return pokemon && Array.isArray(pokemon.abilities) ? pokemon.abilities : [];
     }
@@ -498,7 +528,7 @@
                 <div class="slot-body">
                     <div class="slot-moves">
                         <div class="slot-move-list">
-                            ${moves.map((move) => `<div class="slot-move-line">${move || "-"}</div>`).join("")}
+                            ${moves.map((move) => renderMoveLine(move, species)).join("")}
                         </div>
                         <div class="slot-item-corner">
                             <div class="slot-corner-meta">
