@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포켓몬 선출 도우미</title>
+    <meta name="description" content="Pokémon Champions 6v6 싱글 팀 프리뷰 보조 정적 웹앱">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="app-topbar">
+            <div class="app-topbar-title">
+                <p class="eyebrow">포켓몬 챔피언스 싱글 선출 보조</p>
+                <strong>포켓몬 선출 도우미</strong>
+            </div>
+            <button id="menu-toggle-btn" class="menu-toggle-btn" type="button" aria-label="페이지 메뉴 열기" aria-expanded="false" aria-controls="page-nav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="page-nav" class="page-nav" aria-label="페이지 이동">
+                <button class="page-nav-link is-active" type="button" data-page-target="party">내 파티</button>
+                <button class="page-nav-link" type="button" data-page-target="enemy">상대 입력</button>
+                <button class="page-nav-link" type="button" data-page-target="result">추천 결과</button>
+                <button class="page-nav-link" type="button" data-page-target="support">보조 기능</button>
+            </nav>
+        </header>
+
+        <main class="layout-grid">
+            <section class="panel-card panel-span-2 page-panel" data-page="party" aria-labelledby="party-title">
+                <div class="section-head section-head-stack">
+                    <div>
+                        <h2 id="party-title">내 파티 설정</h2>
+                    </div>
+                    <div class="section-actions">
+                        <div id="party-switcher" class="party-switcher" aria-label="파티 선택">
+                            <button class="party-switch-btn is-active" type="button" data-party-index="0">1파티</button>
+                            <button class="party-switch-btn" type="button" data-party-index="1">2파티</button>
+                            <button class="party-switch-btn" type="button" data-party-index="2">3파티</button>
+                        </div>
+                        <label class="party-name-field">
+                            <span>파티 이름</span>
+                            <input id="party-name" type="text" maxlength="30" value="기본 파티" autocomplete="off">
+                        </label>
+                        <button id="save-party-btn" class="primary-btn" type="button">파티 저장</button>
+                        <button id="reset-party-btn" class="ghost-btn" type="button">초기화</button>
+                    </div>
+                </div>
+                <div id="party-overview" class="party-overview">
+                    <div id="party-slot-grid" class="party-slot-grid"></div>
+                </div>
+                <div id="party-editor" class="party-editor" hidden>
+                    <div class="party-editor-head">
+                        <div>
+                            <h3 id="party-editor-title">#1</h3>
+                        </div>
+                    </div>
+                    <div class="party-editor-body">
+                        <label class="field autocomplete-shell">
+                            <span>포켓몬 이름</span>
+                            <input id="party-editor-name" type="text" placeholder="포켓몬 이름을 입력해주세요." autocomplete="off">
+                        </label>
+                        <div id="party-editor-preview" class="member-preview empty">선택된 포켓몬 정보가 여기 표시됩니다.</div>
+                        <div id="party-editor-form-toggle" class="form-toggle" hidden>
+                            <button class="form-toggle-btn is-active" type="button" data-form-key="shield">실드폼</button>
+                            <button class="form-toggle-btn" type="button" data-form-key="blade">블레이드폼</button>
+                        </div>
+                        <div class="item-editor-row">
+                            <label class="field autocomplete-shell item-field">
+                                <span>아이템</span>
+                                <input id="party-editor-item" type="text" placeholder="아이템 이름을 입력해주세요.">
+                            </label>
+                            <div id="party-editor-item-preview" class="item-preview-card" aria-live="polite">
+                                <img id="party-editor-item-image" class="item-preview-image" alt="아이템 이미지">
+                            </div>
+                        </div>
+                        <div class="editor-two-col">
+                            <label class="field autocomplete-shell">
+                                <span>특성</span>
+                                <input id="party-editor-ability" type="text" autocomplete="off">
+                            </label>
+                            <label class="field autocomplete-shell">
+                                <span>성격</span>
+                                <input id="party-editor-nature" type="text" autocomplete="off" placeholder="성격 입력">
+                            </label>
+                        </div>
+                        <div class="stat-editor">
+                            <div class="stat-editor-head">
+                                <strong>능력 포인트</strong>
+                                <div class="stat-editor-meta">
+                                    <strong id="stat-total-points" class="stat-total-points">0 / 66</strong>
+                                    <span class="member-help">레벨 50 실수치를 바로 보여줍니다.</span>
+                                </div>
+                            </div>
+                            <div class="stat-grid-pairs">
+                                <div class="stat-box" data-stat="hp">
+                                    <span class="stat-name" data-stat-label="hp">HP</span>
+                                    <div class="stat-box-body">
+                                        <label class="stat-value-wrap stat-input-wrap">
+                                            <span class="stat-value-label">노력치</span>
+                                            <input id="stat-hp" class="stat-input" type="number" min="0" max="32" step="1">
+                                        </label>
+                                        <div class="stat-action-group">
+                                            <button class="stat-action-btn ghost-btn stat-edge-btn" type="button" data-stat-action="min" data-stat-target="hp" aria-label="HP 최소"><span class="mdi mdi-chevron-double-down" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn primary-btn stat-edge-btn" type="button" data-stat-action="max" data-stat-target="hp" aria-label="HP 최대"><span class="mdi mdi-chevron-double-up" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="decrease" data-stat-target="hp" aria-label="HP 감소"><span class="mdi mdi-minus-thick" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="increase" data-stat-target="hp" aria-label="HP 증가"><span class="mdi mdi-plus-thick" aria-hidden="true"></span></button>
+                                        </div>
+                                        <div class="stat-value-wrap stat-actual-wrap"><span class="stat-value-label">실수치</span><span id="actual-hp" class="stat-actual">0</span></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box" data-stat="atk">
+                                    <span class="stat-name" data-stat-label="atk">공격</span>
+                                    <div class="stat-box-body">
+                                        <label class="stat-value-wrap stat-input-wrap">
+                                            <span class="stat-value-label">노력치</span>
+                                            <input id="stat-atk" class="stat-input" type="number" min="0" max="32" step="1">
+                                        </label>
+                                        <div class="stat-action-group">
+                                            <button class="stat-action-btn ghost-btn stat-edge-btn" type="button" data-stat-action="min" data-stat-target="atk" aria-label="공격 최소"><span class="mdi mdi-chevron-double-down" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn primary-btn stat-edge-btn" type="button" data-stat-action="max" data-stat-target="atk" aria-label="공격 최대"><span class="mdi mdi-chevron-double-up" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="decrease" data-stat-target="atk" aria-label="공격 감소"><span class="mdi mdi-minus-thick" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="increase" data-stat-target="atk" aria-label="공격 증가"><span class="mdi mdi-plus-thick" aria-hidden="true"></span></button>
+                                        </div>
+                                        <div class="stat-value-wrap stat-actual-wrap"><span class="stat-value-label">실수치</span><span id="actual-atk" class="stat-actual">0</span></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box" data-stat="def">
+                                    <span class="stat-name" data-stat-label="def">방어</span>
+                                    <div class="stat-box-body">
+                                        <label class="stat-value-wrap stat-input-wrap">
+                                            <span class="stat-value-label">노력치</span>
+                                            <input id="stat-def" class="stat-input" type="number" min="0" max="32" step="1">
+                                        </label>
+                                        <div class="stat-action-group">
+                                            <button class="stat-action-btn ghost-btn stat-edge-btn" type="button" data-stat-action="min" data-stat-target="def" aria-label="방어 최소"><span class="mdi mdi-chevron-double-down" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn primary-btn stat-edge-btn" type="button" data-stat-action="max" data-stat-target="def" aria-label="방어 최대"><span class="mdi mdi-chevron-double-up" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="decrease" data-stat-target="def" aria-label="방어 감소"><span class="mdi mdi-minus-thick" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="increase" data-stat-target="def" aria-label="방어 증가"><span class="mdi mdi-plus-thick" aria-hidden="true"></span></button>
+                                        </div>
+                                        <div class="stat-value-wrap stat-actual-wrap"><span class="stat-value-label">실수치</span><span id="actual-def" class="stat-actual">0</span></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box" data-stat="spa">
+                                    <span class="stat-name" data-stat-label="spa">특공</span>
+                                    <div class="stat-box-body">
+                                        <label class="stat-value-wrap stat-input-wrap">
+                                            <span class="stat-value-label">노력치</span>
+                                            <input id="stat-spa" class="stat-input" type="number" min="0" max="32" step="1">
+                                        </label>
+                                        <div class="stat-action-group">
+                                            <button class="stat-action-btn ghost-btn stat-edge-btn" type="button" data-stat-action="min" data-stat-target="spa" aria-label="특공 최소"><span class="mdi mdi-chevron-double-down" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn primary-btn stat-edge-btn" type="button" data-stat-action="max" data-stat-target="spa" aria-label="특공 최대"><span class="mdi mdi-chevron-double-up" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="decrease" data-stat-target="spa" aria-label="특공 감소"><span class="mdi mdi-minus-thick" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="increase" data-stat-target="spa" aria-label="특공 증가"><span class="mdi mdi-plus-thick" aria-hidden="true"></span></button>
+                                        </div>
+                                        <div class="stat-value-wrap stat-actual-wrap"><span class="stat-value-label">실수치</span><span id="actual-spa" class="stat-actual">0</span></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box" data-stat="spd">
+                                    <span class="stat-name" data-stat-label="spd">특방</span>
+                                    <div class="stat-box-body">
+                                        <label class="stat-value-wrap stat-input-wrap">
+                                            <span class="stat-value-label">노력치</span>
+                                            <input id="stat-spd" class="stat-input" type="number" min="0" max="32" step="1">
+                                        </label>
+                                        <div class="stat-action-group">
+                                            <button class="stat-action-btn ghost-btn stat-edge-btn" type="button" data-stat-action="min" data-stat-target="spd" aria-label="특방 최소"><span class="mdi mdi-chevron-double-down" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn primary-btn stat-edge-btn" type="button" data-stat-action="max" data-stat-target="spd" aria-label="특방 최대"><span class="mdi mdi-chevron-double-up" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="decrease" data-stat-target="spd" aria-label="특방 감소"><span class="mdi mdi-minus-thick" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="increase" data-stat-target="spd" aria-label="특방 증가"><span class="mdi mdi-plus-thick" aria-hidden="true"></span></button>
+                                        </div>
+                                        <div class="stat-value-wrap stat-actual-wrap"><span class="stat-value-label">실수치</span><span id="actual-spd" class="stat-actual">0</span></div>
+                                    </div>
+                                </div>
+                                <div class="stat-box" data-stat="spe">
+                                    <span class="stat-name" data-stat-label="spe">스핏</span>
+                                    <div class="stat-box-body">
+                                        <label class="stat-value-wrap stat-input-wrap">
+                                            <span class="stat-value-label">노력치</span>
+                                            <input id="stat-spe" class="stat-input" type="number" min="0" max="32" step="1">
+                                        </label>
+                                        <div class="stat-action-group">
+                                            <button class="stat-action-btn ghost-btn stat-edge-btn" type="button" data-stat-action="min" data-stat-target="spe" aria-label="스핏 최소"><span class="mdi mdi-chevron-double-down" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn primary-btn stat-edge-btn" type="button" data-stat-action="max" data-stat-target="spe" aria-label="스핏 최대"><span class="mdi mdi-chevron-double-up" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="decrease" data-stat-target="spe" aria-label="스핏 감소"><span class="mdi mdi-minus-thick" aria-hidden="true"></span></button>
+                                            <button class="stat-action-btn ghost-btn" type="button" data-stat-action="increase" data-stat-target="spe" aria-label="스핏 증가"><span class="mdi mdi-plus-thick" aria-hidden="true"></span></button>
+                                        </div>
+                                        <div class="stat-value-wrap stat-actual-wrap"><span class="stat-value-label">실수치</span><span id="actual-spe" class="stat-actual">0</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="editor-two-col">
+                            <label class="field move-field">
+                                <span class="autocomplete-shell">
+                                    <span class="move-field-label">기술명 1</span>
+                                    <input id="move-1" type="text" autocomplete="off">
+                                </span>
+                            </label>
+                            <label class="field move-field">
+                                <span class="autocomplete-shell">
+                                    <span class="move-field-label">기술명 2</span>
+                                    <input id="move-2" type="text" autocomplete="off">
+                                </span>
+                            </label>
+                            <label class="field move-field">
+                                <span class="autocomplete-shell">
+                                    <span class="move-field-label">기술명 3</span>
+                                    <input id="move-3" type="text" autocomplete="off">
+                                </span>
+                            </label>
+                            <label class="field move-field">
+                                <span class="autocomplete-shell">
+                                    <span class="move-field-label">기술명 4</span>
+                                    <input id="move-4" type="text" autocomplete="off">
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="party-editor-actions">
+                        <button id="party-editor-save-btn" class="accent-btn" type="button">슬롯 저장</button>
+                        <button id="party-editor-back-btn" class="ghost-btn" type="button">돌아가기</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel-card page-panel" data-page="enemy" aria-labelledby="enemy-title">
+                <div class="section-head compact">
+                    <div>
+                        <h2 id="enemy-title">상대 팀 입력</h2>
+                    </div>
+                </div>
+                <div class="input-stack">
+                    <label class="field autocomplete-shell">
+                        <span>상대 포켓몬 검색</span>
+                        <input id="enemy-search" type="text" autocomplete="off">
+                    </label>
+                    <div class="enemy-action-stack">
+                        <button id="add-enemy-btn" class="primary-btn" type="button">상대 추가</button>
+                        <button id="reset-enemy-btn" class="ghost-btn" type="button">리셋</button>
+                    </div>
+                </div>
+                <div id="enemy-count" class="mini-meta">현재 0 / 6</div>
+                <ul id="enemy-list" class="enemy-list" aria-live="polite"></ul>
+                <div class="enemy-result-action">
+                    <button id="enemy-analyze-btn" class="accent-btn" type="button">추천 결과 보기</button>
+                </div>
+            </section>
+
+            <section class="panel-card page-panel" data-page="support" aria-labelledby="type-title">
+                <div class="section-head compact">
+                    <div>
+                        <h2 id="type-title">타입 확인</h2>
+                    </div>
+                </div>
+                <div id="type-card" class="info-card empty-card">
+                    아직 선택한 상대 포켓몬이 없습니다.
+                </div>
+            </section>
+
+            <section class="panel-card panel-span-2 page-panel" data-page="result" aria-labelledby="result-title">
+                <div class="section-head">
+                    <div>
+                        <h2 id="result-title">추천 결과</h2>
+                    </div>
+                </div>
+                <div class="result-grid">
+                    <div class="result-column">
+                        <h3>추천 선봉</h3>
+                        <div id="lead-result" class="info-card empty-card">
+                            상대 6마리를 입력한 뒤 추천 보기를 눌러 주세요.
+                        </div>
+                    </div>
+                    <div class="result-column">
+                        <h3>추천 3마리 조합</h3>
+                        <div id="combo-result" class="stack-card empty-card">
+                            추천 조합이 여기 표시됩니다.
+                        </div>
+                    </div>
+                    <div class="result-column">
+                        <h3>대안 조합</h3>
+                        <div id="alt-combo-result" class="stack-card empty-card">
+                            대안 조합이 여기 표시됩니다.
+                        </div>
+                    </div>
+                    <div class="result-column">
+                        <h3>주의 포켓몬</h3>
+                        <div id="threat-result" class="stack-card empty-card">
+                            주의 포켓몬이 여기 표시됩니다.
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-block">
+                    <h3>총평</h3>
+                    <p id="overall-summary">아직 분석 전입니다.</p>
+                </div>
+            </section>
+
+            <section class="panel-card panel-span-2 page-panel" data-page="support" aria-labelledby="speed-title">
+                <div class="section-head">
+                    <div>
+                        <h2 id="speed-title">스피드 비교</h2>
+                    </div>
+                    <button id="compare-speed-btn" class="primary-btn" type="button">비교하기</button>
+                </div>
+                <div class="speed-grid">
+                    <label class="field">
+                        <span>내 포켓몬 선택</span>
+                        <select id="my-speed-select"></select>
+                    </label>
+                    <label class="field">
+                        <span>상대 포켓몬 선택</span>
+                        <select id="enemy-speed-select"></select>
+                    </label>
+                </div>
+                <div id="speed-result" class="info-card empty-card">
+                    비교할 포켓몬을 선택해 주세요.
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script defer src="datapokemon.js"></script>
+    <script defer src="datamoves.js"></script>
+    <script defer src="datatype-chart.js"></script>
+    <script defer src="jsstorage.js"></script>
+    <script defer src="jstype.js"></script>
+    <script defer src="jsspeed.js"></script>
+    <script defer src="jsrecommend.js"></script>
+    <script defer src="jsapp.js"></script>
+</body>
+</html>
