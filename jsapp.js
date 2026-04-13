@@ -202,6 +202,7 @@
         const basePokemon = pokemon && pokemon.formFamily ? window.PokeData.getFormSpecies(pokemon, "shield") : pokemon;
         const hasForms = Boolean(basePokemon && Array.isArray(basePokemon.forms) && basePokemon.forms.length > 1);
         refs.partyEditorFormToggle.hidden = !hasForms;
+        refs.partyEditorFormToggle.style.display = hasForms ? "inline-flex" : "none";
         if (!hasForms) {
             setSelectedFormKey("");
             return;

@@ -686,6 +686,10 @@ select:focus {
     gap: 8px;
 }
 
+.form-toggle[hidden] {
+    display: none !important;
+}
+
 .form-toggle-btn {
     min-width: 86px;
     min-height: 40px;
