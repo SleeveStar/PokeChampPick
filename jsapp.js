@@ -498,15 +498,15 @@
         refs.partyEditorPreview.innerHTML = renderMemberPreview(pokemon);
     }
     function fillPartyEditor(member, index) {
-        const species = member.name ? window.PokeData.getPokemonByName(member.name) : null;
+        const species = member.name ? (window.PokeData.getPokemonByName(member.name) || window.PokeData.resolvePokemon(member.name)) : null;
         refs.partyEditorTitle.textContent = `#${index + 1}`;
-        refs.partyEditorName.value = species ? (species.displayKoName || species.koName) : "";
+        refs.partyEditorName.value = species ? (species.displayKoName || species.koName) : (member.koName || member.name || "");
         refs.partyEditorName.dataset.selectedName = species ? (species.canonicalName || species.name) : "";
         refs.partyEditorItem.value = member.item || "";
         updateItemPreview(member.item || "");
         refs.partyEditorNature.value = getNatureLabel(member.nature);
         refs.partyEditorNature.dataset.selectedValue = sanitizeNature(member.nature);
-        updateFormToggle(species, member.form || species.formKey || "");
+        updateFormToggle(species, member.form || (species ? species.formKey : "") || "");
         updatePartyEditorAbilityOptions(species, member.ability || "");
         refs.move1.value = member.moves[0] || "";
         refs.move2.value = member.moves[1] || "";
