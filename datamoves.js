@@ -732,7 +732,7 @@
         "priority": 1
     },
     "bullet-seed": {
-        "koName": "기관총",
+        "koName": "씨기관총",
         "type": "grass",
         "englishName": "bullet-seed",
         "category": "physical",
@@ -28310,6 +28310,17 @@
         return moves.map((moveKey) => Object.assign({ key: moveKey }, MOVE_MAP[moveKey] || { koName: moveKey, type: "" }));
     }
 
+    const MOVE_KO_ALIASES = {
+        "bullet-seed": ["기관총", "씨기관총"]
+    };
+
+    function getMoveAliasNames(move) {
+        if (!move || !move.key) {
+            return [];
+        }
+        return MOVE_KO_ALIASES[move.key] || [];
+    }
+
     function searchMoves(pokemon, query, limit) {
         const normalized = String(query || "").trim().toLowerCase();
         const max = Number(limit) || 8;
@@ -28319,7 +28330,8 @@
             const ko = String(move.koName || "").toLowerCase();
             const en = String(move.englishName || move.key || "").toLowerCase();
             const key = String(move.key || "").toLowerCase();
-            return ko.includes(normalized) || en.includes(normalized) || key.includes(normalized);
+            const aliases = getMoveAliasNames(move).map((alias) => String(alias || "").toLowerCase());
+            return ko.includes(normalized) || en.includes(normalized) || key.includes(normalized) || aliases.some((alias) => alias.includes(normalized));
         }).slice(0, max);
     }
 
@@ -28327,7 +28339,11 @@
         const normalized = String(value || "").trim().toLowerCase();
         if (!normalized) { return null; }
         return getMovesForPokemon(pokemon).find((move) => {
-            return String(move.koName || "").toLowerCase() === normalized || String(move.englishName || "").toLowerCase() === normalized || String(move.key || "").toLowerCase() === normalized;
+            const aliases = getMoveAliasNames(move).map((alias) => String(alias || "").toLowerCase());
+            return String(move.koName || "").toLowerCase() === normalized
+                || String(move.englishName || "").toLowerCase() === normalized
+                || String(move.key || "").toLowerCase() === normalized
+                || aliases.includes(normalized);
         }) || null;
     }
 
