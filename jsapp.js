@@ -363,6 +363,77 @@
     function renderTypeBadges(types) {
         return (types || []).map((type) => `<span class="type-badge" data-type="${type}">${window.TypeModule.toTypeLabel(type)}</span>`).join("");
     }
+    function renderMiniChips(labels) {
+        return (labels || []).filter(Boolean).map((label) => `<span class="mini-chip">${label}</span>`).join("");
+    }
+    function renderReasonLines(lines, className) {
+        return (lines || [])
+            .filter(Boolean)
+            .map((line) => `<p class="${className || "recommend-detail"}">${line}</p>`)
+            .join("");
+    }
+    function renderRecommendationFacts(entry) {
+        if (!entry) { return ""; }
+        return renderMiniChips([
+            `유리 ${((entry.favorableOpponents || []).length)}`,
+            `주의 ${((entry.riskyOpponents || []).length)}`,
+            entry.safeCount ? `안정 ${entry.safeCount}` : ""
+        ]);
+    }
+    function renderStrategyChips(entry) {
+        if (!entry) { return ""; }
+        const labels = (entry.strategySummary || []).map((item) => item.label).concat(entry.strategyLabels || []).filter(Boolean);
+        const uniqueLabels = Array.from(new Set(labels)).slice(0, 4);
+        return renderMiniChips(uniqueLabels);
+    }
+    function renderPlanScores(entry) {
+        if (!entry) { return ""; }
+        return renderMiniChips([
+            typeof entry.leadFit === "number" ? `선봉 ${entry.leadFit.toFixed(1)}` : "",
+            typeof entry.pivotFit === "number" ? `운영 ${entry.pivotFit.toFixed(1)}` : "",
+            typeof entry.cleanupFit === "number" ? `마무리 ${entry.cleanupFit.toFixed(1)}` : "",
+            entry.primaryPlan && entry.primaryPlan.label ? `주역 ${entry.primaryPlan.label}` : ""
+        ]);
+    }
+    function renderRecommendationTargets(entry) {
+        if (!entry) { return ""; }
+        const favorable = (entry.favorableOpponents || []).slice(0, 2).map((opponent) => opponent.koName).join(", ");
+        const risky = (entry.riskyOpponents || []).slice(0, 2).map((opponent) => opponent.koName).join(", ");
+        const lines = [];
+
+        if (favorable) {
+            lines.push(`<p class="recommend-reason">유리 상대: <strong>${favorable}</strong></p>`);
+        }
+        if (risky) {
+            lines.push(`<p class="recommend-reason">주의 상대: <strong>${risky}</strong></p>`);
+        }
+        return lines.join("");
+    }
+    function renderBattlePlan(plan) {
+        if (!plan) {
+            refs.planSummary.className = "plan-summary empty-card";
+            refs.planSummary.textContent = "추천 운영 플랜이 여기 표시됩니다.";
+            return;
+        }
+
+        refs.planSummary.className = "plan-summary";
+        refs.planSummary.innerHTML = [
+            `<div class="plan-card"><strong>기본 플랜</strong><div class="type-row">${renderMiniChips([`선봉 ${plan.opener}`, `운영 ${plan.pivot}`, `마무리 ${plan.cleanup}`, plan.styleLabel || ""])}</div>${plan.strategySummary && plan.strategySummary.length > 0 ? `<div class="type-row">${renderMiniChips(plan.strategySummary.map((item) => item.label).slice(0, 4))}</div>` : ""}${(plan.lines || []).map((line) => `<p class="recommend-reason">${line}</p>`).join("")}</div>`,
+            ...(plan.coreResponses || []).map((entry) => {
+                return `<div class="plan-card"><strong>${entry.coreNames} 코어 대응</strong><div class="type-row">${renderMiniChips([entry.styleLabel || "", entry.responseLead ? `선봉 ${entry.responseLead}` : "", entry.responseCleanup ? `마무리 ${entry.responseCleanup}` : ""])}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips)}</div>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails)}<p class="recommend-reason">추천 3마리: <strong>${(entry.responseCombo || []).join(", ")}</strong></p>${entry.responsePivot ? `<p class="recommend-reason">운영 중심축: <strong>${entry.responsePivot}</strong></p>` : ""}${entry.responseReason ? `<p class="recommend-reason">${entry.responseReason}</p>` : ""}${renderReasonLines(entry.responseReasonDetails)}</div>`;
+            }),
+            ...(plan.leadResponses || []).map((entry) => {
+                const primary = entry.primary ? (entry.primary.moveName ? `${entry.primary.name}(${entry.primary.moveName})` : entry.primary.name) : "";
+                const backup = entry.backup ? (entry.backup.moveName ? `${entry.backup.name}(${entry.backup.moveName})` : entry.backup.name) : "";
+                return `<div class="plan-card"><strong>${entry.opponentName} 예상 선봉</strong><div class="type-row">${renderMiniChips([entry.opponentLabel || ""])}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips)}</div>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails)}${primary ? `<p class="recommend-reason">권장 선봉: <strong>${primary}</strong></p>` : ""}${entry.primary && entry.primary.reason ? `<p class="recommend-reason">${entry.primary.reason}</p>` : ""}${renderReasonLines(entry.primary && entry.primary.reasonDetails)}${backup ? `<p class="recommend-reason">백업 운영축: <strong>${backup}</strong></p>` : ""}${entry.backup && entry.backup.reason ? `<p class="recommend-reason">${entry.backup.reason}</p>` : ""}${renderReasonLines(entry.backup && entry.backup.reasonDetails)}</div>`;
+            }),
+            ...(plan.threatResponses || []).map((entry) => {
+                const answers = (entry.answers || []).map((answer) => answer.moveName ? `${answer.name}(${answer.moveName})` : answer.name).join(", ");
+                const safeAnswers = (entry.safeAnswers || []).map((answer) => answer.moveName ? `${answer.name}(${answer.moveName})` : answer.name).join(", ");
+                return `<div class="plan-card"><strong>${entry.threat.koName} 대응</strong>${entry.threat.evidenceChips && entry.threat.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.threat.evidenceChips)}</div>` : ""}<p class="recommend-reason">${entry.threat.message}</p>${renderReasonLines(entry.threat.detailLines)}${answers ? `<p class="recommend-reason">우선 답: <strong>${answers}</strong></p>` : ""}${safeAnswers ? `<p class="recommend-reason">안정 교체: <strong>${safeAnswers}</strong></p>` : ""}</div>`;
+            })
+        ].join("");
+    }
     function renderItemImage(itemName, className) {
         const itemData = resolveItemData(itemName);
         const imageUrl = itemData ? itemData.imageUrl : ITEM_IMAGE_FALLBACK;
@@ -953,17 +1024,17 @@
     function renderLeadResult(lead) {
         if (!lead) { refs.leadResult.className = "info-card empty-card"; refs.leadResult.textContent = "추천 선봉이 없습니다."; return; }
         refs.leadResult.className = "info-card lead-card";
-        refs.leadResult.innerHTML = `<div class="recommend-head"><div class="recommend-title"><strong>${lead.species.koName}</strong></div><div class="mini-chip">${lead.species.types.map((type) => window.TypeModule.toTypeLabel(type)).join(" / ")}</div></div><p class="recommend-reason">${lead.reason}</p>`;
+        refs.leadResult.innerHTML = `<div class="recommend-head"><div class="recommend-title"><strong>${lead.species.koName}</strong></div><div class="type-row">${renderTypeBadges(lead.species.types)}</div><div class="type-row">${renderRecommendationFacts(lead)}</div><div class="type-row">${renderPlanScores(lead)}</div><div class="type-row">${renderStrategyChips(lead)}</div>${lead.attackTypes && lead.attackTypes.length > 0 ? `<div class="type-row">${renderTypeBadges(lead.attackTypes.slice(0, 4))}</div>` : ""}</div><p class="recommend-reason">${lead.reason}</p>${renderReasonLines(lead.reasonDetails)}${renderRecommendationTargets(lead)}`;
     }
     function renderComboContainer(container, combos, emptyMessage, labelPrefix) {
         if (!combos || combos.length === 0) { container.className = "stack-card empty-card"; container.textContent = emptyMessage; return; }
         container.className = "stack-card";
-        container.innerHTML = combos.map((entry, index) => `<article class="combo-card"><div class="recommend-head"><div class="recommend-title"><strong>${labelPrefix} ${index + 1}</strong></div><span class="mini-chip">${entry.combo.map((member) => member.species.koName).join(" / ")}</span></div><div class="combo-members">${entry.combo.map((member) => `<div class="combo-member"><strong>${member.species.koName}</strong><span>${member.reason}</span></div>`).join("")}</div><p class="combo-summary">${entry.summary}</p></article>`).join("");
+        container.innerHTML = combos.map((entry, index) => `<article class="combo-card"><div class="recommend-head"><div class="recommend-title"><strong>${labelPrefix} ${index + 1}</strong></div><span class="mini-chip">${entry.combo.map((member) => member.species.koName).join(" / ")}</span></div><div class="type-row">${renderMiniChips([`평점 ${entry.totalScore.toFixed(1)}`, entry.styleLabel || "", entry.leadAnchor ? `선봉축 ${entry.leadAnchor.species.koName}` : "", entry.cleanupAnchor ? `마무리 ${entry.cleanupAnchor.species.koName}` : ""])}</div><div class="type-row">${renderStrategyChips(entry)}</div>${entry.summaryChips && entry.summaryChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.summaryChips)}</div>` : ""}</div><div class="combo-members">${entry.combo.map((member) => `<div class="combo-member"><strong>${member.species.koName}</strong><div class="type-row">${renderRecommendationFacts(member)}</div><div class="type-row">${renderPlanScores(member)}</div><div class="type-row">${renderStrategyChips(member)}</div>${member.attackTypes && member.attackTypes.length > 0 ? `<div class="type-row">${renderTypeBadges(member.attackTypes.slice(0, 4))}</div>` : ""}<p class="recommend-reason">${member.reason}</p>${renderReasonLines(member.reasonDetails)}${renderRecommendationTargets(member)}</div>`).join("")}</div><p class="combo-summary">${entry.summary}</p>${renderReasonLines(entry.summaryDetails, "combo-summary combo-detail")}</article>`).join("");
     }
     function renderThreats(threats) {
         if (!threats || threats.length === 0) { refs.threatResult.className = "stack-card empty-card"; refs.threatResult.textContent = "현재 입력 기준으로는 치명적인 주의 포켓몬이 두드러지지 않습니다."; return; }
         refs.threatResult.className = "stack-card";
-        refs.threatResult.innerHTML = threats.map((threat) => `<article class="threat-card"><div class="recommend-head"><div class="recommend-title"><strong>${threat.koName}</strong></div></div><p class="threat-text">${threat.message}</p></article>`).join("");
+        refs.threatResult.innerHTML = threats.map((threat) => `<article class="threat-card"><div class="recommend-head"><div class="recommend-title"><strong>${threat.koName}</strong></div><div class="type-row">${renderMiniChips([threat.category || "주의"])}</div>${threat.evidenceChips && threat.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(threat.evidenceChips)}</div>` : ""}</div><p class="threat-text">${threat.message}</p>${renderReasonLines(threat.detailLines, "threat-text recommend-detail")}</article>`).join("");
     }
     function runRecommendation(options) {
         const config = options || {};
@@ -975,6 +1046,7 @@
         renderComboContainer(refs.comboResult, recommendation.primaryCombo ? [recommendation.primaryCombo] : [], "추천 조합이 없습니다.", "추천 조합");
         renderComboContainer(refs.altComboResult, recommendation.alternativeCombos || [], "추가 대안 조합이 없습니다.", "대안 조합");
         renderThreats(recommendation.threats || []);
+        renderBattlePlan(recommendation.battlePlan || null);
         refs.overallSummary.textContent = recommendation.summary || "총평을 생성하지 못했습니다.";
         if (config.switchPage) {
             setCurrentPage("result");
@@ -1162,6 +1234,7 @@
         refs.altComboResult = document.getElementById("alt-combo-result");
         refs.threatResult = document.getElementById("threat-result");
         refs.overallSummary = document.getElementById("overall-summary");
+        refs.planSummary = document.getElementById("plan-summary");
         refs.mySpeedSelect = document.getElementById("my-speed-select");
         refs.enemySpeedSelect = document.getElementById("enemy-speed-select");
         refs.compareSpeedBtn = document.getElementById("compare-speed-btn");

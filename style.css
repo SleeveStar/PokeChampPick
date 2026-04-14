@@ -619,7 +619,7 @@ select:focus {
     gap: 6px;
     font-size: 0.84rem;
     color: var(--text);
-    width: 100px;
+    width: 110px;
 }
 
 .slot-move-type-icon {
@@ -1382,8 +1382,19 @@ select:focus {
     line-height: 1.6;
 }
 
+.recommend-detail {
+    margin: 6px 0 0;
+    color: rgba(36, 52, 63, 0.82);
+    line-height: 1.55;
+    font-size: 0.95rem;
+}
+
 .combo-summary {
     margin-top: 14px;
+}
+
+.combo-detail {
+    margin-top: 6px;
 }
 
 .combo-members {
@@ -1405,6 +1416,24 @@ select:focus {
 
 .summary-block {
     margin-top: 16px;
+}
+
+.plan-summary {
+    margin-top: 14px;
+    display: grid;
+    gap: 10px;
+}
+
+.plan-card {
+    padding: 14px;
+    border-radius: var(--radius-md);
+    background: rgba(244, 249, 252, 0.96);
+    border: 1px solid rgba(86, 130, 160, 0.08);
+}
+
+.plan-card strong {
+    display: block;
+    margin-bottom: 6px;
 }
 
 .speed-grid {
