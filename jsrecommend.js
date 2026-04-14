@@ -342,6 +342,421 @@
             notes: ["메가캥카 축", "킬가르도 대응", "삼삼드래 마무리"]
         }
     ];
+    const SPECIES_META_NOTES = {
+        garchomp: {
+            chip: "고속 압박",
+            opponent: [
+                "한카리아스는 스카프, 기합의띠, 스케일샷 계열이 모두 자연스러워 선봉부터 마무리까지 읽기가 까다로운 편입니다.",
+                "한카리아스는 초반 대면 압박과 후반 정리 각을 동시에 가져가서 상대가 가장 먼저 의식하게 만드는 축입니다.",
+                "한카리아스는 타입 상성보다 먼저 속도와 지진 압박을 강요해 선출 단계에서 기준점처럼 작동합니다."
+            ],
+            threat: [
+                "한카리아스는 선봉 빈도도 높고 후반 마무리각도 있어 한 번 놓치면 경기 전반을 흔들기 쉽습니다.",
+                "한카리아스는 초반 정보 확인용 카드처럼 보이면서도 그대로 게임을 끝낼 수 있어 대면 판단이 특히 중요합니다.",
+                "한카리아스는 땅 일관성과 속도 압박이 커서 무난한 상성만으로는 대응했다고 보기 어려운 상대입니다."
+            ],
+            response: [
+                "한카리아스 상대로는 한 번 받아내는 것보다 속도 라인을 넘기지 않거나 즉시 유효타를 넣는 대응이 더 중요합니다.",
+                "한카리아스는 오래 두면 유리한 교환을 반복하기 쉬워서 정면 압박이나 명확한 견제기로 템포를 끊는 편이 낫습니다.",
+                "한카리아스는 한 턴만 비워도 스케일샷이나 스텔스록으로 흐름을 가져갈 수 있어 초반 대응 정확도가 중요합니다."
+            ]
+        },
+        hippowdon: {
+            chip: "설치 완충",
+            opponent: [
+                "하마돈은 스텔스록과 하품을 기반으로 물리 압박을 한 번 끊어 내는 데 강해 운영 단계에서 특히 성가롭습니다.",
+                "하마돈은 단순 탱커보다 설치와 회복을 같이 써서 상대 템포를 늦추는 쪽이 더 까다로운 포켓몬입니다.",
+                "하마돈은 물리 에이스를 억지로 멈춰 세운 뒤 하품과 교체전으로 판을 늘리는 성향이 강합니다."
+            ],
+            threat: [
+                "하마돈은 스텔스록, 하품, 게으름피우기 때문에 대면 하나보다 전체 템포를 계속 끊어 먹는 쪽이 더 까다롭습니다.",
+                "하마돈은 한 번 안전하게 들어오면 설치와 수면 압박으로 선출 흐름 자체를 꼬기 쉬운 축입니다.",
+                "하마돈은 정면 화력보다 교체를 강요하는 압박이 강해서 운영이 꼬이기 시작하면 체감 난도가 크게 올라갑니다."
+            ],
+            response: [
+                "하마돈 상대로는 장기전으로 받아 주기보다 강한 특수 물·풀 타점으로 바로 흔드는 편이 안정적입니다.",
+                "하마돈은 천천히 상대하면 하품과 회복으로 시간을 벌기 쉬워서 짧은 턴 안에 압박하는 대응이 더 좋습니다.",
+                "하마돈은 물리 대면으로 풀기 어렵기 쉬워 특수 타점이나 확실한 교체 유도 수단을 준비하는 편이 낫습니다."
+            ]
+        },
+        corviknight: {
+            chip: "교체전 장악",
+            opponent: [
+                "아머까오는 강철/비행 저항과 유턴, 회복기 덕분에 불리하지 않은 대면을 길게 끌고 가는 데 능합니다.",
+                "아머까오는 한 번 받아낸 뒤 유턴으로 판을 다시 정리하는 식이라 즉시 화력보다 교체전 감각이 더 중요한 상대입니다.",
+                "아머까오는 물리를 받아내고 후속에게 안전하게 연결하는 능력이 좋아 밸런스 코어의 중심축으로 자주 보입니다."
+            ],
+            threat: [
+                "아머까오는 단순히 안 죽는 수준이 아니라 유턴과 회복으로 교체전 주도권을 오래 잡아 꽤 까다롭습니다.",
+                "아머까오는 한 번 자리 잡으면 물리 어태커를 무디게 만들고 후속 메타 포켓몬에게 자연스럽게 넘기는 축입니다.",
+                "아머까오는 대면 화력은 과하지 않아도 받아낸 뒤 다시 빠지는 흐름이 좋아 체감상 훨씬 성가롭게 느껴집니다."
+            ],
+            response: [
+                "아머까오 상대로는 약한 접촉기로 여러 번 두드리기보다 강한 특수 압박이나 전기·불꽃 견제가 더 확실합니다.",
+                "아머까오는 교체전을 길게 가져갈수록 가치가 커져서 턴을 오래 주지 않는 대응이 중요합니다.",
+                "아머까오는 받아내는 역할이 뚜렷해 유턴을 허용하지 않고 즉시 압박할 수 있는 카드가 특히 좋습니다."
+            ]
+        },
+        archaludon: {
+            chip: "행동 보장",
+            opponent: [
+                "브리두라스는 튼튼함이나 지구력 축 때문에 한 번은 꼭 행동하는 느낌이 강해 대면전에서 계산을 꼬기 쉽습니다.",
+                "브리두라스는 특수 화력과 설치, 벽, 전개 방해까지 폭이 넓어서 세트 추정이 늦으면 대응이 어려워집니다.",
+                "브리두라스는 강철/드래곤 상성과 행동 보장이 겹쳐 무난한 교환만으로는 쉽게 밀리지 않는 축입니다."
+            ],
+            threat: [
+                "브리두라스는 행동 보장과 특수 압박을 동시에 가져가서 예상보다 한 턴 더 버티며 전개를 시작하기 쉽습니다.",
+                "브리두라스는 메테오빔, 안경, 스텔스록, 벽 전개까지 전부 가능해 세트 확인 전까지는 꽤 까다로운 상대입니다.",
+                "브리두라스는 한 번 버틴 뒤 특공 상승이나 전개 보조까지 이어질 수 있어 첫 대응이 느슨하면 흐름을 내주기 쉽습니다."
+            ],
+            response: [
+                "브리두라스 상대로는 한 번 버틴다는 전제를 두고, 그 다음 턴까지 감안한 후속 대응을 같이 준비하는 편이 좋습니다.",
+                "브리두라스는 세트 폭이 넓어 단일 카운터보다 격투·땅 압박과 후속 마무리 계획을 함께 두는 편이 안전합니다.",
+                "브리두라스는 예상보다 오래 남아 판을 꼬기 쉬워 첫 타점만이 아니라 후속 정리선까지 계산하는 편이 좋습니다."
+            ]
+        },
+        primarina: {
+            chip: "특수 완충",
+            opponent: [
+                "누리레느는 높은 특수 화력에 퀵턴과 아쿠아제트까지 있어 단순 특수 어태커보다 훨씬 유연한 축입니다.",
+                "누리레느는 물/페어리 조합이 좋아 무난하게 던지기 쉽고, 맞으면서도 다음 턴 운영을 이어 가기 편합니다.",
+                "누리레느는 돌격조끼나 잔반 계열까지 자연스러워서 특수 완충과 후속 연결을 동시에 맡는 경우가 많습니다."
+            ],
+            threat: [
+                "누리레느는 타입 조합이 훌륭해 억지로 받아낼 수 있는 포켓몬이 제한되고, 퀵턴으로 손해를 줄이기도 쉽습니다.",
+                "누리레느는 단순 화력보다도 안정적인 상성, 우선도, 대면 조정까지 함께 가져가 꽤 성가로운 밸런스 카드입니다.",
+                "누리레느는 물·페어리 자속의 일관성이 좋아 선출이 무난하고, 한번 들어오면 손해 없이 빠져나가기 쉽습니다."
+            ],
+            response: [
+                "누리레느 상대로는 반감 하나만 믿기보다 전기·독 압박이나 강한 물리 화력으로 짧게 끊는 편이 안정적입니다.",
+                "누리레느는 퀵턴과 우선도가 있어 느슨하게 상대하면 손해만 적게 보고 빠지기 쉬워 즉시 압박이 중요합니다.",
+                "누리레느는 안정적인 후출 가치가 높아 턴을 오래 주기보다 명확한 약점을 찌르는 대응이 필요합니다."
+            ]
+        },
+        gengar: {
+            chip: "고속 특수",
+            opponent: [
+                "팬텀은 빠른 독/고스트 타점과 길동무, 얼음바람 같은 변수 때문에 약한 상성 우위만으로는 안심하기 어렵습니다.",
+                "팬텀은 기합의띠 일반형도 성가롭고 메가축까지 겹치면 대면 압박이 훨씬 날카로워집니다.",
+                "팬텀은 속도와 기술 폭이 좋아 상대의 보조 턴이나 느슨한 교체를 곧바로 벌점으로 만드는 축입니다."
+            ],
+            threat: [
+                "팬텀은 빠른 독/고스트 압박과 길동무 같은 마무리 변수 때문에 계산보다 체감 난도가 더 높은 상대입니다.",
+                "팬텀은 유리 대면을 길게 보는 포켓몬이 아니라 한두 턴 안에 크게 흔들어 놓는 쪽이라 선출부터 까다롭습니다.",
+                "팬텀은 메가축까지 열리면 교체 허용 자체가 부담이 커져 운영 여유를 많이 주기 어렵습니다."
+            ],
+            response: [
+                "팬텀 상대로는 불필요한 보조 턴을 주지 않고, 한 번에 큰 압박을 넣거나 우선도로 마무리하는 대응이 좋습니다.",
+                "팬텀은 체력 자체는 두껍지 않아 속도 경쟁이나 기합의띠를 염두에 둔 2단 대응이 안정적입니다.",
+                "팬텀은 한 턴 변수 가치가 큰 포켓몬이라 무리한 읽기보다 안전한 정리선이 있는 카드가 좋습니다."
+            ]
+        },
+        kingambit: {
+            chip: "후반 스윕",
+            opponent: [
+                "대도각참은 느려 보여도 기습과 높은 화력 덕분에 후반 한 턴만 열어 줘도 게임을 끝내기 쉬운 축입니다.",
+                "대도각참은 악/강철 상성과 우선도 때문에 체력이 깎인 판에서 체감 압박이 급격히 커집니다.",
+                "대도각참은 초반보다 후반 가치가 높은 포켓몬이라 남은 수와 체력 상황에 따라 위협도가 크게 올라갑니다."
+            ],
+            threat: [
+                "대도각참은 후반에 기습 심리전이 열리는 순간 대응 난도가 올라가서 남겨 두기 특히 껄끄럽습니다.",
+                "대도각참은 격투 4배 약점이 분명해도, 정작 막판에는 그 약점을 찌를 카드가 이미 빠진 경우가 많아 성가롭습니다.",
+                "대도각참은 체력이 조금만 남아도 기습으로 판을 끝낼 수 있어 마지막 교환 구도를 어렵게 만듭니다."
+            ],
+            response: [
+                "대도각참 상대로는 초반부터 격투 압박을 남겨 두거나, 기습을 비워낼 비공격 선택지를 준비하는 편이 좋습니다.",
+                "대도각참은 후반 심리전이 강해지므로 체력 관리 단계에서부터 미리 답을 남기는 식의 대응이 중요합니다.",
+                "대도각참은 느린 대신 기습으로 속도를 보정하니, 정면 화력만이 아니라 기습 빈칸까지 감안한 대응이 안정적입니다."
+            ]
+        },
+        mimikyu: {
+            chip: "행동 보장",
+            opponent: [
+                "따라큐는 탈 덕분에 한 번은 거의 반드시 움직여서 세팅, 트릭룸, 저주, 마무리 중 하나를 강제로 통과시키는 축입니다.",
+                "따라큐는 순수 화력보다도 한 턴 보장을 바탕으로 판을 뒤집는 수단이 많아 끝까지 경계해야 합니다.",
+                "따라큐는 후반 보험 카드로 넣어도 되고 전개 시동으로도 써서 선출 의도가 유연한 편입니다."
+            ],
+            threat: [
+                "따라큐는 탈 하나 때문에 계산상 유리해 보여도 실제로는 한 턴 더 필요해지는 경우가 많아 꽤 까다롭습니다.",
+                "따라큐는 칼춤 마무리, 트릭룸 시동, 저주 압박까지 가능해 마지막까지 역할이 남는 축입니다.",
+                "따라큐는 한 번은 움직인다는 확신이 있어 체력이 깎인 판일수록 위협도가 훨씬 커집니다."
+            ],
+            response: [
+                "따라큐 상대로는 탈을 벗긴 뒤 바로 정리할 수 있는 2단 압박이 중요하고, 느슨한 세팅 턴을 주면 안 됩니다.",
+                "따라큐는 한 턴 보장을 전제로 굴러가서 우선도나 연속 견제가 있을수록 대응이 편해집니다.",
+                "따라큐는 탈을 확인한 뒤 후속 정리선까지 이어지는 카드가 특히 믿을 만합니다."
+            ]
+        },
+        charizard: {
+            chip: "메가 화력",
+            opponent: [
+                "리자몽은 메가Y 비중이 높아 한 턴 화력과 날씨 압박으로 게임 템포를 갑자기 바꾸는 축입니다.",
+                "리자몽은 불꽃 화력 자체도 세지만, 태양까지 겹치면 기존 상성 계산이 흔들리기 쉬워 특히 조심해야 합니다.",
+                "리자몽은 선출 단계에서부터 바위 약점과 메가 화력 중 무엇을 더 의식해야 할지 판단을 강요합니다."
+            ],
+            threat: [
+                "리자몽은 메가Y를 전제로 보면 한 번의 잘못된 교체로도 판이 크게 기울 수 있어 즉시 화력 경계가 필요합니다.",
+                "리자몽은 날씨 구간을 여는 순간 특수 압박이 급격히 올라가서 느린 대응은 거의 허용하지 않습니다.",
+                "리자몽은 바위 약점이 분명하지만, 실제 경기에서는 그 전에 한 턴 이득을 크게 가져가려는 성향이 강합니다."
+            ],
+            response: [
+                "리자몽 상대로는 반감만 믿고 받기보다 속도 라인과 날씨까지 감안한 즉시 견제가 더 안전합니다.",
+                "리자몽은 한 턴 화력 기대값이 높아 교체전보다는 확실한 견제기나 스텔스록 압박을 미리 준비하는 편이 좋습니다.",
+                "리자몽은 메가 여부가 확인되기 전에도 화력 부담이 커서 초반부터 강하게 압박하는 대응이 안정적입니다."
+            ]
+        },
+        aegislash: {
+            chip: "폼 변수",
+            opponent: [
+                "킬가르도는 폼 전환과 뛰어난 저항 덕분에 상대의 선택을 한 번 더 꼬이게 만드는 축입니다.",
+                "킬가르도는 정면 화력만이 아니라 실드폼으로 받아내고 블레이드폼으로 반격하는 흐름이 특히 까다롭습니다.",
+                "킬가르도는 고스트/강철 상성 덕분에 밸런스 코어 안에서 틈을 메우는 역할로 자주 들어옵니다."
+            ],
+            threat: [
+                "킬가르도는 폼 전환 때문에 평범한 속도·화력 계산이 잘 어긋나 실제 체감 난도가 높습니다.",
+                "킬가르도는 무난한 반감 구조와 폼 변수 덕분에 마무리 카드와 받아내기 카드 역할을 동시에 노릴 수 있습니다.",
+                "킬가르도는 한 턴 잘못 치면 실드폼에 막히고, 머뭇거리면 블레이드폼 화력에 반격당하기 쉬운 상대입니다."
+            ],
+            response: [
+                "킬가르도 상대로는 한 번에 끝내지 못할 상황을 먼저 전제로 두고, 다음 턴까지 이어지는 대응이 더 안정적입니다.",
+                "킬가르도는 폼 심리전이 있어 약한 연타보다 강한 중립타나 확실한 후속 정리선이 중요합니다.",
+                "킬가르도는 실드폼에서 시간을 벌기 쉬우니 무리한 읽기보다 안전한 압박을 반복하는 편이 낫습니다."
+            ]
+        },
+        rotom: {
+            chip: "피벗 유틸",
+            opponent: [
+                "워시로토무는 타입과 유틸이 좋아 무난하게 던지기 쉽고, 불리한 판도 볼트체인지로 크게 손해 보지 않습니다.",
+                "워시로토무는 공격보다 대면 조정과 화상 압박 쪽이 더 성가로워서 체감상 까다로운 포켓몬입니다.",
+                "워시로토무는 한 번 받아낸 뒤 볼트체인지로 메타 에이스에게 넘기는 흐름이 자연스러워 밸런스 축에서 자주 보입니다."
+            ],
+            threat: [
+                "워시로토무는 정면 돌파력이 과한 편은 아니어도, 대면 조정과 상태이상 때문에 운영을 길게 꼬기 좋습니다.",
+                "워시로토무는 볼트체인지 하나만으로도 상대 교체 순서를 계속 불편하게 만들 수 있어 꽤 성가롭습니다.",
+                "워시로토무는 안전하게 들어와 안전하게 빠지는 흐름이 좋아 경기 템포를 조금씩 자기 쪽으로 당겨 갑니다."
+            ],
+            response: [
+                "워시로토무 상대로는 천천히 받는 대응보다 풀 타점이나 즉시 압박으로 볼트체인지 각을 줄이는 편이 좋습니다.",
+                "워시로토무는 상태이상과 피벗이 핵심이라 오래 두면 손해가 커져 짧게 압박하는 대응이 유리합니다.",
+                "워시로토무는 맞대면 자체보다 후속 연결 가치가 높아, 교체 허용을 최소화하는 식의 대응이 안정적입니다."
+            ]
+        },
+        glimmora: {
+            chip: "초반 전개",
+            opponent: [
+                "킬라플로르는 선봉에서 독압정, 스텔스록, 고화력 특수 타점을 한 번에 보여 줄 수 있어 전개형 파티의 시동점이 됩니다.",
+                "킬라플로르는 초반 한두 턴 가치가 유난히 커서, 그냥 잡더라도 설치가 남는 경우가 많아 까다롭습니다.",
+                "킬라플로르는 선봉전에서 손해를 줄이고 후속 메가 에이스에게 판을 넘기는 용도로 자주 쓰입니다."
+            ],
+            threat: [
+                "킬라플로르는 쓰러지기 전까지 설치와 독압박을 남기기 쉬워 선봉전 체감이 특히 불편한 축입니다.",
+                "킬라플로르는 초반에 바닥을 오염시키고 빠지는 역할이 뚜렷해서 후속 에이스의 기대값을 올리기 쉽습니다.",
+                "킬라플로르는 대면 하나보다 '설치가 남은 뒤의 후속 전개'가 더 성가로운 포켓몬입니다."
+            ],
+            response: [
+                "킬라플로르 상대로는 선봉에서 설치를 최소화하거나, 설치를 감수하더라도 후속 에이스를 막을 카드까지 같이 준비해야 합니다.",
+                "킬라플로르는 한 턴만 비워도 바닥이 남기 쉬워 초반부터 강하게 압박하는 대응이 좋습니다.",
+                "킬라플로르는 자기 역할만 해도 이득을 보는 포켓몬이라 설치 이후 전개까지 함께 끊을 수 있어야 안정적입니다."
+            ]
+        }
+    };
+    const SPECIES_SOURCE_SIGNALS = {
+        garchomp: {
+            sourceChip: "사용률 기반",
+            leadBias: 0.55,
+            coreBias: 0.22,
+            entry: [
+                "최근 사용률 자료에선 한카리아스가 스카프와 기합의띠를 넓게 나눠 가져, 상대 엔트리만 봐도 초반 템포 카드로 먼저 의식하는 편이 자연스럽습니다.",
+                "사용률 기준으로 한카리아스는 선봉/마무리 양쪽 채용이 모두 높아, 팀 프리뷰 단계에서 가장 먼저 가정해야 하는 엔트리 축입니다.",
+                "한카리아스는 세트 분포가 넓게 퍼져 있어 상대 6마리 안에 보이면 기본 엔트리 후보로 올려 두는 편이 맞습니다."
+            ],
+            lead: [
+                "스카프와 띠 비중이 모두 높아 실제로는 선봉에서 정보 확인과 압박을 같이 맡길 가능성이 큽니다.",
+                "최근 63싱글 흐름에선 한카리아스를 초반 기준점으로 두는 경우가 많아 유력 선봉 후보로 보는 편이 자연스럽습니다.",
+                "사용률과 세트 분포를 같이 보면 한카리아스는 선봉으로 나와도, 뒤에 남아도 모두 강해서 우선 추정 대상으로 잡기 좋습니다."
+            ]
+        },
+        hippowdon: {
+            sourceChip: "공략형 기반",
+            leadBias: 0.4,
+            coreBias: 0.2,
+            entry: [
+                "Game8 하마돈 육성론은 HD 스텔스록+하품형과 HB 물리완충형을 함께 제시해, 팀 프리뷰만으로도 선봉 시동과 후출 완충 두 가능성을 모두 열어 두게 만듭니다.",
+                "하마돈은 공략 사이트에서도 설치+하품과 물리막이 두 축이 같이 잡혀 있어, 엔트리 추측 단계에서 운영 시동 카드로 먼저 의식하기 쉽습니다.",
+                "실전 자료와 공략 흐름을 같이 보면 하마돈은 단순 탱커가 아니라 바닥을 깔고 템포를 끊는 엔트리 후보로 읽는 편이 맞습니다."
+            ],
+            lead: [
+                "스텔스록과 하품형이 널리 소개돼 있어 선봉으로 나와 초반 흐름을 늦추는 그림을 우선 상정하기 쉽습니다.",
+                "하마돈은 특수 완충형도 존재하지만, 팀 프리뷰 단계에선 설치 시동 선봉 가능성을 먼저 보는 편이 더 자연스럽습니다.",
+                "상대 조합이 리자몽이나 강한 에이스를 함께 들고 있으면 하마돈 선봉으로 판을 여는 시나리오가 꽤 설득력 있습니다."
+            ]
+        },
+        corviknight: {
+            sourceChip: "물리막이 기반",
+            leadBias: 0.12,
+            coreBias: 0.34,
+            entry: [
+                "Game8 아머까오 육성론이 유턴, 회복기, 바디프레스를 중심으로 잡혀 있어, 실제 엔트리 추측에서도 교체전 완충축으로 보는 편이 자연스럽습니다.",
+                "아머까오는 공략 자료에서도 물리막이와 유턴 축이 강조돼 있어 선봉보다 중반 교체전 핵심 카드로 읽히는 경우가 많습니다.",
+                "아머까오는 강철/비행 저항과 유턴 운영이 정형화돼 있어 팀 프리뷰에서 뒤에서 나올 확률을 높게 보게 만드는 포켓몬입니다."
+            ],
+            lead: [
+                "아머까오는 선봉보다는 후출 피벗이 더 흔하지만, 물리 중심 상대를 의식한 안정 선봉 카드로도 가끔 열릴 수 있습니다.",
+                "선봉 빈도 자체는 아주 높지 않아도, 상대가 물리 대면을 강하게 막고 싶을 때는 아머까오부터 시작하는 그림도 충분히 나옵니다.",
+                "아머까오는 초반 정보 확인용보다 중반 완충 가치가 높아, 엔트리 추측에서도 뒤에 남아 있을 가능성을 크게 봐야 합니다."
+            ]
+        },
+        primarina: {
+            sourceChip: "사용률 기반",
+            leadBias: 0.08,
+            coreBias: 0.38,
+            entry: [
+                "사용률 자료에서 누리레느는 오보ン, 잔반, 물강화 아이템이 넓게 퍼져 있어, 무난한 밸런스 엔트리로 가장 자주 상정되는 카드 중 하나입니다.",
+                "누리레느는 최근 메타에서 물/페어리 특수 완충이자 중반 조정 카드로 평가가 좋아, 팀 프리뷰에서 뒤쪽 핵심 축으로 자주 읽힙니다.",
+                "아이템과 세트 폭이 너무 날카롭지 않아 오히려 어떤 조합에도 잘 붙는다는 점이 누리레느 엔트리 추측을 더 어렵게 만듭니다."
+            ],
+            lead: [
+                "누리레느는 선봉보다는 뒤에서 받아내는 그림이 많지만, 상대 조합이 빠른 대면전에 치우쳤다면 안정 선봉으로도 충분히 열립니다.",
+                "선봉 빈도 자체보다도 '어디에 놔도 무난하다'는 점 때문에 상대 3선출 안에 남을 가능성을 높게 봐야 합니다.",
+                "누리레느는 보통 후출 가치가 더 크지만, 선봉 대면이 나빠 보이지 않으면 그대로 전개를 시작하기도 쉬운 카드입니다."
+            ]
+        },
+        archaludon: {
+            sourceChip: "체감/문의 기반",
+            leadBias: 0.18,
+            coreBias: 0.33,
+            entry: [
+                "브리두라스는 대응법을 묻는 글이 반복될 정도로 세트 폭과 행동 보장 체감이 강해, 상대 엔트리만으로도 우선 경계하게 되는 축입니다.",
+                "커뮤니티 체감상 브리두라스는 '한 번은 꼭 움직인다'는 인상이 강해서, 팀 프리뷰에서도 실제 선출 가능성을 높게 보게 만듭니다.",
+                "브리두라스는 설치, 특수 압박, 전개 보조 모두 가능해 팀 프리뷰 단계에서 세트 추정이 늦어지기 쉬운 포켓몬입니다."
+            ],
+            lead: [
+                "브리두라스는 선봉 시동도 가능하지만 후출 완충으로도 강해, 유력 선봉이면서 동시에 뒤에 남아 있을 가능성도 큰 편입니다.",
+                "상대 조합이 전개형이면 브리두라스가 초반부터 나오기 쉽고, 밸런스형이면 뒤에서 받는 축으로 남기 쉬운 포켓몬입니다.",
+                "브리두라스는 선봉 확정형보다는 '어디에 둬도 가치가 있다'는 점에서 엔트리 추측을 더 어렵게 만듭니다."
+            ]
+        },
+        charizard: {
+            sourceChip: "메가축 기반",
+            leadBias: 0.45,
+            coreBias: 0.34,
+            entry: [
+                "사용률 자료에서 리자몽은 메가리자몽Y 비중이 매우 높아, 팀 프리뷰만 봐도 메가축 엔트리 후보로 먼저 읽히는 편입니다.",
+                "Game8 강한 파티 예시에선 하마돈과 함께 리자몽Y 축이 반복돼, 리자몽이 보이면 날씨형 메가 압박을 우선 가정하게 됩니다.",
+                "리자몽은 메가 여부가 사실상 선출 방향 자체를 바꾸는 포켓몬이라 프리뷰 단계에서 가장 강하게 반응하게 만드는 카드 중 하나입니다."
+            ],
+            lead: [
+                "리자몽은 메가Y의 즉시 화력 때문에 선봉 출전도 충분히 자연스럽고, 상대가 수동적인 조합이면 초반부터 강하게 나올 가능성이 큽니다.",
+                "하마돈 같은 완충축이 함께 보이면 리자몽은 초반보다 중후반 메가 마무리로 남을 수 있지만, 기본적으로는 언제 나와도 압박이 큰 포켓몬입니다.",
+                "리자몽은 선봉 여부보다 '반드시 한 번은 나올 것 같은 메가축'이라는 점에서 엔트리 추측 우선순위가 높습니다."
+            ]
+        },
+        kangaskhan: {
+            sourceChip: "메가캥카 축",
+            leadBias: 0.38,
+            coreBias: 0.29,
+            entry: [
+                "GameWith와 Game8의 강한 파티 예시에서 메가캥카 축이 반복돼, 캥카가 보이면 우선 실전 메가 엔트리 후보로 읽는 편이 자연스럽습니다.",
+                "메가캥카는 대면 화력과 범용성이 좋아 공략 샘플에서도 중심축으로 자주 제시돼 실제 선출 가능성을 높게 보게 만듭니다.",
+                "한국 커뮤니티 2000점 샘플에서도 메가캥카 코어가 반복돼, 캥카는 지금 메타에서 체감 선출 빈도가 높은 카드로 보는 편이 맞습니다."
+            ],
+            lead: [
+                "메가캥카는 초반 대면 화력 자체가 좋아 선봉으로 열어도 무난하고, 엔트리 추측에서도 앞에 설 가능성을 크게 봐야 합니다.",
+                "캥카는 뒤에 남아도 강하지만 상대를 바로 눌러야 하는 판에선 선봉 카드로도 충분히 자연스러워 유력 엔트리 후보입니다.",
+                "메가캥카 축은 실제 샘플 파티에서 선봉·중반 둘 다 자주 보여, 팀 프리뷰만으로 위치를 단정하긴 어렵지만 출전 가능성은 높게 봐야 합니다."
+            ]
+        },
+        lopunny: {
+            sourceChip: "메가이어롭 축",
+            leadBias: 0.42,
+            coreBias: 0.18,
+            entry: [
+                "GameWith 최강 파티 예시에선 메가이어롭-한카리아스-누리레느 축이 반복돼, 이어롭이 보이면 빠른 대면 메가 엔트리를 우선 가정하게 됩니다.",
+                "메가이어롭은 초반 압박과 고속 대면이 장점이라, 팀 프리뷰 단계에서부터 '앞에서 강하게 나올 카드'로 읽히기 쉽습니다.",
+                "메가이어롭 축은 공격적인 63싱글 샘플에서 자주 보이기 때문에, 이어롭이 있으면 속도전 중심 엔트리를 먼저 상정하는 편이 자연스럽습니다."
+            ],
+            lead: [
+                "메가이어롭은 초반부터 압박을 거는 가치가 높아 선봉 출전 가능성을 꽤 높게 보는 편이 맞습니다.",
+                "이어롭은 메가 턴을 빠르게 열수록 가치가 커 대면형 조합에선 선봉 후보로 자주 올라옵니다.",
+                "한카리아스 같은 빠른 카드와 같이 보이면 메가이어롭 선봉으로 속도전부터 여는 그림이 더 설득력 있습니다."
+            ]
+        },
+        scizor: {
+            sourceChip: "메가핫삼 축",
+            leadBias: 0.06,
+            coreBias: 0.22,
+            entry: [
+                "Game8 강한 파티 예시에선 메가핫삼-워시로토무-한카리아스 축이 반복돼, 핫삼은 메가 마무리나 중반 완충축으로 자주 읽힙니다.",
+                "핫삼은 공략 샘플상 선봉보다는 중반 교체전과 후반 불릿펀치 정리 쪽 가치가 더 커서 뒤에 남을 가능성을 높게 보게 됩니다.",
+                "메가핫삼 축은 느슨한 운영보다 '받아내고 마무리'에 가까워 팀 프리뷰에서도 후출 카드로 자주 추정됩니다."
+            ],
+            lead: [
+                "핫삼은 선봉으로도 나올 수 있지만 보통은 후출 가치가 더 커, 프리뷰에선 뒤쪽 에이스 후보로 두는 편이 더 자연스럽습니다.",
+                "상대 조합이 페어리·풀 중심이면 핫삼 선봉도 가능하지만, 전체적으로는 뒤에 남아 마무리를 보는 쪽이 더 흔합니다.",
+                "핫삼은 첫 카드보다 후속 정리 카드로 가치가 커 실제 엔트리 추측에서도 후반 쪽 비중을 높게 두게 됩니다."
+            ]
+        },
+        aegislash: {
+            sourceChip: "한국 샘플 기반",
+            leadBias: 0.08,
+            coreBias: 0.28,
+            entry: [
+                "한국 커뮤니티 2000점 샘플에서 킬가르도는 메가캥카, 하마돈 같은 축과 반복해서 묶여 중반 완충 겸 마무리 축으로 자주 등장합니다.",
+                "킬가르도는 폼 전환과 상성 덕분에 실전 샘플에서도 빈틈을 메우는 카드로 자주 채택돼 엔트리 추측 우선순위가 높습니다.",
+                "킬가르도는 공략보다도 실전 샘플에서 존재감이 커, 팀 프리뷰에서 보이면 밸런스 조합의 핵심 후속 카드로 읽히기 쉽습니다."
+            ],
+            lead: [
+                "킬가르도는 선봉보다 중반 이후 가치가 더 큰 편이라, 실제 선출 추측에선 뒤에 남을 가능성을 조금 더 높게 보는 편이 낫습니다.",
+                "상대 조합이 격투나 페어리 쪽 압박을 많이 주면 킬가르도를 초반 안전장치로 바로 꺼낼 수도 있습니다.",
+                "킬가르도는 위치보다도 '반드시 한 번은 필요할 카드'인 경우가 많아, 선출 안에 남을 가능성이 높은 포켓몬입니다."
+            ]
+        },
+        glimmora: {
+            sourceChip: "한국 샘플 기반",
+            leadBias: 0.62,
+            coreBias: 0.16,
+            entry: [
+                "한국 커뮤니티 2000점 샘플에서 킬라플로르가 선봉 시동 축으로 반복돼, 팀 프리뷰 단계에선 유력한 초반 엔트리로 먼저 가정하는 편이 맞습니다.",
+                "킬라플로르는 설치와 독압박을 남기는 역할이 선명해 실전 샘플에서도 대부분 선봉 가치가 크게 잡힙니다.",
+                "킬라플로르는 프리뷰만 봐도 '바닥을 깔고 메가 에이스에게 잇는 카드'로 읽히는 경우가 많아 선봉 추정이 특히 쉽습니다."
+            ],
+            lead: [
+                "킬라플로르는 실제 샘플에서도 선봉 시동 역할이 뚜렷해 유력 선봉으로 가장 먼저 올려둘 만한 포켓몬입니다.",
+                "킬라플로르는 설치가 핵심이라 뒤에 숨기기보다 초반부터 나와 역할을 수행할 가능성이 큽니다.",
+                "킬라플로르는 선봉 가치가 너무 명확해, 상대 6마리만 봐도 첫 카드 후보로 바로 떠오르는 편입니다."
+            ]
+        },
+        rotom: {
+            sourceChip: "보완축 기반",
+            leadBias: 0.06,
+            coreBias: 0.2,
+            entry: [
+                "워시로토무는 여러 강한 파티 예시에서 메가핫삼, 한카리아스 같은 축을 보완하는 피벗으로 반복돼 실제 선출 확률을 높게 보게 만듭니다.",
+                "워시로토무는 실전 샘플에서 특정 에이스를 받쳐 주는 보완축으로 자주 보여, 프리뷰 단계에서도 후출 핵심 카드로 읽히기 쉽습니다.",
+                "워시로토무는 볼트체인지와 화상 압박 덕분에 조합 완성도를 높이는 카드라 샘플 파티에서 꾸준히 채용됩니다."
+            ],
+            lead: [
+                "워시로토무는 선봉보다는 중반 대면 조정 가치가 더 커, 실제 선출 추측에서도 뒤쪽 피벗으로 두는 편이 자연스럽습니다.",
+                "상대가 불꽃·땅 압박을 강하게 주면 워시로토무를 선봉으로 낼 수 있지만, 일반적으로는 후출 가치가 더 큽니다.",
+                "워시로토무는 첫 카드보다 연결 카드에 가까워 팀 프리뷰에서도 후속 운영축으로 읽히는 경우가 많습니다."
+            ]
+        },
+        hydreigon: {
+            sourceChip: "상위 샘플 기반",
+            leadBias: 0.1,
+            coreBias: 0.18,
+            entry: [
+                "삼삼드래는 상위 밸런스 샘플에서 누리레느, 킬가르도 같은 카드와 함께 보완형 특수 축으로 반복돼 실제 선출 가치를 높게 봅니다.",
+                "삼삼드래는 특정 한 역할보다 넓은 상성 보완이 강점이라, 팀 프리뷰 단계에서 뒤에서 마무리나 중반 압박을 맡을 가능성이 큽니다.",
+                "삼삼드래는 날카로운 선봉보다는 조합 완성도를 높이는 특수 축으로 자주 채택돼 샘플 파티 적중률이 높은 편입니다."
+            ],
+            lead: [
+                "삼삼드래는 선봉 가능성도 있지만, 실제로는 후속 압박이나 마무리 역할이 더 자연스러워 뒤에 남을 확률을 조금 더 높게 봅니다.",
+                "상대가 느린 밸런스 조합이면 삼삼드래를 앞에서 던질 수 있지만, 일반적으로는 중반 카드로 보는 편이 더 맞습니다.",
+                "삼삼드래는 첫 카드보다 보완형 특수 압박에 가까워, 엔트리 추측에서도 후속 후보로 읽히는 경우가 많습니다."
+            ]
+        }
+    };
 
     function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
@@ -353,6 +768,66 @@
 
     function isMegaStoneItem(itemName) {
         return Boolean(String(itemName || "").trim().includes("나이트"));
+    }
+
+    function getItemTacticalProfile(itemName) {
+        const item = String(itemName || "").trim();
+
+        if (!item) {
+            return null;
+        }
+        if (isMegaStoneItem(item)) {
+            return {
+                shortLabel: "메가스톤",
+                chip: "메가 준비",
+                variants: [
+                    `${item} 기준 메가 전개가 열려 있어 선출 방향이 더 분명해집니다.`,
+                    `${item}을 전제로 보면 이 포켓몬은 에이스 축으로 기용 의도가 또렷합니다.`,
+                    `${item}을 들고 있어 메가 타이밍을 중심으로 운용 가치가 커집니다.`
+                ]
+            };
+        }
+
+        const exactProfiles = {
+            "구애스카프": { shortLabel: "스카프", chip: "아이템 스카프", variants: ["구애스카프라 속도 기준점을 넘겨 초반 템포나 마무리 역할이 더 선명합니다.", "구애스카프로 속도를 보정해 예상보다 넓은 상대로 선공 압박을 걸 수 있습니다.", "구애스카프 기준이면 선봉 견제와 후반 정리 둘 다 훨씬 자연스러워집니다."] },
+            "구애머리띠": { shortLabel: "머리띠", chip: "아이템 머리띠", variants: ["구애머리띠로 즉시 화력이 크게 올라 정면 압박 목적이 분명합니다.", "구애머리띠를 들고 있어 교체를 강하게 흔드는 역할이 더 또렷합니다.", "구애머리띠 기준이면 한 번의 맞대면에서 큰 이득을 노리는 카드로 읽힙니다."] },
+            "구애안경": { shortLabel: "안경", chip: "아이템 안경", variants: ["구애안경 기준 특수 압박이 강해 받아내기보다 즉시 화력 쪽 의도가 더 분명합니다.", "구애안경을 들고 있어 특수 유효타를 강하게 밀어 넣는 역할이 선명합니다.", "구애안경이라 정면 교환에서 큰 데미지를 강요하는 카드에 가깝습니다."] },
+            "기합의띠": { shortLabel: "띠", chip: "아이템 기띠", variants: ["기합의띠 기준 한 번은 행동을 보장받기 쉬워 선봉 가치가 더 높습니다.", "기합의띠를 들고 있어 시동기나 대면 압박을 안정적으로 남길 수 있습니다.", "기합의띠라 첫 대면에서 최소 한 턴 역할 수행을 기대하기 쉽습니다."] },
+            "먹다남은음식": { shortLabel: "잔반", chip: "아이템 잔반", variants: ["먹다남은음식 기준 장기전과 반복 교체에서 가치가 더 커집니다.", "먹다남은음식이라 한 번 받아낸 뒤 다시 나오는 운영 축으로 읽기 쉽습니다.", "먹다남은음식은 즉시 화력보다 중반 유지력을 살리는 선택이라 운영 의도가 분명합니다."] },
+            "돌격조끼": { shortLabel: "조끼", chip: "아이템 조끼", variants: ["돌격조끼라 특수 완충 역할이 더 분명해져 후출 가치가 올라갑니다.", "돌격조끼 기준이면 보조기보다 받아내기와 맞대면 유지력에 초점이 맞춰져 있습니다.", "돌격조끼를 들고 있어 특수 압박을 한 번 받아내는 운영 카드로 보기 쉽습니다."] },
+            "생명의구슬": { shortLabel: "생구", chip: "아이템 생구", variants: ["생명의구슬 기준 화력 압박이 더 날카로워져 마무리나 벽파괴 의도가 선명합니다.", "생명의구슬을 들고 있어 교환보다 결정력 확보 쪽으로 무게가 실려 있습니다.", "생명의구슬이라 짧은 턴 안에 큰 압박을 넣는 역할이 더 잘 맞습니다."] },
+            "진화의휘석": { shortLabel: "휘석", chip: "아이템 휘석", variants: ["진화의휘석 기준 내구 운영 가치가 크게 올라가 장기전 카드 성격이 짙습니다.", "진화의휘석을 들고 있어 받아내는 역할이 더 분명해집니다.", "진화의휘석이라 정면 화력보다 운영 완충축으로 읽는 편이 자연스럽습니다."] },
+            "하양허브": { shortLabel: "허브", chip: "아이템 허브", variants: ["하양허브는 부스트 이후 능력 저하를 지워 전개 성공률을 높이는 선택이라 세팅 의도가 선명합니다.", "하양허브를 들고 있어 한 번의 전개 턴을 강하게 살리려는 방향이 읽힙니다.", "하양허브 기준이면 단기 전개나 능력 상승 플랜과 더 잘 맞습니다."] },
+            "멘탈허브": { shortLabel: "멘허", chip: "아이템 멘탈허브", variants: ["멘탈허브를 들고 있어 도발 같은 견제를 넘기고 보조기나 전개기를 통과시키려는 의도가 보입니다.", "멘탈허브 기준이면 안정적으로 한 번 전개를 성공시키는 쪽에 무게가 실려 있습니다.", "멘탈허브라 첫 전개 턴 보장을 더 중시한 구성으로 읽힙니다."] }
+        };
+
+        if (exactProfiles[item]) {
+            return exactProfiles[item];
+        }
+        if (String(item).endsWith("열매")) {
+            return {
+                shortLabel: "열매",
+                chip: "아이템 열매",
+                variants: [
+                    `${item}을 통해 한 번의 상성 압박이나 상태이상을 넘기려는 의도가 보여 운영 안정감이 있습니다.`,
+                    `${item} 기준 특정 대면을 한 번 더 버티는 방향이라 실전 완충 가치가 올라갑니다.`,
+                    `${item}을 들고 있어 예상된 약점을 한 턴 더 견디려는 선택으로 읽힙니다.`
+                ]
+            };
+        }
+        if (String(item).includes("목탄") || String(item).includes("자석") || String(item).includes("부드러운모래") || String(item).includes("기적의씨") || String(item).includes("신비의물방울") || String(item).includes("요정의깃털")) {
+            return {
+                shortLabel: "타입강화",
+                chip: "아이템 화력",
+                variants: [
+                    `${item} 기준 자주 누르는 주력기 화력을 보강해 일관된 압박을 노리는 선택입니다.`,
+                    `${item}을 들고 있어 특정 자속기 중심으로 대면 압박을 높이는 방향이 분명합니다.`,
+                    `${item}은 넓은 범용성보다 자주 쓰는 주력기 화력을 꾸준히 올리는 선택입니다.`
+                ]
+            };
+        }
+
+        return null;
     }
 
     function isMegaCandidate(member, species) {
@@ -387,6 +862,14 @@
 
     function getMetaProfile(species) {
         return META_SPECIES_PROFILES[getMetaSpeciesKey(species)] || null;
+    }
+
+    function getSpeciesMetaNotes(species) {
+        return SPECIES_META_NOTES[getMetaSpeciesKey(species)] || null;
+    }
+
+    function getSpeciesSourceSignals(species) {
+        return SPECIES_SOURCE_SIGNALS[getMetaSpeciesKey(species)] || null;
     }
 
     function getMetaWeight(species) {
@@ -472,6 +955,20 @@
                 sourceLabel: profile.sourceLabel,
                 sourceDetail: profile.sourceDetail
             }));
+    }
+
+    function summarizeNotableOpponents(opponents, max) {
+        return (opponents || [])
+            .filter((opponent) => getSpeciesMetaNotes(opponent))
+            .slice(0, max || 2)
+            .map((opponent) => opponent.koName);
+    }
+
+    function summarizeSourceBackedOpponents(opponents, max) {
+        return (opponents || [])
+            .filter((opponent) => getSpeciesSourceSignals(opponent))
+            .slice(0, max || 2)
+            .map((opponent) => opponent.koName);
     }
 
     function hashText(value) {
@@ -828,6 +1325,8 @@
         const typeProfile = getOpponentTypeProfile(species);
         const roleTags = inferOpponentRoleTags(species, statProfile, typeProfile);
         const metaProfile = getMetaProfile(species);
+        const speciesNotes = getSpeciesMetaNotes(species);
+        const sourceSignals = getSpeciesSourceSignals(species);
         let leadScore = 0;
         let coreValue = 0;
 
@@ -844,6 +1343,7 @@
         leadScore += roleTags.includes("anchor") && statProfile.speed >= 100 ? 0.45 : 0;
         leadScore -= roleTags.includes("slowAnchor") ? 0.35 : 0;
         leadScore += metaProfile ? metaProfile.leadBias : 0;
+        leadScore += sourceSignals ? (sourceSignals.leadBias || 0) : 0;
 
         coreValue += statProfile.offense * 0.035;
         coreValue += statProfile.bulk * 0.016;
@@ -854,6 +1354,7 @@
         coreValue += roleTags.includes("breaker") ? 0.9 : 0;
         coreValue += roleTags.includes("pivot") ? 0.8 : 0;
         coreValue += metaProfile ? metaProfile.coreBias : 0;
+        coreValue += sourceSignals ? (sourceSignals.coreBias || 0) : 0;
 
         const evidenceChips = [
             `스피드 ${statProfile.speed}`,
@@ -861,6 +1362,7 @@
             `내구합 ${statProfile.bulk}`,
             `반감 ${typeProfile.resistanceCount}`,
             metaProfile ? metaProfile.label : "",
+            sourceSignals ? sourceSignals.sourceChip : "",
             typeProfile.immunityCount > 0 ? `무효 ${typeProfile.immunityCount}` : "",
             typeProfile.quadWeakCount > 0 ? `4배약점 ${typeProfile.quadWeakCount}` : ""
         ].filter(Boolean);
@@ -877,6 +1379,30 @@
                 `최근 메타 의견을 보면 ${metaProfile ? metaProfile.hints[0] : "이 포켓몬"} 쪽 평가가 높아 유력 카드로 남을 가능성이 큽니다.`,
                 `사용률 상위권에서 반복해서 언급되는 축이라 상대가 실제로 꺼낼 가능성을 한 단계 높게 보는 편이 맞습니다.`
             ]
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: Boolean(speciesNotes && speciesNotes.opponent && speciesNotes.opponent.length > 0),
+            score: 8.15,
+            category: "meta-style",
+            seed: `${species.name}:meta:style`,
+            chip: speciesNotes ? speciesNotes.chip : "",
+            variants: speciesNotes ? speciesNotes.opponent : []
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: Boolean(sourceSignals && sourceSignals.entry && sourceSignals.entry.length > 0),
+            score: 8.35,
+            category: "source-entry",
+            seed: `${species.name}:source:entry`,
+            chip: sourceSignals ? sourceSignals.sourceChip : "",
+            variants: sourceSignals ? sourceSignals.entry : []
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: Boolean(sourceSignals && sourceSignals.lead && sourceSignals.lead.length > 0),
+            score: 7.65,
+            category: "source-lead",
+            seed: `${species.name}:source:lead`,
+            chip: sourceSignals ? `${sourceSignals.sourceChip} 선출` : "",
+            variants: sourceSignals ? sourceSignals.lead : []
         });
         pushReasonCandidate(reasonCandidates, {
             enabled: statProfile.speed >= 105,
@@ -1379,6 +1905,8 @@
         const reasonCandidates = [];
         const favorableNames = summarizeOpponentNames(analysis.favorableOpponents, 3);
         const riskyNames = summarizeOpponentNames(analysis.riskyOpponents, 2);
+        const notableFavorableNames = summarizeNotableOpponents(analysis.favorableOpponents, 2);
+        const notableRiskyNames = summarizeNotableOpponents(analysis.riskyOpponents, 2);
         const coverageTypes = analysis.coverageTypes.slice(0, 2).map((type) => window.TypeModule.toTypeLabel(type));
 
         pushReasonCandidate(reasonCandidates, {
@@ -1430,6 +1958,18 @@
                 `현재 메타 상위 축 상대로도 역할이 잡혀 있어 범용 선출 가치가 높습니다.`,
                 `최근 자주 보이는 상위 메타 카드들까지 의식하면 이 포켓몬 가치가 한 단계 더 올라갑니다.`,
                 `실전에서 자주 마주치는 메타 상위 포켓몬들에 대한 답이 있어 추천 우선순위가 높습니다.`
+            ]
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: notableFavorableNames.length > 0,
+            score: 7.55,
+            category: "notable-favorable",
+            seed: `${species.name}:member:notablefavorable`,
+            chip: `${notableFavorableNames[0]} 견제`,
+            variants: [
+                `${notableFavorableNames.join(", ")}처럼 실제 체감상 까다로운 축 상대로 역할이 보여 실전 가치가 높습니다.`,
+                `${notableFavorableNames.join(", ")} 라인처럼 메타에서 성가로운 포켓몬들에 직접 압박을 넣을 수 있습니다.`,
+                `${notableFavorableNames.join(", ")} 같은 주요 메타 포켓몬에게 어느 정도 답이 있어 선출 목적이 선명합니다.`
             ]
         });
 
@@ -1498,6 +2038,14 @@
                 `${analysis.styleLabel} 플랜에 자연스럽게 묶이는 카드입니다.`
             ]
         });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: Boolean(analysis.itemProfile && analysis.itemProfile.variants && analysis.itemProfile.variants.length > 0),
+            score: 6.55,
+            category: "item",
+            seed: `${species.name}:member:item:${member.item || ""}`,
+            chip: analysis.itemProfile ? analysis.itemProfile.chip : "",
+            variants: analysis.itemProfile ? analysis.itemProfile.variants : []
+        });
 
         pushReasonCandidate(reasonCandidates, {
             enabled: analysis.primaryPlan && analysis.primaryPlan.score >= 6.5,
@@ -1535,6 +2083,18 @@
                 `다만 최근 많이 보이는 메타 상위 축 일부에는 정면 대응이 불편해 보완 선출이 필요합니다.`,
                 `현재 메타 기준 상위 카드 몇 종에는 다소 수동적일 수 있어 조합 보완이 중요합니다.`,
                 `메타 상위 압박축 몇 개에는 직접 맞대기보다 후속 운영으로 풀어야 하는 편입니다.`
+            ]
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: notableRiskyNames.length > 0,
+            score: 5.05,
+            category: "notable-risk",
+            seed: `${species.name}:member:notablerisk`,
+            chip: `${notableRiskyNames[0]} 주의`,
+            variants: [
+                `다만 ${notableRiskyNames.join(", ")} 같은 메타 핵심 카드 상대로는 대면 운영을 조금 더 신중히 잡아야 합니다.`,
+                `${notableRiskyNames.join(", ")} 쪽은 실제 체감 난도가 높은 축이라 후속 보완이 함께 필요합니다.`,
+                `${notableRiskyNames.join(", ")} 같은 성가로운 포켓몬 상대로는 정면 상성보다 운영 플랜을 먼저 정해 두는 편이 좋습니다.`
             ]
         });
 
@@ -1588,6 +2148,8 @@
         const fastMembers = combo.filter((entry) => entry.fastCount >= 3).map((entry) => entry.species.koName);
         const styleLabel = getComboStyleLabel(combo);
         const metaTargets = summarizeMetaOpponents(opponents, 2);
+        const notableOpponents = summarizeNotableOpponents(opponents, 2);
+        const sourceBackedOpponents = summarizeSourceBackedOpponents(opponents, 2);
         const pressureTargets = collectTargetTypes(
             opponents.filter((opponent) => combo.some((entry) => {
                 const matchup = entry.matchupByOpponent[opponent.name];
@@ -1690,6 +2252,30 @@
             ]
         });
         pushReasonCandidate(reasonCandidates, {
+            enabled: notableOpponents.length > 0,
+            score: 7.15,
+            category: "notable-opponents",
+            seed: `${comboSeed}:combo:notableopponents`,
+            chip: `${notableOpponents[0]} 의식`,
+            variants: [
+                `${notableOpponents.join(", ")}처럼 실제 체감상 거슬리는 포켓몬들까지 포함해 봐도 이 조합 쪽이 운영 방향을 잡기 편합니다.`,
+                `${notableOpponents.join(", ")} 같은 성가로운 메타 카드 상대로도 역할 분담이 어느 정도 분명합니다.`,
+                `${notableOpponents.join(", ")} 라인을 상대할 때도 누가 받아내고 누가 마무리할지 흐름이 비교적 선명합니다.`
+            ]
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: sourceBackedOpponents.length > 0,
+            score: 7.25,
+            category: "source-opponents",
+            seed: `${comboSeed}:combo:sourceopponents`,
+            chip: `${sourceBackedOpponents[0]} 엔트리`,
+            variants: [
+                `${sourceBackedOpponents.join(", ")}처럼 최근 샘플 파티에서 실제 출전 빈도가 높은 카드까지 감안해도 이 조합 쪽이 대응 흐름을 잡기 편합니다.`,
+                `${sourceBackedOpponents.join(", ")} 라인은 공략과 실전 후기에서 모두 자주 언급되는 엔트리라, 그 기준으로 봐도 이번 조합이 크게 흔들리지 않습니다.`,
+                `${sourceBackedOpponents.join(", ")} 같은 출처 기반 빈출 엔트리까지 넣어 보면 이 조합의 선출 의도가 더 설득력 있게 맞물립니다.`
+            ]
+        });
+        pushReasonCandidate(reasonCandidates, {
             enabled: answerPairs.length > 0,
             score: 6.5,
             category: "answers",
@@ -1736,6 +2322,7 @@
         const moveName = matchup && matchup.bestMoveName ? matchup.bestMoveName : "";
         const moveLabel = moveName ? `${moveName}` : "주력기";
         const speedGap = speedResult ? speedResult.myStat - speedResult.enemyStat : 0;
+        const candidateNotes = candidate && candidate.opponent ? getSpeciesMetaNotes(candidate.opponent) : null;
 
         pushReasonCandidate(reasonCandidates, {
             enabled: Boolean(matchup && matchup.offenseMultiplier >= 2),
@@ -1748,6 +2335,14 @@
                 `${moveLabel} 타점이 분명해 ${candidate.opponent.koName} 상대로 바로 압박을 걸기 좋습니다.`,
                 `${moveLabel}로 강한 유효타가 들어가 초반 맞대면에서 가장 직접적인 대응이 됩니다.`
             ]
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: Boolean(candidateNotes && candidateNotes.response && candidateNotes.response.length > 0),
+            score: 7.15,
+            category: "meta-response",
+            seed: `${candidate.opponent.name}:${response.entry.species.name}:${mode}:metaresponse`,
+            chip: candidateNotes ? candidateNotes.chip : "",
+            variants: candidateNotes ? candidateNotes.response : []
         });
         pushReasonCandidate(reasonCandidates, {
             enabled: Boolean(speedResult && speedGap >= 0),
@@ -1836,10 +2431,12 @@
         const attackProfile = buildAttackProfile(member, species);
         const statProfile = buildStatProfile(species);
         const megaCandidate = isMegaCandidate(member, species);
+        const itemProfile = getItemTacticalProfile(member.item);
         const analysis = {
             member,
             species,
             isMegaCandidate: megaCandidate,
+            itemLabel: itemProfile ? itemProfile.shortLabel : "",
             roles,
             attackTypes: attackProfile.attackTypes,
             coverageTypes: attackProfile.coverageTypes,
@@ -1853,6 +2450,7 @@
             strategyTags: attackProfile.strategyTags,
             strategyLabels: attackProfile.strategyTags.map((tag) => STRATEGY_LABELS[tag] || tag),
             statProfile,
+            itemProfile,
             totalScore: 0,
             leadScore: 0,
             metaAnswerCount: 0,
@@ -2304,6 +2902,8 @@
                 let category = "운영 주의";
                 const bestAnswers = getBestAnswersForOpponent(partyAnalyses, entry.opponent, 2);
                 const safeAnswers = bestAnswers.filter((answer) => answer.matchup.defenseMultiplier <= 1);
+                const speciesNotes = getSpeciesMetaNotes(entry.opponent);
+                const sourceSignals = getSpeciesSourceSignals(entry.opponent);
                 const reasonCandidates = [];
 
                 if (entry.reliableAnswers === 0) {
@@ -2337,6 +2937,22 @@
                     ]
                 });
                 pushReasonCandidate(reasonCandidates, {
+                    enabled: Boolean(speciesNotes && speciesNotes.threat && speciesNotes.threat.length > 0),
+                    score: 7.95,
+                    category: "meta-flavor",
+                    seed: `${entry.opponent.name}:threat:meta`,
+                    chip: speciesNotes ? speciesNotes.chip : "",
+                    variants: speciesNotes ? speciesNotes.threat : []
+                });
+                pushReasonCandidate(reasonCandidates, {
+                    enabled: Boolean(sourceSignals && sourceSignals.entry && sourceSignals.entry.length > 0),
+                    score: 7.35,
+                    category: "source-threat",
+                    seed: `${entry.opponent.name}:threat:source`,
+                    chip: sourceSignals ? sourceSignals.sourceChip : "",
+                    variants: sourceSignals ? sourceSignals.entry : []
+                });
+                pushReasonCandidate(reasonCandidates, {
                     enabled: entry.reliableAnswers > 0 && bestAnswers.length > 0,
                     score: 6.6,
                     category: "best-answers",
@@ -2359,6 +2975,14 @@
                         `${safeAnswers.map((answer) => answer.entry.species.koName).join(", ")} 정도는 교체 안정성까지 기대할 수 있습니다.`,
                         `완전한 정면 답은 아니어도 ${safeAnswers.map((answer) => answer.entry.species.koName).join(", ")} 라인은 운영으로 풀 여지가 남습니다.`
                     ]
+                });
+                pushReasonCandidate(reasonCandidates, {
+                    enabled: Boolean(speciesNotes && speciesNotes.response && speciesNotes.response.length > 0 && bestAnswers.length > 0),
+                    score: 6.95,
+                    category: "meta-answer-style",
+                    seed: `${entry.opponent.name}:threat:responsemeta`,
+                    chip: `대응방향 ${entry.opponent.koName}`,
+                    variants: speciesNotes ? speciesNotes.response : []
                 });
                 pushReasonCandidate(reasonCandidates, {
                     enabled: reasonCandidates.length === 0,
@@ -2728,6 +3352,9 @@
                     communityCoreLabel: topCommunityCore ? topCommunityCore.sourceLabel : "",
                     communityCoreNames: topCommunityCore ? topCommunityCore.memberKoNames : [],
                     communityCoreDetail: topCommunityCore ? topCommunityCore.sourceDetail : "",
+                    predictedLead: leadCandidate ? leadCandidate.opponent.koName : "",
+                    predictedPivot: pivotCandidate ? pivotCandidate.opponent.koName : "",
+                    predictedCleanup: cleanerCandidate ? cleanerCandidate.opponent.koName : "",
                     reason: coreReasonBundle.summary,
                     reasonDetails: coreReasonBundle.details,
                     evidenceChips: unique(evidenceChips.concat(coreReasonBundle.chips).concat(responseReasonChips)).slice(0, 6),
@@ -2753,6 +3380,8 @@
         const summary = [];
         const metaTargets = summarizeMetaOpponents(opponents, 2);
         const communityCores = summarizeCommunityMetaCores(opponents, 1);
+        const notableOpponents = summarizeNotableOpponents(opponents, 2);
+        const sourceBackedOpponents = summarizeSourceBackedOpponents(opponents, 2);
 
         if (teamIntent && teamIntent.summary) {
             summary.push(teamIntent.summary);
@@ -2767,6 +3396,12 @@
         if (metaTargets.length > 0) {
             summary.push(`현재 메타에서 자주 보이는 ${metaTargets.join(", ")} 축까지 의식하면 이번 추천 조합 쪽이 비교적 안정적입니다.`);
         }
+        if (notableOpponents.length > 0) {
+            summary.push(`${notableOpponents.join(", ")}처럼 실제 체감상 까다로운 포켓몬까지 고려하면 운영 순서를 미리 정해 두는 편이 좋습니다.`);
+        }
+        if (sourceBackedOpponents.length > 0) {
+            summary.push(`${sourceBackedOpponents.join(", ")} 쪽은 최근 샘플 파티와 사용 후기에서도 실제 선출 빈도가 높게 읽혀, 엔트리 추측에서 우선순위를 높게 두는 편이 맞습니다.`);
+        }
         if (communityCores.length > 0) {
             summary.push(`${communityCores[0].label} 같은 ${communityCores[0].sourceLabel} 기준 빈출 코어와도 겹쳐 상대 선출 방향을 어느 정도 좁혀 볼 수 있습니다.`);
         }
@@ -2775,6 +3410,83 @@
         }
 
         return summary.join(" ");
+    }
+
+    function buildEntryForecasts(coreScenarios, likelyOpponentLeads) {
+        const leadMap = new Map((likelyOpponentLeads || []).map((entry) => [entry.opponent.name, entry]));
+
+        return (coreScenarios || []).slice(0, 3).map((scenario, index) => {
+            const leadProfile = (scenario.core || [])
+                .map((opponent) => leadMap.get(opponent.name))
+                .filter(Boolean)
+                .sort((left, right) => right.leadScore - left.leadScore)[0] || null;
+            const leadName = scenario.predictedLead || (leadProfile ? leadProfile.opponent.koName : "");
+            const reasonCandidates = [];
+
+            pushReasonCandidate(reasonCandidates, {
+                enabled: Boolean(scenario.communityCoreLabel && scenario.communityCoreNames && scenario.communityCoreNames.length > 0),
+                score: 8.5,
+                category: "community",
+                seed: `${scenario.names}:forecast:community`,
+                chip: scenario.communityCoreLabel || "",
+                variants: [
+                    `${scenario.communityCoreNames.join(", ")} 축이 ${scenario.communityCoreLabel}에서 반복해서 보이는 만큼 이 엔트리가 가장 자연스럽습니다.`,
+                    `${scenario.communityCoreLabel} 기준 빈출 코어와 직접 겹쳐 실제 선출 후보로 가장 먼저 상정할 만합니다.`,
+                    `${scenario.communityCoreLabel} 쪽 샘플과 맞물리는 구성이라 상대가 실제로 이 셋을 꺼낼 가능성을 높게 볼 수 있습니다.`
+                ]
+            });
+            pushReasonCandidate(reasonCandidates, {
+                enabled: Boolean(leadName),
+                score: 8.1,
+                category: "lead",
+                seed: `${scenario.names}:forecast:lead`,
+                chip: leadName ? `선봉 ${leadName}` : "",
+                variants: [
+                    `이 셋 중에서는 ${leadName}가 초반을 열 가능성이 가장 높아 보입니다.`,
+                    `엔트리까지 가정하면 ${leadName} 선봉으로 시작하는 그림이 가장 자연스럽습니다.`,
+                    `실제 출전 시에는 ${leadName}가 첫 카드로 나와 템포를 잡으려 할 가능성이 큽니다.`
+                ]
+            });
+            pushReasonCandidate(reasonCandidates, {
+                enabled: Boolean(scenario.predictedPivot && scenario.predictedCleanup && scenario.predictedPivot !== scenario.predictedCleanup),
+                score: 7.6,
+                category: "flow",
+                seed: `${scenario.names}:forecast:flow`,
+                chip: scenario.styleLabel || "엔트리 흐름",
+                variants: [
+                    `${scenario.predictedPivot}가 중반 완충을 맡고 ${scenario.predictedCleanup}가 후반 압박을 이어 가는 흐름이 가장 설득력 있습니다.`,
+                    `${scenario.predictedPivot}로 교체전을 정리한 뒤 ${scenario.predictedCleanup} 쪽 마무리를 보는 엔트리로 읽히기 쉽습니다.`,
+                    `${scenario.predictedPivot}와 ${scenario.predictedCleanup}가 뒤를 받치는 구조라 선출 흐름까지 비교적 선명합니다.`
+                ]
+            });
+            pushReasonCandidate(reasonCandidates, {
+                enabled: Boolean(scenario.reason),
+                score: 7.1,
+                category: "structure",
+                seed: `${scenario.names}:forecast:structure`,
+                chip: `가능성 ${scenario.likelihoodScore.toFixed(1)}`,
+                variants: [
+                    scenario.reason,
+                    scenario.reason,
+                    scenario.reason
+                ]
+            });
+
+            const bundle = buildReasonBundle(`${scenario.names}:forecast`, reasonCandidates, 2, 2, 4);
+
+            return {
+                title: `유력 엔트리 ${index + 1}`,
+                names: scenario.names,
+                styleLabel: scenario.styleLabel || "",
+                leadName,
+                pivotName: scenario.predictedPivot || "",
+                cleanupName: scenario.predictedCleanup || "",
+                confidence: scenario.likelihoodScore,
+                reason: bundle.summary,
+                reasonDetails: bundle.details,
+                evidenceChips: unique((scenario.evidenceChips || []).concat(bundle.chips)).slice(0, 5)
+            };
+        });
     }
 
     function getBestAnswersForOpponent(pool, opponent, limit) {
@@ -2810,6 +3522,7 @@
         const openingTargets = summarizeOpponentNames(lead.favorableOpponents, 2);
         const riskyLeadTargets = summarizeOpponentNames(lead.riskyOpponents, 2);
         const likelyOpponentLeads = getLikelyOpponentLeads(opponents);
+        const entryForecasts = buildEntryForecasts(coreScenarios, likelyOpponentLeads);
         const coreResponses = (coreScenarios || []).slice(0, 3).map((scenario) => {
             const response = scenario.response;
             return {
@@ -2912,6 +3625,7 @@
             styleLabel: comboResult.styleLabel || "",
             strategySummary: comboResult.strategySummary || [],
             lines,
+            entryForecasts,
             coreResponses,
             leadResponses,
             threatResponses
