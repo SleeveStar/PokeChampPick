@@ -92,6 +92,7 @@ button {
 
 .app-topbar {
     position: relative;
+    z-index: 90;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -116,8 +117,8 @@ button {
 }
 
 .app-brand-logo {
-    width: 132px;
-    height: 88px;
+    width: 300px;
+    /*height: 88px;*/
     object-fit: contain;
     flex: 0 0 132px;
     display: block;
@@ -1754,16 +1755,57 @@ select:focus {
     }
 
     .enemy-select-btn {
-        min-height: 224px;
+        min-height: 136px;
+        padding: 14px 72px 14px 14px;
+    }
+
+    .enemy-card-head {
+        display: none;
+    }
+
+    .enemy-card-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 92px;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .enemy-name {
+        grid-column: 1;
+        grid-row: 1;
+        font-size: 1.7rem;
+        text-align: left;
+        align-self: start;
+        margin-bottom: 8px;
+    }
+
+    .enemy-type-row {
+        grid-column: 1;
+        grid-row: 2;
+        justify-content: flex-start;
+        align-self: start;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .enemy-type-row .type-badge {
+        min-height: 24px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
     }
 
     .enemy-card-art {
-        min-height: 120px;
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        min-height: 92px;
+        width: 92px;
+        justify-content: center;
+        align-self: center;
     }
 
     .enemy-pokemon-image {
-        width: 120px;
-        height: 120px;
+        width: 92px;
+        height: 92px;
     }
 
     .party-editor-head {
@@ -1936,17 +1978,21 @@ select:focus {
         max-width: calc(100% - 64px);
     }
 
+    .app-topbar-title {
+        display: none;
+    }
+
     .app-brand-logo {
-        width: 104px;
-        height: 70px;
-        flex-basis: 104px;
+        width: 184px;
+        /*height: 70px;*/
+        flex-basis: 204px;
     }
 
     .page-nav {
-        position: fixed;
-        top: 18px;
-        right: 10px;
-        left: 10px;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        left: 0;
         z-index: 80;
         padding: 12px;
         border-radius: 18px;
@@ -1985,15 +2031,15 @@ select:focus {
     }
 
     .party-editor .stat-action-btn {
-        min-height: 32px;
-        max-height: 32px;
-        width: 32px;
-        min-width: 32px;
-        max-width: 32px;
-        height: 32px;
+        min-height: 28px;
+        max-height: 28px;
+        width: 28px;
+        min-width: 28px;
+        max-width: 28px;
+        height: 28px;
         font-size: 0.72rem;
         border-radius: 8px;
-        flex-basis: 32px;
+        flex-basis: 28px;
     }
 
     .party-editor .stat-action-btn[data-stat-action="decrease"] .mdi,
