@@ -426,22 +426,27 @@
         STAT_KEYS.forEach((stat) => { inputs[stat].value = values[stat]; });
         refreshEditorStatSummary();
     }
+    function getStatUpperBound(values, statKey) {
+        const current = Number(values[statKey]) || 0;
+        const withoutCurrent = getEditorTotalPoints(values) - current;
+        return Math.max(0, Math.min(EV_MAX, EV_TOTAL_MAX - withoutCurrent));
+    }
     function syncStatEdgeButtons(nextValues) {
         const values = nextValues || getEditorStatValues();
         STAT_KEYS.forEach((stat) => {
             const minButton = refs.statEditor.querySelector(`[data-stat-action="min"][data-stat-target="${stat}"]`);
             const maxButton = refs.statEditor.querySelector(`[data-stat-action="max"][data-stat-target="${stat}"]`);
             if (!minButton || !maxButton) { return; }
+            const upperBound = getStatUpperBound(values, stat);
             minButton.classList.toggle("is-last-edge", Number(values[stat]) <= 0);
-            maxButton.classList.toggle("is-last-edge", Number(values[stat]) >= EV_MAX);
+            maxButton.classList.toggle("is-last-edge", Number(values[stat]) >= upperBound);
         });
     }
     function setStatValueWithCap(statKey, desiredValue) {
         const values = getEditorStatValues();
         const current = values[statKey];
         const raw = clampNumber(desiredValue, 0, EV_MAX, current);
-        const withoutCurrent = getEditorTotalPoints(values) - current;
-        values[statKey] = Math.max(0, Math.min(raw, EV_TOTAL_MAX - withoutCurrent));
+        values[statKey] = Math.max(0, Math.min(raw, getStatUpperBound(values, statKey)));
         applyEditorStatValues(values);
     }
     function renderActualStats(pokemon, evs, nature) {
