@@ -978,6 +978,7 @@
             };
         }).filter((entry) => entry.answers.length > 0).slice(0, 3);
         const megaMember = combo.find((entry) => entry.isMegaCandidate);
+        const megaMemberName = megaMember ? megaMember.species.koName : "";
 
         pushReasonCandidate(reasonCandidates, {
             enabled: roleLabels.length > 0,
@@ -1070,9 +1071,9 @@
             seed: `${comboSeed}:combo:mega`,
             chip: "메가축",
             variants: [
-                `${megaMember.species.koName}를 메가 축으로 잡고 나머지가 교체와 마무리를 받쳐 주는 그림이 자연스럽습니다.`,
-                `${megaMember.species.koName} 메가 전개를 중심에 두면 다른 두 마리 역할도 함께 정리됩니다.`,
-                `${megaMember.species.koName}를 핵심 에이스로 두고 주변이 받쳐 주는 구조가 가장 깔끔합니다.`
+                `${megaMemberName}를 메가 축으로 잡고 나머지가 교체와 마무리를 받쳐 주는 그림이 자연스럽습니다.`,
+                `${megaMemberName} 메가 전개를 중심에 두면 다른 두 마리 역할도 함께 정리됩니다.`,
+                `${megaMemberName}를 핵심 에이스로 두고 주변이 받쳐 주는 구조가 가장 깔끔합니다.`
             ]
         });
         pushReasonCandidate(reasonCandidates, {
