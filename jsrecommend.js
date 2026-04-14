@@ -94,6 +94,254 @@
         "mach-punch", "quick-attack", "fake-out", "accelerock", "jet-punch", "vacuum-wave",
         "ice-shard", "trailblaze", "flame-charge"
     ]);
+    const META_SPECIES_PROFILES = {
+        garchomp: {
+            weight: 1.45,
+            leadBias: 1.45,
+            coreBias: 1.1,
+            label: "최상위 메타",
+            hints: ["고속 지면 압박", "선봉 빈도 높음", "스텔스록/스케일샷 축"]
+        },
+        charizard: {
+            weight: 1.35,
+            leadBias: 1.05,
+            coreBias: 1.2,
+            label: "메가 화력축",
+            hints: ["메가리자드온Y 비중 높음", "즉시 화력 압박", "태양 전개 경계"]
+        },
+        primarina: {
+            weight: 1.3,
+            leadBias: 0.25,
+            coreBias: 1.3,
+            label: "벌크 특수축",
+            hints: ["문포스/아리아 중심", "물/페어리 밸런스 축", "중반 안정성 높음"]
+        },
+        archaludon: {
+            weight: 1.26,
+            leadBias: 0.35,
+            coreBias: 1.18,
+            label: "강철 드래곤축",
+            hints: ["벌크+화력 겸비", "코어 잔류율 높음", "상성 압박 폭 넓음"]
+        },
+        hippowdon: {
+            weight: 1.2,
+            leadBias: 0.95,
+            coreBias: 1.1,
+            label: "설치 내구축",
+            hints: ["스텔스록 전개", "내구 운영", "장기전 발판"]
+        },
+        corviknight: {
+            weight: 1.18,
+            leadBias: 0.2,
+            coreBias: 1.18,
+            label: "사이클 피벗축",
+            hints: ["후출 안정성", "강철/비행 피벗", "교체전 핵심"]
+        },
+        mimikyu: {
+            weight: 1.16,
+            leadBias: 0.45,
+            coreBias: 0.98,
+            label: "비상 마무리축",
+            hints: ["탈 특성으로 행동 보장", "후반 정리", "우선도 압박"]
+        },
+        gengar: {
+            weight: 1.22,
+            leadBias: 0.9,
+            coreBias: 1.05,
+            label: "고속 특수축",
+            hints: ["메가겐가 경계", "빠른 독/고스트 압박", "상대 교체 제약"]
+        },
+        kingambit: {
+            weight: 1.17,
+            leadBias: 0.15,
+            coreBias: 1.12,
+            label: "후반 우선도축",
+            hints: ["막판 청소 능력", "강철/악 압박", "후반전 비중 큼"]
+        },
+        kangaskhan: {
+            weight: 1.15,
+            leadBias: 0.6,
+            coreBias: 1.05,
+            label: "메가 대면축",
+            hints: ["메가캥카 경계", "대면 화력", "넓은 범용성"]
+        },
+        lopunny: {
+            weight: 1.14,
+            leadBias: 0.75,
+            coreBias: 0.98,
+            label: "메가 템포축",
+            hints: ["메가이어롭 축", "초반 압박", "고속 대면"]
+        },
+        meowscarada: {
+            weight: 1.08,
+            leadBias: 0.85,
+            coreBias: 0.95,
+            label: "템포 선봉축",
+            hints: ["빠른 턴 교환", "초반 템포", "선봉 카드 빈도"]
+        },
+        rotom: {
+            weight: 1.07,
+            leadBias: 0.2,
+            coreBias: 0.92,
+            label: "유틸 피벗축",
+            hints: ["워시로토무 경계", "볼트체인지 축", "대면 조정"]
+        },
+        aegislash: {
+            weight: 1.09,
+            leadBias: 0.15,
+            coreBias: 1.03,
+            label: "폼 전환축",
+            hints: ["킬가르도 경계", "타입 저항 우수", "교체전 강함"]
+        },
+        hydreigon: {
+            weight: 1.08,
+            leadBias: 0.25,
+            coreBias: 0.97,
+            label: "범용 특수축",
+            hints: ["삼삼드래 범용성", "타입 보완", "특수 압박"]
+        },
+        espathra: {
+            weight: 1.05,
+            leadBias: 0.3,
+            coreBias: 0.96,
+            label: "전개 에이스축",
+            hints: ["클레스퍼트라 전개", "배턴/누적 부스트", "대응 강요"]
+        },
+        clefable: {
+            weight: 1.04,
+            leadBias: 0.05,
+            coreBias: 0.94,
+            label: "벌크 지원축",
+            hints: ["픽시 보조", "버티기 우수", "전개 보조"]
+        },
+        dragonite: {
+            weight: 1.08,
+            leadBias: 0.55,
+            coreBias: 1.02,
+            label: "멀티스케일 축",
+            hints: ["세팅 후 마무리", "우선도", "안정적인 후반 카드"]
+        },
+        scizor: {
+            weight: 1.06,
+            leadBias: 0.1,
+            coreBias: 1.02,
+            label: "강철 우선도축",
+            hints: ["불릿펀치 마무리", "사이클 보조", "메가 가능"]
+        },
+        aggron: {
+            weight: 1.03,
+            leadBias: 0.1,
+            coreBias: 0.92,
+            label: "물리 내구축",
+            hints: ["메가보스로 운용", "물리 대면 강함", "바디프레스 축"]
+        }
+    };
+    const COMMUNITY_META_CORE_PROFILES = [
+        {
+            id: "gw-lopunny-garchomp-primarina",
+            members: ["lopunny", "garchomp", "primarina"],
+            weight: 2.4,
+            sourceLabel: "GameWith 최강 파티",
+            sourceDetail: "메가이어롭 축 기본 선출",
+            notes: ["대면 압박", "스카프 한카리아스", "물리받이 보완용 누리레느"]
+        },
+        {
+            id: "gw-kangaskhan-volcarona-greninja",
+            members: ["kangaskhan", "volcarona", "greninja"],
+            weight: 2.1,
+            sourceLabel: "GameWith 최강 파티",
+            sourceDetail: "메가캥카 축 기본 선출",
+            notes: ["메가캥카 대면", "불카모스 후출", "개굴닌자 범용 정리"]
+        },
+        {
+            id: "gw-garchomp-primarina-corviknight",
+            members: ["garchomp", "primarina", "corviknight"],
+            weight: 2.2,
+            sourceLabel: "GameWith 사용률 동반 출전",
+            sourceDetail: "한카리아스 기준 빈출 동반 축",
+            notes: ["상위 사용률 코어", "타입 보완 우수", "63싱글 범용성"]
+        },
+        {
+            id: "gw-charizard-hippowdon-primarina",
+            members: ["charizard", "hippowdon", "primarina"],
+            weight: 1.95,
+            sourceLabel: "GameWith 사용률 동반 출전",
+            sourceDetail: "리자몽 중심 빈출 축",
+            notes: ["리자몽 축", "하마돈 지원", "누리레느 보완"]
+        },
+        {
+            id: "gw-garchomp-espathra-clefable",
+            members: ["garchomp", "espathra", "clefable"],
+            weight: 1.85,
+            sourceLabel: "GameWith 최강 파티",
+            sourceDetail: "클레스퍼트라-픽시 전개 축",
+            notes: ["스텔스록 시동", "배턴 전개", "에이스 보조"]
+        },
+        {
+            id: "g8-charizard-hippowdon-scizor",
+            members: ["charizard", "hippowdon", "scizor"],
+            weight: 2.25,
+            sourceLabel: "Game8 강한 파티 4선",
+            sourceDetail: "리자몽Y 구축 핵심 3축",
+            notes: ["리자몽Y 중심", "하마돈 전개", "메가핫삼 연계"]
+        },
+        {
+            id: "g8-kangaskhan-gengar-primarina",
+            members: ["kangaskhan", "gengar", "primarina"],
+            weight: 2.05,
+            sourceLabel: "Game8 강한 파티 4선",
+            sourceDetail: "메가캥카 구축 핵심 3축",
+            notes: ["메가캥카 축", "팬텀 압박", "누리레느 보완"]
+        },
+        {
+            id: "g8-scizor-rotom-wash-garchomp",
+            members: ["scizor", "rotom-wash", "garchomp"],
+            weight: 2,
+            sourceLabel: "Game8 강한 파티 4선",
+            sourceDetail: "메가핫삼 구축 핵심 3축",
+            notes: ["메가핫삼 축", "워시로토무 피벗", "한카리아스 압박"]
+        },
+        {
+            id: "g8-primarina-aegislash-hydreigon",
+            members: ["primarina", "aegislash", "hydreigon"],
+            weight: 1.7,
+            sourceLabel: "Game8 레이트 2000+ 파티",
+            sourceDetail: "상위권 밸런스 샘플 축",
+            notes: ["누리레느 밸런스", "킬가르도 피벗", "삼삼드래 보완"]
+        },
+        {
+            id: "kr-garchomp-primarina-rotom-wash",
+            members: ["garchomp", "primarina", "rotom-wash"],
+            weight: 1.55,
+            sourceLabel: "한국 커뮤니티 실전 예시",
+            sourceDetail: "국내 유저 승률 체감 축",
+            notes: ["한카리아스 밸런스", "누리레느 채용 빈도", "워시로토무 보완"]
+        },
+        {
+            id: "kr-glimmora-kangaskhan-aegislash",
+            members: ["glimmora", "kangaskhan", "aegislash"],
+            weight: 1.85,
+            sourceLabel: "한국 커뮤니티 2000점 샘플",
+            sourceDetail: "킬라플로르 선출 시 핵심 3축",
+            notes: ["킬라플로르 선봉", "메가캥카 동반", "킬가르도 후속"]
+        },
+        {
+            id: "kr-kangaskhan-aegislash-hippowdon",
+            members: ["kangaskhan", "aegislash", "hippowdon"],
+            weight: 1.8,
+            sourceLabel: "한국 커뮤니티 2000점 샘플",
+            sourceDetail: "비행/강철 많은 판 기본 선출",
+            notes: ["메가캥카 압박", "킬가르도 특수형", "하마돈 보완"]
+        },
+        {
+            id: "kr-kangaskhan-aegislash-hydreigon",
+            members: ["kangaskhan", "aegislash", "hydreigon"],
+            weight: 1.72,
+            sourceLabel: "한국 커뮤니티 2000점 샘플",
+            sourceDetail: "대면 보완용 대체 선출",
+            notes: ["메가캥카 축", "킬가르도 대응", "삼삼드래 마무리"]
+        }
+    ];
 
     function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
@@ -120,6 +368,110 @@
 
     function unique(values) {
         return Array.from(new Set((values || []).filter(Boolean)));
+    }
+
+    function getMetaSpeciesKey(species) {
+        const name = String(species && species.name || "").trim().toLowerCase();
+
+        if (!name) {
+            return "";
+        }
+
+        return name
+            .replace(/-mega(?:-[xy])?$/, "")
+            .replace(/-hisui$/, "")
+            .replace(/-paldea$/, "")
+            .replace(/-galar$/, "")
+            .replace(/-alola$/, "");
+    }
+
+    function getMetaProfile(species) {
+        return META_SPECIES_PROFILES[getMetaSpeciesKey(species)] || null;
+    }
+
+    function getMetaWeight(species) {
+        const profile = getMetaProfile(species);
+        return profile ? profile.weight : 1;
+    }
+
+    function getMetaInfluenceFactor(species) {
+        return 0.82 + (getMetaWeight(species) * 0.18);
+    }
+
+    function summarizeMetaOpponents(opponents, max) {
+        return (opponents || [])
+            .map((opponent) => ({
+                opponent,
+                profile: getMetaProfile(opponent)
+            }))
+            .filter((entry) => entry.profile)
+            .sort((left, right) => right.profile.weight - left.profile.weight)
+            .slice(0, max || 2)
+            .map((entry) => entry.opponent.koName);
+    }
+
+    function resolveMetaSourcePokemon(name) {
+        if (!window.PokeData) {
+            return null;
+        }
+        return window.PokeData.resolvePokemon(name) || window.PokeData.getPokemonByName(name) || null;
+    }
+
+    function getCanonicalSpeciesKey(value) {
+        const species = typeof value === "string" ? resolveMetaSourcePokemon(value) : value;
+        if (!species) {
+            return getMetaSpeciesKey({ name: value });
+        }
+        return getMetaSpeciesKey(species);
+    }
+
+    function getCanonicalKoName(value) {
+        const species = typeof value === "string" ? resolveMetaSourcePokemon(value) : value;
+        return species ? species.koName : String(value || "");
+    }
+
+    function getResolvedCommunityMetaCores() {
+        return COMMUNITY_META_CORE_PROFILES
+            .map((profile) => {
+                const members = (profile.members || [])
+                    .map((name) => resolveMetaSourcePokemon(name))
+                    .filter(Boolean);
+
+                if (members.length !== (profile.members || []).length) {
+                    return null;
+                }
+
+                return Object.assign({}, profile, {
+                    canonicalMembers: members.map((species) => getCanonicalSpeciesKey(species)),
+                    memberKoNames: members.map((species) => species.koName)
+                });
+            })
+            .filter(Boolean);
+    }
+
+    function getMatchingCommunityMetaCores(core) {
+        const coreKeys = new Set((core || []).map((species) => getCanonicalSpeciesKey(species)));
+        return getResolvedCommunityMetaCores()
+            .map((profile) => {
+                const matchedCount = profile.canonicalMembers.filter((name) => coreKeys.has(name)).length;
+                return Object.assign({}, profile, {
+                    matchedCount,
+                    matchScore: matchedCount === profile.canonicalMembers.length ? profile.weight : (matchedCount >= 2 ? profile.weight * 0.45 : 0)
+                });
+            })
+            .filter((profile) => profile.matchScore > 0)
+            .sort((left, right) => right.matchScore - left.matchScore);
+    }
+
+    function summarizeCommunityMetaCores(opponents, max) {
+        return getMatchingCommunityMetaCores(opponents)
+            .filter((profile) => profile.matchedCount >= 2)
+            .slice(0, max || 2)
+            .map((profile) => ({
+                label: profile.memberKoNames.join(" / "),
+                sourceLabel: profile.sourceLabel,
+                sourceDetail: profile.sourceDetail
+            }));
     }
 
     function hashText(value) {
@@ -475,6 +827,7 @@
         const statProfile = buildStatProfile(species);
         const typeProfile = getOpponentTypeProfile(species);
         const roleTags = inferOpponentRoleTags(species, statProfile, typeProfile);
+        const metaProfile = getMetaProfile(species);
         let leadScore = 0;
         let coreValue = 0;
 
@@ -490,6 +843,7 @@
         leadScore += roleTags.includes("safeSwitch") ? 0.55 : 0;
         leadScore += roleTags.includes("anchor") && statProfile.speed >= 100 ? 0.45 : 0;
         leadScore -= roleTags.includes("slowAnchor") ? 0.35 : 0;
+        leadScore += metaProfile ? metaProfile.leadBias : 0;
 
         coreValue += statProfile.offense * 0.035;
         coreValue += statProfile.bulk * 0.016;
@@ -499,17 +853,31 @@
         coreValue += roleTags.includes("anchor") ? 1.1 : 0;
         coreValue += roleTags.includes("breaker") ? 0.9 : 0;
         coreValue += roleTags.includes("pivot") ? 0.8 : 0;
+        coreValue += metaProfile ? metaProfile.coreBias : 0;
 
         const evidenceChips = [
             `스피드 ${statProfile.speed}`,
             `최고화력 ${statProfile.offense}`,
             `내구합 ${statProfile.bulk}`,
             `반감 ${typeProfile.resistanceCount}`,
+            metaProfile ? metaProfile.label : "",
             typeProfile.immunityCount > 0 ? `무효 ${typeProfile.immunityCount}` : "",
             typeProfile.quadWeakCount > 0 ? `4배약점 ${typeProfile.quadWeakCount}` : ""
         ].filter(Boolean);
 
         const reasonCandidates = [];
+        pushReasonCandidate(reasonCandidates, {
+            enabled: Boolean(metaProfile),
+            score: 8.6,
+            category: "meta",
+            seed: `${species.name}:meta`,
+            chip: metaProfile ? metaProfile.label : "",
+            variants: [
+                `현재 커뮤니티와 사용률 기준으로 ${metaProfile ? metaProfile.hints.slice(0, 2).join(", ") : "상위 메타"} 축이라 실제 선출 빈도를 높게 봐야 합니다.`,
+                `최근 메타 의견을 보면 ${metaProfile ? metaProfile.hints[0] : "이 포켓몬"} 쪽 평가가 높아 유력 카드로 남을 가능성이 큽니다.`,
+                `사용률 상위권에서 반복해서 언급되는 축이라 상대가 실제로 꺼낼 가능성을 한 단계 높게 보는 편이 맞습니다.`
+            ]
+        });
         pushReasonCandidate(reasonCandidates, {
             enabled: statProfile.speed >= 105,
             score: 9,
@@ -704,6 +1072,238 @@
         return "밸런스";
     }
 
+    function countAnalysesWithStrategy(analyses, strategyKey) {
+        return (analyses || []).filter((entry) => (entry.strategyTags || []).includes(strategyKey)).length;
+    }
+
+    function summarizeMembersByStrategy(entries, strategyKey, limit) {
+        return (entries || [])
+            .filter((entry) => (entry.strategyTags || []).includes(strategyKey))
+            .slice(0, limit || 2)
+            .map((entry) => entry.species.koName);
+    }
+
+    function buildTeamIntentProfile(analyses) {
+        const hazards = countAnalysesWithStrategy(analyses, "hazards");
+        const speedControl = countAnalysesWithStrategy(analyses, "speedControl");
+        const screens = countAnalysesWithStrategy(analyses, "screens");
+        const weather = countAnalysesWithStrategy(analyses, "weather");
+        const recovery = countAnalysesWithStrategy(analyses, "recovery");
+        const setup = countAnalysesWithStrategy(analyses, "setup");
+        const pivot = countAnalysesWithStrategy(analyses, "pivot");
+        const disruption = countAnalysesWithStrategy(analyses, "disruption");
+        const trickRoom = countAnalysesWithStrategy(analyses, "trickRoom");
+        const fastMembers = (analyses || []).filter((entry) => entry.fastCount >= 3 || entry.statProfile.speed >= 100).length;
+        const bulkyMembers = (analyses || []).filter((entry) => entry.safeCount >= 4 || entry.statProfile.bulk >= 300).length;
+        const cleanupMembers = (analyses || []).filter((entry) => entry.cleanupFit >= 6.5).length;
+        const leadMembers = (analyses || []).filter((entry) => entry.leadFit >= 6).length;
+        const candidates = [];
+
+        function addIntent(config) {
+            if (!config || !config.enabled) {
+                return;
+            }
+            candidates.push(config);
+        }
+
+        addIntent({
+            key: "hazardCycle",
+            label: "설치 순환",
+            enabled: hazards > 0 && pivot > 0,
+            score: (hazards * 2) + (pivot * 1.5) + (bulkyMembers * 0.55) + (recovery * 0.35),
+            summary: pickVariant(`team:intent:hazardCycle:${hazards}:${pivot}`, [
+                "입력한 기술배치를 보면 설치기 뒤 턴조정으로 누적 이득을 쌓는 설치 순환 의도가 가장 뚜렷합니다.",
+                "기술 구성을 보면 스텔스록류와 교체기를 묶어 장기적으로 압박하는 설치 순환 쪽 색이 강합니다.",
+                "파티 전체 기술배치는 한 번 설치를 깔아 두고 교체전으로 체력을 깎는 설치 순환 방향에 가깝습니다."
+            ])
+        });
+        addIntent({
+            key: "screenSetup",
+            label: "벽 전개",
+            enabled: screens > 0 && setup > 0,
+            score: (screens * 2) + (setup * 1.7) + (cleanupMembers * 0.8),
+            summary: pickVariant(`team:intent:screenSetup:${screens}:${setup}`, [
+                "입력한 기술배치를 보면 벽을 세운 뒤 에이스를 통과시키는 벽 전개 의도가 선명합니다.",
+                "벽 기술과 부스트 기술이 함께 잡혀 있어 벽 전개로 판을 강하게 밀어붙이려는 구조가 보입니다.",
+                "스크린 뒤에서 세팅 에이스를 살리는 벽 전개 쪽으로 기술 의도가 또렷하게 모여 있습니다."
+            ])
+        });
+        addIntent({
+            key: "speedSetup",
+            label: "속도 전개",
+            enabled: speedControl > 0 && (setup > 0 || cleanupMembers >= 2),
+            score: (speedControl * 1.9) + (setup * 1.5) + (fastMembers * 0.8) + (cleanupMembers * 0.5),
+            summary: pickVariant(`team:intent:speedSetup:${speedControl}:${setup}`, [
+                "속도 제어와 마무리 카드 배치를 보면 빠른 턴에 전개를 몰아붙이는 속도 전개 의도가 읽힙니다.",
+                "기술 구성이 스피드 조정 뒤 후속 에이스를 밀어 넣는 속도 전개 성격을 강하게 띱니다.",
+                "상대보다 먼저 움직이는 구간을 만들고 그 턴에 이득을 굳히는 속도 전개 쪽 설계로 보입니다."
+            ])
+        });
+        addIntent({
+            key: "trickRoom",
+            label: "트릭룸 전개",
+            enabled: trickRoom > 0 && (analyses || []).some((entry) => entry.statProfile.speed <= 70 || entry.cleanupFit >= 7),
+            score: (trickRoom * 2.4) + ((analyses || []).filter((entry) => entry.statProfile.speed <= 70).length * 1.1) + (cleanupMembers * 0.4),
+            summary: pickVariant(`team:intent:trickRoom:${trickRoom}`, [
+                "기술 배치를 보면 느린 축을 살리는 트릭룸 전개 의도가 분명합니다.",
+                "트릭룸과 저속 화력 카드 조합이 보여서 트릭룸 전개로 판을 뒤집는 흐름이 핵심으로 보입니다.",
+                "파티 전체가 빠른 템포보다 트릭룸 전개 타이밍에 힘이 실리도록 짜여 있습니다."
+            ])
+        });
+        addIntent({
+            key: "bulkyBalance",
+            label: "밸런스 운영",
+            enabled: bulkyMembers >= 2 && (recovery > 0 || pivot > 0 || disruption > 0),
+            score: (bulkyMembers * 1.3) + (recovery * 1.2) + (pivot * 1.15) + (disruption * 0.85),
+            summary: pickVariant(`team:intent:bulkyBalance:${bulkyMembers}:${pivot}:${recovery}`, [
+                "내구와 운영기 배치를 보면 맞교환보다 교체 순서로 이득을 쌓는 밸런스 운영 의도가 강합니다.",
+                "회복기와 사이클 요소가 보여서 한 번의 전개보다 중반 운영을 중시한 밸런스 운영 파티에 가깝습니다.",
+                "기술 구성을 보면 급하게 밀어붙이기보다 받아내고 다시 압박하는 밸런스 운영 구조가 읽힙니다."
+            ])
+        });
+        addIntent({
+            key: "weatherPressure",
+            label: "날씨 압박",
+            enabled: weather > 0,
+            score: (weather * 2) + (setup * 0.9) + (fastMembers * 0.6) + (leadMembers * 0.4),
+            summary: pickVariant(`team:intent:weather:${weather}`, [
+                "날씨 기술 배치를 보면 특정 턴에 화력과 속도를 끌어올리는 날씨 압박 의도가 보입니다.",
+                "파티 기술 구성이 날씨 전개를 중심으로 특정 대면을 강제로 유리하게 만들려는 방향입니다.",
+                "날씨를 열고 그 구간에 승부를 보는 날씨 압박 플랜이 파티 전체에 깔려 있습니다."
+            ])
+        });
+        addIntent({
+            key: "tempoPressure",
+            label: "템포 압박",
+            enabled: fastMembers >= 2 && (pivot > 0 || leadMembers >= 2),
+            score: (fastMembers * 1.35) + (pivot * 1.1) + (leadMembers * 0.9) + (disruption * 0.55),
+            summary: pickVariant(`team:intent:tempo:${fastMembers}:${pivot}`, [
+                "빠른 축과 교체기 배치를 보면 초반 템포를 잡아 끝까지 밀어붙이는 템포 압박 성향이 강합니다.",
+                "기술 구성이 선봉 주도권을 잡은 뒤 계속 유리 대면을 강요하는 템포 압박 쪽에 가깝습니다.",
+                "초반 속도 이득을 바탕으로 교체전까지 주도하려는 템포 압박 의도가 기술에서 바로 드러납니다."
+            ])
+        });
+
+        if (candidates.length === 0) {
+            return {
+                key: "roleBalance",
+                label: "역할 분산",
+                score: 1,
+                summary: pickVariant("team:intent:roleBalance", [
+                    "기술배치를 보면 특정 전개 하나보다 각 포켓몬 역할을 분산해 두는 쪽에 가깝습니다.",
+                    "한 가지 플랜 올인보다는 여러 대면에 무난하게 대응하도록 기술이 배치돼 있습니다.",
+                    "파티 의도는 특정 한 축보다 역할 분산과 대응 범위를 확보하는 데 더 가깝습니다."
+                ])
+            };
+        }
+
+        candidates.sort((left, right) => right.score - left.score);
+        return candidates[0];
+    }
+
+    function scoreIntentFit(combo, teamIntent) {
+        if (!combo || combo.length === 0 || !teamIntent) {
+            return 0;
+        }
+
+        const hazards = countComboStrategy(combo, "hazards");
+        const speedControl = countComboStrategy(combo, "speedControl");
+        const screens = countComboStrategy(combo, "screens");
+        const weather = countComboStrategy(combo, "weather");
+        const recovery = countComboStrategy(combo, "recovery");
+        const setup = countComboStrategy(combo, "setup");
+        const pivot = countComboStrategy(combo, "pivot");
+        const disruption = countComboStrategy(combo, "disruption");
+        const trickRoom = countComboStrategy(combo, "trickRoom");
+        const stableMembers = combo.filter((entry) => entry.safeCount >= 4 || entry.statProfile.bulk >= 300).length;
+        const fastMembers = combo.filter((entry) => entry.fastCount >= 3 || entry.statProfile.speed >= 100).length;
+        const cleanupMembers = combo.filter((entry) => entry.cleanupFit >= 6.5).length;
+
+        switch (teamIntent.key) {
+        case "hazardCycle":
+            return (hazards > 0 ? 1.35 : -0.7) + (pivot > 0 ? 1.25 : -0.6) + (stableMembers >= 1 ? 0.7 : -0.2) + (recovery > 0 ? 0.35 : 0);
+        case "screenSetup":
+            return (screens > 0 ? 1.4 : -0.9) + (setup > 0 ? 1.25 : -0.8) + (cleanupMembers >= 1 ? 0.55 : -0.2);
+        case "speedSetup":
+            return (speedControl > 0 ? 1.2 : -0.5) + (setup > 0 ? 0.95 : 0) + (fastMembers >= 1 ? 0.55 : 0) + (cleanupMembers >= 1 ? 0.4 : 0);
+        case "trickRoom":
+            return (trickRoom > 0 ? 1.6 : -1.1) + (combo.some((entry) => entry.statProfile.speed <= 70 || entry.cleanupFit >= 7) ? 0.9 : -0.2);
+        case "bulkyBalance":
+            return (stableMembers >= 2 ? 1.2 : -0.45) + (pivot > 0 ? 0.95 : -0.3) + (recovery > 0 ? 0.85 : 0) + (disruption > 0 ? 0.35 : 0);
+        case "weatherPressure":
+            return (weather > 0 ? 1.45 : -0.85) + (fastMembers >= 1 ? 0.45 : 0) + (setup > 0 ? 0.35 : 0);
+        case "tempoPressure":
+            return (fastMembers >= 2 ? 1.15 : -0.4) + (pivot > 0 ? 0.9 : -0.3) + (combo.some((entry) => entry.leadFit >= 6.5) ? 0.45 : 0);
+        default:
+            return 0.25;
+        }
+    }
+
+    function buildIntentAlignmentBundle(combo, teamIntent) {
+        if (!combo || combo.length === 0 || !teamIntent) {
+            return null;
+        }
+
+        const comboSeed = combo.map((entry) => entry.species.name).join("|");
+        const hazardNames = summarizeMembersByStrategy(combo, "hazards", 1);
+        const pivotNames = summarizeMembersByStrategy(combo, "pivot", 2);
+        const screenNames = summarizeMembersByStrategy(combo, "screens", 1);
+        const setupNames = summarizeMembersByStrategy(combo, "setup", 2);
+        const recoveryNames = summarizeMembersByStrategy(combo, "recovery", 2);
+        const weatherNames = summarizeMembersByStrategy(combo, "weather", 1);
+        const speedNames = summarizeMembersByStrategy(combo, "speedControl", 2);
+        const variantsByIntent = {
+            hazardCycle: [
+                `${hazardNames[0] || combo[0].species.koName}의 설치와 ${(pivotNames[0] || combo[1].species.koName)}의 턴조정이 이어져 입력한 파티 의도를 가장 덜 끊습니다.`,
+                `${hazardNames[0] || combo[0].species.koName} 쪽 설치 압박 뒤 ${(pivotNames[0] || combo[1].species.koName)}로 교체전을 이어 가는 흐름이 현재 파티 설계와 가장 잘 맞습니다.`,
+                "설치기와 턴조정기를 함께 살리는 구성이어서 입력한 파티의 핵심 의도를 그대로 실전에 옮기기 좋습니다."
+            ],
+            screenSetup: [
+                `${screenNames[0] || combo[0].species.koName}의 벽 전개와 ${(setupNames[0] || combo[1].species.koName)}의 부스트 구간이 맞물려 파티 설계를 가장 자연스럽게 살립니다.`,
+                "벽을 세우는 축과 세팅 에이스가 같이 들어가 입력한 벽 전개 구조를 그대로 굴리기 좋습니다.",
+                `스크린 지원 뒤 ${(setupNames[0] || combo[1].species.koName)} 쪽 마무리를 여는 흐름이 파티 의도와 가장 정확히 맞닿아 있습니다.`
+            ],
+            speedSetup: [
+                `${speedNames[0] || combo[0].species.koName}의 속도 제어와 ${(setupNames[0] || combo[1].species.koName)}의 마무리 각이 이어져 파티 의도와 잘 맞습니다.`,
+                "속도 우위를 만드는 카드와 후속 에이스가 함께 들어가 입력한 속도 전개 흐름을 가장 살립니다.",
+                "빠른 턴을 만드는 축과 후반 압박 카드가 같이 잡혀 있어 기술배치에서 읽힌 의도에 가깝습니다."
+            ],
+            trickRoom: [
+                "트릭룸 턴을 직접 열고 받아먹는 카드가 같이 들어가 현재 파티 의도를 가장 안정적으로 실전에 옮길 수 있습니다.",
+                "느린 화력축을 살리는 배치가 유지돼 입력한 기술 구성의 트릭룸 방향이 가장 잘 살아납니다.",
+                "트릭룸 전개와 저속 마무리 카드가 같이 선출돼 파티 설계와 실제 추천 조합이 자연스럽게 이어집니다."
+            ],
+            bulkyBalance: [
+                `${recoveryNames[0] || combo[0].species.koName} 쪽 운영 안정성과 ${(pivotNames[0] || combo[1].species.koName)}의 교체전 가치가 살아 있어 파티 본래 의도를 잘 보존합니다.`,
+                "받아내는 축과 턴을 넘기는 축이 함께 들어가 입력한 밸런스 운영 구조를 가장 무난하게 재현합니다.",
+                "회복기와 사이클 요소를 동시에 살릴 수 있어 파티 기술배치에서 읽힌 운영 의도를 덜 훼손합니다."
+            ],
+            weatherPressure: [
+                `${weatherNames[0] || combo[0].species.koName}의 날씨 구간을 핵심 카드가 함께 활용할 수 있어 파티 의도가 또렷하게 유지됩니다.`,
+                "날씨를 여는 카드와 그 구간에 힘을 받는 카드가 같이 선출돼 파티 설계 방향과 잘 맞습니다.",
+                "기술배치에서 보인 날씨 압박 흐름을 실제 선출에서도 바로 살릴 수 있는 조합입니다."
+            ],
+            tempoPressure: [
+                "빠른 축과 턴조정기가 함께 들어가 입력한 템포 압박 성향을 가장 자연스럽게 살릴 수 있습니다.",
+                "선봉 템포를 잡은 뒤 계속 유리 대면을 이어 가는 흐름이 현재 파티 기술배치와 잘 맞물립니다.",
+                "빠른 카드 비중과 교체전 가치가 동시에 살아 있어 파티의 템포 압박 의도와 맞습니다."
+            ],
+            roleBalance: [
+                "특정 전개 하나보다 역할을 고르게 배분한 현재 파티 구조를 이 조합이 가장 안정적으로 보존합니다.",
+                "한 방향 올인보다 역할 균형을 유지하는 현재 파티 설계와 이 조합이 가장 잘 맞습니다.",
+                "입력한 기술배치가 가진 넓은 대응 범위를 이 조합이 가장 덜 잃습니다."
+            ]
+        };
+
+        return {
+            score: 7.85,
+            category: "team-intent",
+            seed: `${comboSeed}:intent:${teamIntent.key}`,
+            chip: `의도 ${teamIntent.label}`,
+            variants: variantsByIntent[teamIntent.key] || variantsByIntent.roleBalance
+        };
+    }
+
     function getBestMoveMultiplier(attackTypes, defenseTypes) {
         return (attackTypes || []).reduce((best, attackType) => {
             return Math.max(best, window.TypeModule.getTypeMultiplier(attackType, defenseTypes));
@@ -820,6 +1420,19 @@
             ]
         });
 
+        pushReasonCandidate(reasonCandidates, {
+            enabled: analysis.metaAnswerCount >= 1,
+            score: 7.45,
+            category: "meta-answer",
+            seed: `${species.name}:member:metaanswer`,
+            chip: `메타대응 ${analysis.metaAnswerCount}`,
+            variants: [
+                `현재 메타 상위 축 상대로도 역할이 잡혀 있어 범용 선출 가치가 높습니다.`,
+                `최근 자주 보이는 상위 메타 카드들까지 의식하면 이 포켓몬 가치가 한 단계 더 올라갑니다.`,
+                `실전에서 자주 마주치는 메타 상위 포켓몬들에 대한 답이 있어 추천 우선순위가 높습니다.`
+            ]
+        });
+
         const favorableTypes = collectTargetTypes(analysis.favorableOpponents);
         pushReasonCandidate(reasonCandidates, {
             enabled: favorableTypes.length > 0,
@@ -913,6 +1526,19 @@
         });
 
         pushReasonCandidate(reasonCandidates, {
+            enabled: analysis.metaRiskCount >= 2,
+            score: 4.9,
+            category: "meta-risk",
+            seed: `${species.name}:member:metarisk`,
+            chip: `메타주의 ${analysis.metaRiskCount}`,
+            variants: [
+                `다만 최근 많이 보이는 메타 상위 축 일부에는 정면 대응이 불편해 보완 선출이 필요합니다.`,
+                `현재 메타 기준 상위 카드 몇 종에는 다소 수동적일 수 있어 조합 보완이 중요합니다.`,
+                `메타 상위 압박축 몇 개에는 직접 맞대기보다 후속 운영으로 풀어야 하는 편입니다.`
+            ]
+        });
+
+        pushReasonCandidate(reasonCandidates, {
             enabled: analysis.favorableOpponents.length >= 2 && favorableNames,
             score: 7.3,
             category: "favorable-opponents",
@@ -954,13 +1580,14 @@
         return buildReasonBundle(`${species.name}:member`, reasonCandidates, 2, 2, 4);
     }
 
-    function buildComboSummaryBundle(combo, opponents, leadAnchor, pivotAnchor, cleanupAnchor) {
+    function buildComboSummaryBundle(combo, opponents, leadAnchor, pivotAnchor, cleanupAnchor, teamIntent) {
         const comboSeed = combo.map((entry) => entry.species.name).join("|");
         const reasonCandidates = [];
         const roleLabels = Array.from(new Set(combo.flatMap((entry) => entry.roles.map((role) => ROLE_LABELS[role] || role)))).slice(0, 3);
         const stableMembers = combo.filter((entry) => entry.safeCount >= 4).map((entry) => entry.species.koName);
         const fastMembers = combo.filter((entry) => entry.fastCount >= 3).map((entry) => entry.species.koName);
         const styleLabel = getComboStyleLabel(combo);
+        const metaTargets = summarizeMetaOpponents(opponents, 2);
         const pressureTargets = collectTargetTypes(
             opponents.filter((opponent) => combo.some((entry) => {
                 const matchup = entry.matchupByOpponent[opponent.name];
@@ -979,6 +1606,7 @@
         }).filter((entry) => entry.answers.length > 0).slice(0, 3);
         const megaMember = combo.find((entry) => entry.isMegaCandidate);
         const megaMemberName = megaMember ? megaMember.species.koName : "";
+        const intentBundle = buildIntentAlignmentBundle(combo, teamIntent);
 
         pushReasonCandidate(reasonCandidates, {
             enabled: roleLabels.length > 0,
@@ -1000,6 +1628,7 @@
             chip: styleLabel,
             variants: getComboStyleVariants(styleLabel)
         });
+        pushReasonCandidate(reasonCandidates, intentBundle);
         pushReasonCandidate(reasonCandidates, {
             enabled: stableMembers.length > 0,
             score: 6.8,
@@ -1046,6 +1675,18 @@
                 `${pressureTargets.join("/")} 축 대응이 선명해 상대 조합을 봤을 때 선출 목적을 바로 잡기 쉽습니다.`,
                 `${pressureTargets.join("/")} 타입 라인을 겨냥하는 구조라 어느 매치업을 노리는 조합인지 분명합니다.`,
                 `${pressureTargets.join("/")} 쪽에 압박 축이 모여 있어 선출 의도가 비교적 명확하게 드러납니다.`
+            ]
+        });
+        pushReasonCandidate(reasonCandidates, {
+            enabled: metaTargets.length > 0,
+            score: 7.05,
+            category: "meta-targets",
+            seed: `${comboSeed}:combo:metatargets`,
+            chip: `메타 ${metaTargets[0] || ""}`,
+            variants: [
+                `현재 메타에서 자주 보이는 ${metaTargets.join(", ")} 축까지 의식했을 때도 대응 방향이 비교적 선명합니다.`,
+                `${metaTargets.join(", ")}처럼 실제 선출 빈도가 높은 메타 카드들을 봐도 이 조합 쪽이 덜 흔들립니다.`,
+                `최근 커뮤니티에서 자주 언급되는 ${metaTargets.join(", ")} 라인에 대한 대응이 무난해 실전성이 높습니다.`
             ]
         });
         pushReasonCandidate(reasonCandidates, {
@@ -1214,6 +1855,8 @@
             statProfile,
             totalScore: 0,
             leadScore: 0,
+            metaAnswerCount: 0,
+            metaRiskCount: 0,
             fastCount: 0,
             safeCount: 0,
             favorableOpponents: [],
@@ -1222,6 +1865,8 @@
         };
 
         opponents.forEach((opponent) => {
+            const metaWeight = getMetaWeight(opponent);
+            const metaFactor = getMetaInfluenceFactor(opponent);
             const bestMoveChoice = getBestMoveChoice(attackProfile, opponent.types, species.types, statProfile);
             const bestMoveMultiplier = bestMoveChoice.multiplier;
             const bestStabMultiplier = window.TypeModule.getBestStabMultiplier(species.types, opponent.types);
@@ -1230,8 +1875,8 @@
             const coverageBonus = getCoverageBonus(bestMoveMultiplier, bestStabMultiplier, attackProfile);
             const matchupScore = bestMoveChoice.score + coverageBonus + getDefenseScore(worstIncomingMultiplier) + getSpeedScore(speedResult);
 
-            analysis.totalScore += matchupScore;
-            analysis.leadScore += matchupScore;
+            analysis.totalScore += matchupScore * metaFactor;
+            analysis.leadScore += matchupScore * (0.85 + ((metaWeight - 1) * 0.22));
             analysis.matchupByOpponent[opponent.name] = {
                 offenseMultiplier: bestMoveMultiplier,
                 stabMultiplier: bestStabMultiplier,
@@ -1241,7 +1886,8 @@
                 defenseMultiplier: worstIncomingMultiplier,
                 speedResult,
                 coverageBonus,
-                matchupScore
+                matchupScore,
+                metaWeight
             };
 
             if (bestMoveMultiplier >= 2 || matchupScore >= 2.6) {
@@ -1258,6 +1904,13 @@
 
             if ((worstIncomingMultiplier >= 2 && bestMoveMultiplier < 2) || matchupScore <= -1.8) {
                 analysis.riskyOpponents.push(opponent);
+            }
+
+            if (metaWeight >= 1.15 && (bestMoveMultiplier >= 2 || matchupScore >= 2.6)) {
+                analysis.metaAnswerCount += 1;
+            }
+            if (metaWeight >= 1.15 && ((worstIncomingMultiplier >= 2 && bestMoveMultiplier < 2) || matchupScore <= -1.8)) {
+                analysis.metaRiskCount += 1;
             }
         });
 
@@ -1295,6 +1948,13 @@
             const megaBonus = analysis.favorableOpponents.length >= 2 ? 2.1 : 0.9;
             analysis.totalScore += megaBonus;
             analysis.leadScore += megaBonus * 0.35;
+        }
+        if (analysis.metaAnswerCount >= 2) {
+            analysis.totalScore += 0.9;
+            analysis.leadScore += 0.35;
+        }
+        if (analysis.metaRiskCount >= 2) {
+            analysis.totalScore -= 0.55;
         }
 
         analysis.leadFit = scoreLeadFit(analysis, attackProfile, statProfile);
@@ -1357,6 +2017,7 @@
         let score = 0;
 
         opponents.forEach((opponent) => {
+            const metaFactor = 0.76 + (getMetaWeight(opponent) * 0.24);
             let goodAnswers = 0;
             let safeSwitches = 0;
 
@@ -1377,15 +2038,15 @@
             });
 
             if (goodAnswers >= 2) {
-                score += 2.2;
+                score += 2.2 * metaFactor;
             } else if (goodAnswers === 1) {
-                score += 1.1;
+                score += 1.1 * metaFactor;
             } else {
-                score -= 1.9;
+                score -= 1.9 * metaFactor;
             }
 
             if (safeSwitches >= 2) {
-                score += 0.8;
+                score += 0.8 * metaFactor;
             }
         });
 
@@ -1579,14 +2240,14 @@
         };
     }
 
-    function buildComboSummary(combo, opponents) {
+    function buildComboSummary(combo, opponents, teamIntent) {
         const { leadAnchor, pivotAnchor, cleanupAnchor } = chooseComboAnchors(combo);
-        return buildComboSummaryBundle(combo, opponents, leadAnchor, pivotAnchor, cleanupAnchor);
+        return buildComboSummaryBundle(combo, opponents, leadAnchor, pivotAnchor, cleanupAnchor, teamIntent);
     }
 
-    function evaluateCombo(combo, opponents) {
+    function evaluateCombo(combo, opponents, teamIntent) {
         const { leadAnchor, pivotAnchor, cleanupAnchor } = chooseComboAnchors(combo);
-        const summaryBundle = buildComboSummary(combo, opponents);
+        const summaryBundle = buildComboSummary(combo, opponents, teamIntent);
 
         return {
             combo,
@@ -1596,12 +2257,14 @@
                 + scoreSpeedLine(combo)
                 + scorePlanBalance(combo)
                 + scoreStrategyProfile(combo)
+                + scoreIntentFit(combo, teamIntent)
                 + scoreMegaUsage(combo),
             leadAnchor,
             pivotAnchor,
             cleanupAnchor,
             strategySummary: summarizeComboStrategies(combo),
             styleLabel: getComboStyleLabel(combo),
+            teamIntentLabel: teamIntent ? teamIntent.label : "",
             summary: summaryBundle.summary,
             summaryDetails: summaryBundle.details,
             summaryChips: summaryBundle.chips
@@ -1631,7 +2294,7 @@
                     opponent,
                     reliableAnswers,
                     dangerCount,
-                    score: dangerCount - reliableAnswers
+                    score: (dangerCount - reliableAnswers) * getMetaWeight(opponent)
                 };
             })
             .filter((entry) => entry.reliableAnswers <= 1 || entry.dangerCount >= 3)
@@ -1905,11 +2568,15 @@
         return combinations(opponentProfiles, 3)
             .map((coreProfiles) => {
                 const core = coreProfiles.map((entry) => entry.opponent);
+                const matchedCommunityCores = getMatchingCommunityMetaCores(core);
+                const topCommunityCore = matchedCommunityCores[0] || null;
                 const pressureScore = core.reduce((total, opponent) => {
                     const pressureProfile = getOpponentPressureProfile(partyAnalyses, opponent);
                     return total + (pressureProfile.dangerCount * 1.2) - (pressureProfile.reliableAnswers * 0.85) + (pressureProfile.bestMatchupScore < 1.2 ? 0.9 : 0);
                 }, 0);
                 const likelihoodScore = coreProfiles.reduce((total, profile) => total + profile.coreValue, 0)
+                    + coreProfiles.reduce((total, profile) => total + ((getMetaWeight(profile.opponent) - 1) * 1.35), 0)
+                    + matchedCommunityCores.reduce((total, profile) => total + profile.matchScore, 0)
                     + scoreCoreRoleBalance(coreProfiles)
                     + scoreCoreTypeDiversity(coreProfiles)
                     - scoreCoreWeaknessOverlap(coreProfiles);
@@ -1928,6 +2595,7 @@
                 const overlapPenalty = scoreCoreWeaknessOverlap(coreProfiles);
                 const coreSeed = core.map((entry) => entry.name).join("|");
                 const coreReasonCandidates = [];
+                const metaNames = coreProfiles.filter((entry) => getMetaProfile(entry.opponent)).map((entry) => entry.opponent.koName);
 
                 pushReasonCandidate(coreReasonCandidates, {
                     enabled: Boolean(leadCandidate && pivotCandidate && cleanerCandidate),
@@ -1939,6 +2607,30 @@
                         `${leadCandidate.opponent.koName}가 초반 템포를 잡고 ${pivotCandidate.opponent.koName}가 중반 버팀목 역할을 하며 ${cleanerCandidate.opponent.koName}가 후반 압박을 이어가기 좋은 구조입니다.`,
                         `${leadCandidate.opponent.koName} 선봉 전개 뒤 ${pivotCandidate.opponent.koName}가 교체 구도를 정리하고 ${cleanerCandidate.opponent.koName}가 마무리 압박을 이어가기 좋습니다.`,
                         `${leadCandidate.opponent.koName}, ${pivotCandidate.opponent.koName}, ${cleanerCandidate.opponent.koName} 순으로 역할 축이 나뉘어 실제 선출 그림이 분명합니다.`
+                    ]
+                });
+                pushReasonCandidate(coreReasonCandidates, {
+                    enabled: metaNames.length > 0,
+                    score: 7.55,
+                    category: "meta",
+                    seed: `${coreSeed}:core:meta`,
+                    chip: "메타상위 포함",
+                    variants: [
+                        `${metaNames.join(", ")}처럼 현재 메타에서 선출 빈도가 높은 카드가 포함돼 실제 채용 가능성을 높게 볼 만합니다.`,
+                        `최근 사용률과 커뮤니티 의견을 보면 ${metaNames.join(", ")} 축은 실제 경기에서도 자주 보여 이 코어 가능성이 올라갑니다.`,
+                        `${metaNames.join(", ")}가 들어 있어 단순 상성보다 실제 메타 빈도까지 고려하면 더 유력한 코어입니다.`
+                    ]
+                });
+                pushReasonCandidate(coreReasonCandidates, {
+                    enabled: Boolean(topCommunityCore),
+                    score: 8.35,
+                    category: "community-core",
+                    seed: `${coreSeed}:core:community:${topCommunityCore ? topCommunityCore.id : ""}`,
+                    chip: topCommunityCore ? topCommunityCore.sourceLabel : "",
+                    variants: [
+                        `${(topCommunityCore ? topCommunityCore.memberKoNames : []).join(", ")} 축은 ${topCommunityCore ? topCommunityCore.sourceLabel : "커뮤니티 메타"}에서 반복해서 언급되는 63싱글 빈출 코어라 실제 선출 가능성을 높게 볼 만합니다.`,
+                        `${topCommunityCore ? topCommunityCore.sourceDetail : "커뮤니티 빈출 코어"}와 직접 겹치는 조합이라 단순 이론상 조합보다 실제 채용 가능성이 더 높습니다.`,
+                        `${topCommunityCore ? topCommunityCore.sourceLabel : "커뮤니티"} 기준으로도 ${(topCommunityCore ? topCommunityCore.memberKoNames : []).join(", ")} 조합은 자주 보이는 축이라 유력 코어로 분류할 만합니다.`
                     ]
                 });
                 pushReasonCandidate(coreReasonCandidates, {
@@ -1992,6 +2684,8 @@
                 const coreReasonBundle = buildReasonBundle(`${coreSeed}:core`, coreReasonCandidates, 2, 2, 4);
                 const evidenceChips = [
                     leadCandidate ? `유력선봉 ${leadCandidate.opponent.koName}` : "",
+                    coreProfiles.some((profile) => getMetaProfile(profile.opponent)) ? "메타상위 포함" : "",
+                    topCommunityCore ? `${topCommunityCore.sourceLabel}` : "",
                     `빠른축 ${fastCount}`,
                     `내구축 ${bulkyCount}`,
                     `가능성 ${ (likelihoodScore + likelyLeadBonus).toFixed(1) }`
@@ -2031,6 +2725,9 @@
                     styleLabel,
                     likelihoodScore: likelihoodScore + likelyLeadBonus,
                     pressureScore,
+                    communityCoreLabel: topCommunityCore ? topCommunityCore.sourceLabel : "",
+                    communityCoreNames: topCommunityCore ? topCommunityCore.memberKoNames : [],
+                    communityCoreDetail: topCommunityCore ? topCommunityCore.sourceDetail : "",
                     reason: coreReasonBundle.summary,
                     reasonDetails: coreReasonBundle.details,
                     evidenceChips: unique(evidenceChips.concat(coreReasonBundle.chips).concat(responseReasonChips)).slice(0, 6),
@@ -2052,14 +2749,26 @@
             .slice(0, 3);
     }
 
-    function buildOverallSummary(lead, comboResult, threats) {
+    function buildOverallSummary(lead, comboResult, threats, opponents, teamIntent) {
         const summary = [];
+        const metaTargets = summarizeMetaOpponents(opponents, 2);
+        const communityCores = summarizeCommunityMetaCores(opponents, 1);
+
+        if (teamIntent && teamIntent.summary) {
+            summary.push(teamIntent.summary);
+        }
 
         if (lead) {
             summary.push(`선봉은 ${lead.species.koName}처럼 초반 압박과 스피드 주도권을 함께 챙길 수 있는 카드부터 고려하는 편이 좋습니다.`);
         }
         if (comboResult) {
             summary.push(`${comboResult.combo.map((entry) => entry.species.koName).join(", ")} 조합은 역할 분담, 상성 커버, 후속 마무리 흐름이 가장 안정적으로 맞물립니다.`);
+        }
+        if (metaTargets.length > 0) {
+            summary.push(`현재 메타에서 자주 보이는 ${metaTargets.join(", ")} 축까지 의식하면 이번 추천 조합 쪽이 비교적 안정적입니다.`);
+        }
+        if (communityCores.length > 0) {
+            summary.push(`${communityCores[0].label} 같은 ${communityCores[0].sourceLabel} 기준 빈출 코어와도 겹쳐 상대 선출 방향을 어느 정도 좁혀 볼 수 있습니다.`);
         }
         if (threats.length > 0) {
             summary.push(`특히 ${threats[0].koName} 대면은 교체 순서와 받아줄 포켓몬을 미리 정해 두는 편이 안전합니다.`);
@@ -2224,6 +2933,7 @@
             .map((member) => evaluateMember(member, opponents))
             .filter(Boolean)
             .sort((left, right) => right.totalScore - left.totalScore);
+        const teamIntent = buildTeamIntentProfile(analyses);
 
         const validCombos = combinations(analyses, 3)
             .filter((combo) => countMegaCandidates(combo) <= 1);
@@ -2233,7 +2943,7 @@
         }
 
         const comboCandidates = validCombos
-            .map((combo) => evaluateCombo(combo, opponents))
+            .map((combo) => evaluateCombo(combo, opponents, teamIntent))
             .sort((left, right) => right.totalScore - left.totalScore);
 
         const primaryCombo = comboCandidates[0] || null;
@@ -2250,7 +2960,8 @@
             threats,
             coreScenarios,
             battlePlan,
-            summary: buildOverallSummary(lead, primaryCombo, threats)
+            teamIntent,
+            summary: buildOverallSummary(lead, primaryCombo, threats, opponents, teamIntent)
         };
     }
 
