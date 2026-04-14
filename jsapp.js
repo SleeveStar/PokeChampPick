@@ -485,6 +485,13 @@
             scrollToCurrentPagePanel();
         }
     }
+    function goHome() {
+        closePartyEditor();
+        setCurrentPage("party");
+        window.requestAnimationFrame(() => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
     function renderTypeBadges(types) {
         return (types || []).map((type) => `<span class="type-badge" data-type="${type}">${window.TypeModule.toTypeLabel(type)}</span>`).join("");
     }
@@ -1163,11 +1170,26 @@
     function renderOpponentList() {
         refs.enemyCount.textContent = `현재 ${state.opponents.length} / 6`;
         if (state.opponents.length === 0) { refs.enemyList.innerHTML = ""; return; }
-        refs.enemyList.innerHTML = state.opponents.map((name) => {
+        refs.enemyList.innerHTML = state.opponents.map((name, index) => {
             const pokemon = window.PokeData.getPokemonByName(name);
-            const active = state.selectedOpponentName === name ? "active" : "";
+            if (!pokemon) { return ""; }
+            const active = state.selectedOpponentName === name ? "is-active" : "";
             const primaryType = pokemon.types && pokemon.types[0] ? pokemon.types[0] : "";
-            return `<li class="enemy-item"><button class="enemy-select-btn ${active}" type="button" data-pokemon-name="${pokemon.name}" data-enemy-type="${primaryType}"><div class="enemy-card-main"><strong class="enemy-name">${pokemon.koName}</strong><div class="type-row enemy-type-row">${renderTypeBadges(pokemon.types)}</div></div></button><button class="enemy-remove-btn" type="button" data-remove-name="${pokemon.name}">삭제</button></li>`;
+            return `<li class="enemy-item">
+                <button class="enemy-select-btn ${active}" type="button" data-pokemon-name="${pokemon.name}" data-enemy-type="${primaryType}" aria-pressed="${state.selectedOpponentName === name}">
+                    <div class="enemy-card-head">
+                        <span class="enemy-card-index">상대 ${index + 1}</span>
+                    </div>
+                    <div class="enemy-card-main">
+                        <strong class="enemy-name">${pokemon.koName}</strong>
+                        <div class="enemy-card-art">
+                            ${renderPokemonImage(pokemon, "pokemon-image enemy-pokemon-image")}
+                        </div>
+                        <div class="type-row enemy-type-row">${renderTypeBadges(pokemon.types)}</div>
+                    </div>
+                </button>
+                <button class="enemy-remove-btn" type="button" data-remove-name="${pokemon.name}" aria-label="${pokemon.koName} 삭제">삭제</button>
+            </li>`;
         }).join("");
     }
     function renderTypeCard() {
@@ -1709,6 +1731,10 @@
             refreshEditorStatSummary();
         });
         refs.menuToggleBtn.addEventListener("click", () => { state.mobileMenuOpen = !state.mobileMenuOpen; updatePageVisibility(); });
+        refs.homeLogoLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            goHome();
+        });
         refs.pageNav.addEventListener("click", (event) => {
             const button = event.target.closest("[data-page-target]");
             if (button) { setCurrentPage(button.dataset.pageTarget); }
@@ -1821,6 +1847,7 @@
     function initRefs() {
         refs.status = document.getElementById("assist-status");
         refs.menuToggleBtn = document.getElementById("menu-toggle-btn");
+        refs.homeLogoLink = document.getElementById("home-logo-link");
         refs.pageNav = document.getElementById("page-nav");
         refs.pageNavLinks = Array.from(document.querySelectorAll("[data-page-target]"));
         refs.pagePanels = Array.from(document.querySelectorAll(".page-panel"));

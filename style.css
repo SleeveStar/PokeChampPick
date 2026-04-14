@@ -91,13 +91,38 @@ button {
 }
 
 .app-topbar {
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 70;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 10px;
     min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 20px;
+    background: rgba(251, 253, 255, 0.84);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(86, 130, 160, 0.14);
+    box-shadow: 0 12px 28px rgba(39, 76, 101, 0.08);
+}
+
+.app-brand {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.app-brand-logo {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    flex: 0 0 52px;
+    filter: drop-shadow(0 8px 18px rgba(39, 76, 101, 0.16));
 }
 
 .app-topbar-title {
@@ -1234,14 +1259,13 @@ select:focus {
     padding: 0;
     margin: 14px 0 0;
     display: grid;
-    gap: 10px;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .enemy-item {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    gap: 10px;
+    position: relative;
+    min-width: 0;
 }
 
 .enemy-select-btn,
@@ -1250,37 +1274,82 @@ select:focus {
 }
 
 .enemy-select-btn {
-    flex: 1;
     text-align: left;
-    padding: 14px 16px;
+    width: 100%;
+    min-height: 268px;
+    padding: 16px;
     background: rgba(255, 255, 255, 0.98);
     color: var(--text);
     border: 1px solid var(--line);
-    transition: border-color 0.18s ease, background 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.enemy-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-right: 52px;
+}
+
+.enemy-card-index {
+    display: inline-flex;
+    align-items: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    font-weight: 700;
 }
 
 .enemy-card-main {
-    min-height: 68px;
+    min-height: 0;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 14px;
 }
 
 .enemy-name {
     display: block;
-    font-size: 1.08rem;
+    font-size: 1.12rem;
     font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.enemy-card-art {
+    min-height: 142px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.enemy-pokemon-image {
+    width: 140px;
+    height: 140px;
 }
 
 .enemy-type-row {
-    justify-content: flex-end;
+    justify-content: center;
+}
+
+.enemy-select-btn:hover {
+    transform: translateY(-1px);
 }
 
 .enemy-select-btn:hover,
-.enemy-select-btn.active {
-    background: rgba(240, 247, 252, 0.98);
-    border-color: rgba(77, 162, 223, 0.32);
+.enemy-select-btn.is-active {
+    border-color: rgba(77, 162, 223, 0.48);
+    box-shadow: 0 0 0 4px rgba(77, 162, 223, 0.14);
 }
 
 .enemy-select-btn[data-enemy-type="normal"] { background: #f2ece5; border-color: #dfd2c4; }
@@ -1302,11 +1371,22 @@ select:focus {
 .enemy-select-btn[data-enemy-type="steel"] { background: #e8eff3; border-color: #cad7df; }
 .enemy-select-btn[data-enemy-type="fairy"] { background: #f8e8f1; border-color: #e8c7d9; }
 
+.enemy-select-btn.is-active {
+    border-color: rgba(77, 162, 223, 0.62);
+    box-shadow: 0 0 0 4px rgba(77, 162, 223, 0.16);
+}
+
 .enemy-remove-btn {
-    min-width: 54px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    min-width: 48px;
+    min-height: 36px;
+    padding: 0 12px;
     background: var(--danger-soft);
     color: #b64d61;
     border: 1px solid rgba(255, 125, 125, 0.18);
+    z-index: 1;
 }
 
 .info-card,
@@ -1640,7 +1720,8 @@ select:focus {
     .damage-grid,
     .damage-toggle-grid,
     .damage-result-grid,
-    .party-slot-grid {
+    .party-slot-grid,
+    .enemy-list {
         grid-template-columns: 1fr;
     }
 
@@ -1671,6 +1752,19 @@ select:focus {
 
     .enemy-action-stack {
         grid-template-columns: 1fr;
+    }
+
+    .enemy-select-btn {
+        min-height: 224px;
+    }
+
+    .enemy-card-art {
+        min-height: 120px;
+    }
+
+    .enemy-pokemon-image {
+        width: 120px;
+        height: 120px;
     }
 
     .party-editor-head {
@@ -1835,7 +1929,19 @@ select:focus {
     }
 
     .app-topbar {
-        padding: 0 10px;
+        top: 8px;
+        padding: 10px 12px;
+    }
+
+    .app-brand {
+        gap: 10px;
+        max-width: calc(100% - 64px);
+    }
+
+    .app-brand-logo {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
     }
 
     .page-nav {
