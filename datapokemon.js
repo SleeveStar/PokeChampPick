@@ -7695,7 +7695,7 @@
         "id": 778,
         "name": "mimikyu-disguised",
         "apiName": "mimikyu-disguised",
-        "koName": "따라큐 둔갑한 모습",
+        "koName": "따라큐",
         "types": [
             "ghost",
             "fairy"

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>포켓몬 선출 도우미</title>
     <meta name="description" content="Pokémon Champions 6v6 싱글 팀 프리뷰 보조 정적 웹앱">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260414-1">
 </head>
 <body>
     <div class="app-shell">
@@ -322,16 +322,239 @@
                     비교할 포켓몬을 선택해 주세요.
                 </div>
             </section>
+
+            <section class="panel-card panel-span-2 page-panel" data-page="support" aria-labelledby="damage-title">
+                <div class="section-head">
+                    <div>
+                        <h2 id="damage-title">데미지 계산기</h2>
+                        <p class="section-copy">레벨 50 고정, 사용자가 준 단순화 공식 기준입니다. 자속, 타입 상성, 급소, 아이템, 특성, 날씨 등 추가 보정은 포함하지 않습니다.</p>
+                    </div>
+                    <button id="damage-calc-btn" class="accent-btn" type="button">계산하기</button>
+                </div>
+                <div class="damage-grid">
+                    <div class="damage-side-card">
+                        <div class="damage-side-head">
+                            <strong>공격측</strong>
+                            <span class="mini-meta">공격 또는 특공 실수치 사용</span>
+                        </div>
+                        <label class="field">
+                            <span>빠른 불러오기</span>
+                            <select id="damage-attack-source"></select>
+                        </label>
+                        <div id="damage-attack-source-note" class="mini-meta">직접 실수치를 입력해 주세요.</div>
+                        <div class="damage-stat-grid">
+                            <label class="field">
+                                <span>공격 실능</span>
+                                <input id="damage-attack-atk" type="number" min="1" step="1" value="120">
+                            </label>
+                            <label class="field">
+                                <span>특공 실능</span>
+                                <input id="damage-attack-spa" type="number" min="1" step="1" value="120">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="damage-side-card">
+                        <div class="damage-side-head">
+                            <strong>방어측</strong>
+                            <span class="mini-meta">HP와 방어 또는 특방 실수치 사용</span>
+                        </div>
+                        <label class="field">
+                            <span>빠른 불러오기</span>
+                            <select id="damage-defense-source"></select>
+                        </label>
+                        <div id="damage-defense-source-note" class="mini-meta">직접 실수치를 입력해 주세요.</div>
+                        <div class="damage-stat-grid damage-stat-grid-defense">
+                            <label class="field">
+                                <span>HP 실능</span>
+                                <input id="damage-defense-hp" type="number" min="1" step="1" value="180">
+                            </label>
+                            <label class="field">
+                                <span>방어 실능</span>
+                                <input id="damage-defense-def" type="number" min="1" step="1" value="120">
+                            </label>
+                            <label class="field">
+                                <span>특방 실능</span>
+                                <input id="damage-defense-spd" type="number" min="1" step="1" value="120">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="damage-grid damage-grid-meta">
+                    <label class="field autocomplete-shell">
+                        <span>기술명</span>
+                        <input id="damage-move-name" type="text" autocomplete="off" placeholder="공격측 포켓몬 기술이면 자동완성됩니다.">
+                    </label>
+                    <label class="field">
+                        <span>기술 타입</span>
+                        <select id="damage-move-type"></select>
+                    </label>
+                    <label class="field">
+                        <span>기술 분류</span>
+                        <select id="damage-move-category">
+                            <option value="physical">물리</option>
+                            <option value="special">특수</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>기술 위력</span>
+                        <input id="damage-move-power" type="number" min="1" step="1" value="80">
+                    </label>
+                </div>
+                <div id="damage-move-note" class="mini-meta">기술명을 선택하면 타입, 분류, 위력을 자동 추정합니다. 자동값이 다르면 직접 수정해 주세요.</div>
+                <div class="damage-grid damage-grid-mods">
+                    <label class="field">
+                        <span>자속</span>
+                        <select id="damage-stab-mode">
+                            <option value="auto">자동</option>
+                            <option value="none">없음</option>
+                            <option value="stab">자속 1.5배</option>
+                            <option value="adaptability">적응력 자속 2.0배</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>상성 배율</span>
+                        <select id="damage-effectiveness">
+                            <option value="auto">자동</option>
+                            <option value="0">0배</option>
+                            <option value="0.25">0.25배</option>
+                            <option value="0.5">0.5배</option>
+                            <option value="1">1배</option>
+                            <option value="2">2배</option>
+                            <option value="4">4배</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>날씨</span>
+                        <select id="damage-weather">
+                            <option value="">없음</option>
+                            <option value="sun">쾌청</option>
+                            <option value="rain">비</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>벽</span>
+                        <select id="damage-screen">
+                            <option value="">없음</option>
+                            <option value="reflect">리플렉터</option>
+                            <option value="light-screen">빛의장막</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>공격측 특성</span>
+                        <select id="damage-attack-ability">
+                            <option value="auto">자동</option>
+                            <option value="">없음</option>
+                            <option value="적응력">적응력</option>
+                            <option value="테크니션">테크니션</option>
+                            <option value="천하장사">천하장사</option>
+                            <option value="순수한힘">순수한힘</option>
+                            <option value="맹화">맹화</option>
+                            <option value="급류">급류</option>
+                            <option value="심록">심록</option>
+                            <option value="선파워">선파워</option>
+                            <option value="근성">근성</option>
+                            <option value="스나이퍼">스나이퍼</option>
+                            <option value="변환자재">변환자재</option>
+                            <option value="리베로">리베로</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>방어측 특성</span>
+                        <select id="damage-defense-ability">
+                            <option value="auto">자동</option>
+                            <option value="">없음</option>
+                            <option value="두꺼운지방">두꺼운지방</option>
+                            <option value="필터">필터</option>
+                            <option value="하드록">하드록</option>
+                            <option value="프리즘아머">프리즘아머</option>
+                            <option value="멀티스케일">멀티스케일</option>
+                            <option value="퍼코트">퍼코트</option>
+                            <option value="옹골참">옹골참</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>공격측 아이템</span>
+                        <select id="damage-attack-item">
+                            <option value="auto">자동</option>
+                            <option value="">없음</option>
+                            <option value="구애머리띠">구애머리띠</option>
+                            <option value="구애안경">구애안경</option>
+                            <option value="생명의구슬">생명의구슬</option>
+                            <option value="전문가벨트">전문가벨트</option>
+                            <option value="힘의머리띠">힘의머리띠</option>
+                            <option value="박식안경">박식안경</option>
+                            <option value="실크스카프">실크스카프</option>
+                            <option value="목탄">목탄</option>
+                            <option value="신비의물방울">신비의물방울</option>
+                            <option value="자석">자석</option>
+                            <option value="기적의씨">기적의씨</option>
+                            <option value="녹지않는얼음">녹지않는얼음</option>
+                            <option value="검은띠">검은띠</option>
+                            <option value="독바늘">독바늘</option>
+                            <option value="부드러운모래">부드러운모래</option>
+                            <option value="예리한부리">예리한부리</option>
+                            <option value="휘어진스푼">휘어진스푼</option>
+                            <option value="은빛가루">은빛가루</option>
+                            <option value="딱딱한돌">딱딱한돌</option>
+                            <option value="저주의부적">저주의부적</option>
+                            <option value="용의이빨">용의이빨</option>
+                            <option value="검은안경">검은안경</option>
+                            <option value="금속코트">금속코트</option>
+                            <option value="요정의깃털">요정의깃털</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>방어측 아이템</span>
+                        <select id="damage-defense-item">
+                            <option value="auto">자동</option>
+                            <option value="">없음</option>
+                            <option value="돌격조끼">돌격조끼</option>
+                            <option value="진화의휘석">진화의휘석</option>
+                            <option value="로셀열매">로셀열매</option>
+                            <option value="하반열매">하반열매</option>
+                            <option value="오카열매">오카열매</option>
+                            <option value="플카열매">플카열매</option>
+                            <option value="슈캐열매">슈캐열매</option>
+                            <option value="린드열매">린드열매</option>
+                            <option value="리체열매">리체열매</option>
+                            <option value="야파열매">야파열매</option>
+                            <option value="꼬시개열매">꼬시개열매</option>
+                            <option value="바코열매">바코열매</option>
+                            <option value="마코열매">마코열매</option>
+                            <option value="바리비열매">바리비열매</option>
+                            <option value="초나열매">초나열매</option>
+                            <option value="카리열매">카리열매</option>
+                            <option value="로플열매">로플열매</option>
+                            <option value="으름열매">으름열매</option>
+                            <option value="수불열매">수불열매</option>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span>기타 최종 배율</span>
+                        <input id="damage-other-modifier" type="number" min="0" step="0.01" value="1">
+                    </label>
+                </div>
+                <div class="damage-toggle-grid">
+                    <label class="checkbox-field"><input id="damage-attacker-low-hp" type="checkbox"><span>공격측 저체력 발동</span></label>
+                    <label class="checkbox-field"><input id="damage-attacker-status" type="checkbox"><span>공격측 상태이상</span></label>
+                    <label class="checkbox-field"><input id="damage-attacker-burned" type="checkbox"><span>공격측 화상</span></label>
+                    <label class="checkbox-field"><input id="damage-defender-full-hp" type="checkbox"><span>방어측 풀피</span></label>
+                    <label class="checkbox-field"><input id="damage-critical-hit" type="checkbox"><span>급소</span></label>
+                </div>
+                <div id="damage-result" class="info-card empty-card">
+                    공격측과 방어측 실수치, 기술 위력을 입력한 뒤 계산하기를 눌러 주세요.
+                </div>
+            </section>
         </main>
     </div>
 
-    <script defer src="datapokemon.js"></script>
-    <script defer src="datamoves.js"></script>
-    <script defer src="datatype-chart.js"></script>
-    <script defer src="jsstorage.js"></script>
-    <script defer src="jstype.js"></script>
-    <script defer src="jsspeed.js"></script>
-    <script defer src="jsrecommend.js"></script>
-    <script defer src="jsapp.js"></script>
+    <script defer src="datapokemon.js?v=20260414-1"></script>
+    <script defer src="datamoves.js?v=20260414-1"></script>
+    <script defer src="datatype-chart.js?v=20260414-1"></script>
+    <script defer src="jsstorage.js?v=20260414-1"></script>
+    <script defer src="jstype.js?v=20260414-1"></script>
+    <script defer src="jsspeed.js?v=20260414-1"></script>
+    <script defer src="jsrecommend.js?v=20260414-1"></script>
+    <script defer src="jsapp.js?v=20260414-1"></script>
 </body>
 </html>

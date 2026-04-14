@@ -103,6 +103,21 @@
         return Boolean(species && String(species.name || "").includes("-mega"));
     }
 
+    function isMegaStoneItem(itemName) {
+        return Boolean(String(itemName || "").trim().includes("나이트"));
+    }
+
+    function isMegaCandidate(member, species) {
+        if (isMegaSpecies(species)) {
+            return true;
+        }
+        return Boolean(member && species && species.mega && species.mega.isMegaCapable && isMegaStoneItem(member.item));
+    }
+
+    function countMegaCandidates(entries) {
+        return (entries || []).filter((entry) => entry && entry.isMegaCandidate).length;
+    }
+
     function unique(values) {
         return Array.from(new Set((values || []).filter(Boolean)));
     }
@@ -189,6 +204,9 @@
         if (!move || !move.key) {
             return statProfile && statProfile.offenseBias ? statProfile.offenseBias : "mixed";
         }
+        if (move.category === "physical" || move.category === "special") {
+            return move.category;
+        }
         if (PHYSICAL_MOVE_KEYS.has(move.key)) {
             return "physical";
         }
@@ -201,6 +219,18 @@
     function getMovePowerTier(move) {
         if (!move || !move.key) {
             return 0.2;
+        }
+        if (typeof move.power === "number") {
+            if (move.power >= 110) {
+                return 1.1;
+            }
+            if (move.power >= 85) {
+                return 0.75;
+            }
+            if (move.power <= 60) {
+                return 0.15;
+            }
+            return 0.45;
         }
         if (VERY_HIGH_POWER_MOVE_KEYS.has(move.key)) {
             return 1.1;
@@ -307,7 +337,7 @@
 
     function buildAttackProfile(member, species) {
         const moves = resolveMemberMoves(member, species);
-        const offensiveMoves = moves.filter((move) => move.type && !NON_OFFENSIVE_MOVE_KEYS.has(move.key));
+        const offensiveMoves = moves.filter((move) => move.type && move.category !== "status" && !NON_OFFENSIVE_MOVE_KEYS.has(move.key));
         const attackTypes = unique(offensiveMoves.map((move) => String(move.type || "").toLowerCase()));
         const speciesTypes = unique((species.types || []).map((type) => String(type || "").toLowerCase()));
         const moveKeys = unique(moves.map((move) => move.key));
@@ -335,7 +365,12 @@
             pivotMoveCount: moveKeys.filter((key) => PIVOT_MOVE_KEYS.has(key)).length,
             setupMoveCount: moveKeys.filter((key) => SETUP_MOVE_KEYS.has(key)).length,
             priorityMoveCount: moveKeys.filter((key) => PRIORITY_MOVE_KEYS.has(key)).length,
-            highPowerMoveCount: offensiveMoves.filter((move) => VERY_HIGH_POWER_MOVE_KEYS.has(move.key) || HIGH_POWER_MOVE_KEYS.has(move.key)).length,
+            highPowerMoveCount: offensiveMoves.filter((move) => {
+                if (typeof move.power === "number") {
+                    return move.power >= 85;
+                }
+                return VERY_HIGH_POWER_MOVE_KEYS.has(move.key) || HIGH_POWER_MOVE_KEYS.has(move.key);
+            }).length,
             strategyTags
         };
     }
@@ -865,7 +900,7 @@
         });
 
         pushReasonCandidate(reasonCandidates, {
-            enabled: isMegaSpecies(species),
+            enabled: analysis.isMegaCandidate,
             score: 5.5,
             category: "mega",
             seed: `${species.name}:member:mega`,
@@ -942,7 +977,7 @@
                 answers
             };
         }).filter((entry) => entry.answers.length > 0).slice(0, 3);
-        const megaMember = combo.find((entry) => isMegaSpecies(entry.species));
+        const megaMember = combo.find((entry) => entry.isMegaCandidate);
 
         pushReasonCandidate(reasonCandidates, {
             enabled: roleLabels.length > 0,
@@ -1162,9 +1197,11 @@
         const roles = normalizeMemberRoles(member, species);
         const attackProfile = buildAttackProfile(member, species);
         const statProfile = buildStatProfile(species);
+        const megaCandidate = isMegaCandidate(member, species);
         const analysis = {
             member,
             species,
+            isMegaCandidate: megaCandidate,
             roles,
             attackTypes: attackProfile.attackTypes,
             coverageTypes: attackProfile.coverageTypes,
@@ -1257,7 +1294,7 @@
         if (attackProfile.highPowerMoveCount >= 2) {
             analysis.totalScore += 0.7;
         }
-        if (isMegaSpecies(species)) {
+        if (analysis.isMegaCandidate) {
             const megaBonus = analysis.favorableOpponents.length >= 2 ? 2.1 : 0.9;
             analysis.totalScore += megaBonus;
             analysis.leadScore += megaBonus * 0.35;
@@ -1371,7 +1408,7 @@
     }
 
     function scoreMegaUsage(combo) {
-        const megaCandidates = combo.filter((entry) => isMegaSpecies(entry.species)).length;
+        const megaCandidates = countMegaCandidates(combo);
 
         if (megaCandidates === 1) {
             return 0.9;
@@ -1380,6 +1417,20 @@
             return -1.1;
         }
         return 0;
+    }
+
+    function compareLeadPriority(left, right) {
+        if (right.leadScore !== left.leadScore) {
+            return right.leadScore - left.leadScore;
+        }
+        return right.totalScore - left.totalScore;
+    }
+
+    function chooseRecommendedLead(analyses, primaryCombo) {
+        if (primaryCombo && primaryCombo.combo && primaryCombo.combo.length > 0) {
+            return primaryCombo.combo.slice().sort(compareLeadPriority)[0] || null;
+        }
+        return analyses.slice().sort(compareLeadPriority)[0] || null;
     }
 
     function scorePlanBalance(combo) {
@@ -2106,21 +2157,20 @@
             .filter(Boolean)
             .sort((left, right) => right.totalScore - left.totalScore);
 
-        const lead = analyses
-            .slice()
-            .sort((left, right) => {
-                if (right.leadScore !== left.leadScore) {
-                    return right.leadScore - left.leadScore;
-                }
-                return right.totalScore - left.totalScore;
-            })[0];
+        const validCombos = combinations(analyses, 3)
+            .filter((combo) => countMegaCandidates(combo) <= 1);
 
-        const comboCandidates = combinations(analyses, 3)
+        if (validCombos.length === 0) {
+            return { error: "한 번의 배틀에서는 메가진화를 한 마리만 사용할 수 있어 메가 후보가 2마리 이상 겹치지 않는 추천 조합을 만들지 못했습니다." };
+        }
+
+        const comboCandidates = validCombos
             .map((combo) => evaluateCombo(combo, opponents))
             .sort((left, right) => right.totalScore - left.totalScore);
 
         const primaryCombo = comboCandidates[0] || null;
         const alternativeCombos = comboCandidates.slice(1, 3);
+        const lead = chooseRecommendedLead(analyses, primaryCombo);
         const threats = buildThreats(analyses, opponents);
         const coreScenarios = buildOpponentCoreScenarios(opponents, analyses, comboCandidates);
         const battlePlan = buildBattlePlan(lead, primaryCombo, threats, opponents, coreScenarios);

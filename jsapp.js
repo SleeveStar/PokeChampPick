@@ -4,6 +4,9 @@
     const PARTY_PRESET_COUNT = 3;
     const EV_MAX = 32;
     const EV_TOTAL_MAX = 66;
+    const DAMAGE_LEVEL = 50;
+    const DAMAGE_RANDOM_MIN = 0.85;
+    const DAMAGE_RANDOM_MAX = 1;
     const STAT_KEYS = ["hp", "atk", "def", "spa", "spd", "spe"];
     const STAT_LABELS = { hp: "HP", atk: "공격", def: "방어", spa: "특공", spd: "특방", spe: "스핏" };
     const NATURES = [
@@ -99,6 +102,36 @@
         "바리비열매", "루미열매", "카리열매", "로플열매", "바코열매", "마코열매", "하반열매", "수불열매", "으름열매", "오카열매",
         "꼬시개열매", "야파열매", "린드열매", "로셀열매", "슈캐열매", "리체열매", "초나열매", "플카열매"
     ];
+    const BERRY_SPRITES = {
+        "배리열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/aspear-berry.png",
+        "버치열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/cheri-berry.png",
+        "유루열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chesto-berry.png",
+        "복슝열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/pecha-berry.png",
+        "시몬열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/persim-berry.png",
+        "복분열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rawst-berry.png",
+        "리샘열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lum-berry.png",
+        "오랭열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/oran-berry.png",
+        "자뭉열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sitrus-berry.png",
+        "과사열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leppa-berry.png",
+        "바리비열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/babiri-berry.png",
+        "루미열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/charti-berry.png",
+        "카리열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chilan-berry.png",
+        "로플열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/chople-berry.png",
+        "바코열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/coba-berry.png",
+        "마코열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/colbur-berry.png",
+        "하반열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/haban-berry.png",
+        "수불열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kasib-berry.png",
+        "으름열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/kebia-berry.png",
+        "오카열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/occa-berry.png",
+        "꼬시개열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/passho-berry.png",
+        "야파열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/payapa-berry.png",
+        "린드열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/rindo-berry.png",
+        "로셀열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/roseli-berry.png",
+        "슈캐열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shuca-berry.png",
+        "리체열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tanga-berry.png",
+        "초나열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/wacan-berry.png",
+        "플카열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/yache-berry.png"
+    };
     const ITEM_OPTIONS = Object.keys(CORE_ITEM_SPRITES).concat(MEGA_STONE_ITEMS, BERRY_ITEMS);
     const ITEM_IMAGE_FALLBACK = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='18' fill='%23f7fbff'/%3E%3Cpath d='M25 33h46l-5 38H30z' fill='%23ffffff' stroke='%23d2dce4' stroke-width='4'/%3E%3Cpath d='M34 33c0-8 6-14 14-14s14 6 14 14' fill='none' stroke='%2398aec0' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M38 45h20' stroke='%23ef7588' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E";
     const refs = {};
@@ -145,9 +178,88 @@
     const ITEM_DATA = Object.fromEntries(ITEM_OPTIONS.map((itemName) => {
         const kind = MEGA_STONE_ITEMS.includes(itemName) ? "mega" : (BERRY_ITEMS.includes(itemName) ? "berry" : "item");
         return [itemName, {
-            imageUrl: CORE_ITEM_SPRITES[itemName] || MEGA_STONE_SPRITES[itemName] || createGeneratedItemImage(itemName, kind)
+            imageUrl: CORE_ITEM_SPRITES[itemName] || MEGA_STONE_SPRITES[itemName] || BERRY_SPRITES[itemName] || createGeneratedItemImage(itemName, kind)
         }];
     }));
+    const TYPE_BOOSTER_ITEMS = {
+        normal: "실크스카프",
+        fire: "목탄",
+        water: "신비의물방울",
+        electric: "자석",
+        grass: "기적의씨",
+        ice: "녹지않는얼음",
+        fighting: "검은띠",
+        poison: "독바늘",
+        ground: "부드러운모래",
+        flying: "예리한부리",
+        psychic: "휘어진스푼",
+        bug: "은빛가루",
+        rock: "딱딱한돌",
+        ghost: "저주의부적",
+        dragon: "용의이빨",
+        dark: "검은안경",
+        steel: "금속코트",
+        fairy: "요정의깃털"
+    };
+    const RESIST_BERRY_TYPES = {
+        로셀열매: "fairy",
+        하반열매: "dragon",
+        오카열매: "fire",
+        플카열매: "ice",
+        슈캐열매: "ground",
+        린드열매: "grass",
+        리체열매: "bug",
+        야파열매: "psychic",
+        꼬시개열매: "water",
+        바코열매: "flying",
+        마코열매: "dark",
+        바리비열매: "steel",
+        초나열매: "electric",
+        카리열매: "normal",
+        로플열매: "fighting",
+        루미열매: "rock",
+        으름열매: "poison",
+        수불열매: "ghost"
+    };
+    const DAMAGE_PHYSICAL_MOVE_KEYS = new Set([
+        "earthquake", "close-combat", "flare-blitz", "u-turn", "bullet-punch", "extreme-speed",
+        "sucker-punch", "aqua-jet", "mach-punch", "shadow-sneak", "ice-shard", "quick-attack",
+        "first-impression", "fake-out", "accelerock", "jet-punch", "brave-bird", "iron-head",
+        "stone-edge", "rock-slide", "knock-off", "play-rough", "liquidation", "waterfall",
+        "dragon-claw", "outrage", "wood-hammer", "power-whip", "poison-jab", "gunk-shot",
+        "drain-punch", "body-press", "wave-crash", "bitter-blade", "triple-axel", "double-edge",
+        "headlong-rush", "stomping-tantrum", "fire-punch", "ice-punch", "thunder-punch",
+        "psychic-fangs", "cross-poison", "x-scissor", "megahorn", "rage-fist", "shadow-claw",
+        "aqua-tail", "acrobatics", "superpower", "high-horsepower", "earthquake", "flame-charge",
+        "trailblaze", "beak-blast", "avalanche", "crabhammer", "wild-charge", "facade", "return"
+    ]);
+    const DAMAGE_SPECIAL_MOVE_KEYS = new Set([
+        "hydro-pump", "surf", "scald", "moonblast", "shadow-ball", "draco-meteor", "dragon-pulse",
+        "thunderbolt", "thunder", "volt-switch", "heat-wave", "fire-blast", "flamethrower",
+        "overheat", "blizzard", "ice-beam", "freeze-dry", "air-slash", "hurricane", "dazzling-gleam",
+        "psychic", "psyshock", "aura-sphere", "sludge-bomb", "earth-power", "power-gem", "energy-ball",
+        "leaf-storm", "giga-drain", "dark-pulse", "water-spout", "flash-cannon", "focus-blast",
+        "boomburst", "expanding-force", "armor-cannon", "torch-song", "electro-drift", "make-it-rain",
+        "vacuum-wave", "apple-acid", "bleakwind-storm", "meteor-beam", "hyper-voice", "fiery-dance"
+    ]);
+    const DAMAGE_VERY_HIGH_POWER_MOVE_KEYS = new Set([
+        "draco-meteor", "close-combat", "flare-blitz", "hydro-pump", "fire-blast", "leaf-storm",
+        "overheat", "blizzard", "gunk-shot", "headlong-rush", "wave-crash", "boomburst",
+        "make-it-rain", "electro-drift", "armor-cannon", "chloroblast", "v-create", "blast-burn",
+        "hydro-cannon", "frenzy-plant"
+    ]);
+    const DAMAGE_HIGH_POWER_MOVE_KEYS = new Set([
+        "earthquake", "moonblast", "shadow-ball", "thunderbolt", "surf", "heat-wave", "ice-beam",
+        "hurricane", "brave-bird", "stone-edge", "power-whip", "play-rough", "liquidation",
+        "dragon-claw", "outrage", "knock-off", "drain-punch", "body-press", "sludge-bomb",
+        "earth-power", "power-gem", "dark-pulse", "aura-sphere", "waterfall", "wild-charge",
+        "rage-fist", "hyper-voice", "psychic", "flare-blitz", "fire-punch", "ice-punch"
+    ]);
+    const DAMAGE_LOW_POWER_MOVE_KEYS = new Set([
+        "u-turn", "volt-switch", "flip-turn", "shadow-sneak", "bullet-punch", "aqua-jet",
+        "mach-punch", "quick-attack", "fake-out", "accelerock", "jet-punch", "vacuum-wave",
+        "ice-shard", "trailblaze", "flame-charge", "water-shuriken"
+    ]);
     const TYPE_ICON_PATHS = {
         normal: "types/Normal%20type.svg",
         fire: "types/Fire%20type.svg",
@@ -358,8 +470,21 @@
         refs.pageNav.classList.toggle("is-open", state.mobileMenuOpen);
         refs.menuToggleBtn.setAttribute("aria-expanded", String(state.mobileMenuOpen));
     }
+    function scrollToCurrentPagePanel() {
+        const panel = refs.pagePanels.find((entry) => entry.dataset.page === state.currentPage && !entry.hidden);
+        if (!panel) { return; }
+        window.requestAnimationFrame(() => {
+            panel.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+    }
     function closeMobileMenu() { state.mobileMenuOpen = false; updatePageVisibility(); }
-    function setCurrentPage(pageName) { state.currentPage = pageName; closeMobileMenu(); }
+    function setCurrentPage(pageName) {
+        state.currentPage = pageName;
+        closeMobileMenu();
+        if (isMobileViewport()) {
+            scrollToCurrentPagePanel();
+        }
+    }
     function renderTypeBadges(types) {
         return (types || []).map((type) => `<span class="type-badge" data-type="${type}">${window.TypeModule.toTypeLabel(type)}</span>`).join("");
     }
@@ -510,7 +635,7 @@
             if (!minButton || !maxButton) { return; }
             const upperBound = getStatUpperBound(values, stat);
             minButton.classList.toggle("is-last-edge", Number(values[stat]) <= 0);
-            maxButton.classList.toggle("is-last-edge", Number(values[stat]) >= upperBound);
+            maxButton.classList.toggle("is-last-edge", upperBound > 0 && Number(values[stat]) >= upperBound);
         });
     }
     function setStatValueWithCap(statKey, desiredValue) {
@@ -961,6 +1086,33 @@
             }
         });
     }
+    function attachDamageMoveAutocomplete() {
+        attachOptionAutocomplete(refs.damageMoveName, {
+            getEntries: () => {
+                const species = getDamageMoveSpecies();
+                return species ? window.MoveData.searchMoves(species, refs.damageMoveName.value, 24).map((move) => ({
+                    value: move.key,
+                    label: move.koName,
+                    meta: window.TypeModule.toTypeLabel(move.type),
+                    move
+                })) : [];
+            },
+            onSelect: (entry) => {
+                refs.damageMoveName.value = entry.label;
+                refs.damageMoveName.dataset.selectedMove = entry.value;
+                applyDamageMoveDefaults(entry.move);
+            },
+            onInputChange: () => {
+                refs.damageMoveName.dataset.selectedMove = "";
+            },
+            onCommit: () => {
+                const move = syncDamageMoveInput();
+                if (move) {
+                    applyDamageMoveDefaults(move);
+                }
+            }
+        });
+    }
     function addOpponent() {
         if (state.opponents.length >= PARTY_SIZE) { setStatus("상대 팀은 최대 6마리까지 입력할 수 있습니다.", "error"); return; }
         const pokemon = window.PokeData.resolvePokemon(refs.enemySearch.dataset.selectedName || refs.enemySearch.value);
@@ -1004,11 +1156,463 @@
         refs.typeCard.className = "info-card";
         refs.typeCard.innerHTML = `<div class="recommend-topline"><div class="recommend-title"><strong>${pokemon.koName}</strong></div><div class="type-row">${renderTypeBadges(pokemon.types)}</div></div><div class="combo-members"><div class="combo-member"><strong>약점</strong><div class="type-row">${summary.weaknesses.length > 0 ? summary.weaknesses.map((entry) => `<span class="type-badge" data-type="${entry.type}">${window.TypeModule.toTypeLabel(entry.type)} x${entry.multiplier}</span>`).join("") : "<span class='member-help'>눈에 띄는 약점이 적습니다.</span>"}</div></div><div class="combo-member"><strong>반감</strong><div class="type-row">${summary.resistances.length > 0 ? summary.resistances.map((entry) => `<span class="type-badge" data-type="${entry.type}">${window.TypeModule.toTypeLabel(entry.type)} x${entry.multiplier}</span>`).join("") : "<span class='member-help'>반감 타입이 많지 않습니다.</span>"}</div></div><div class="combo-member"><strong>무효</strong><div class="type-row">${summary.immunities.length > 0 ? summary.immunities.map((type) => `<span class="type-badge" data-type="${type}">${window.TypeModule.toTypeLabel(type)}</span>`).join("") : "<span class='member-help'>무효 타입이 없습니다.</span>"}</div></div></div>`;
     }
+    function buildNeutralStatProfile(species) {
+        if (!species || !species.baseStats) {
+            return null;
+        }
+        return window.SpeedModule.calculateLevel50Stats(species.baseStats, {
+            nature: "hardy",
+            level: DAMAGE_LEVEL,
+            evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+            ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
+        });
+    }
+    function buildDamageSourceOptions(validParty, opponents) {
+        const options = [`<option value="">직접 입력</option>`];
+
+        if (validParty.length > 0) {
+            options.push(`<optgroup label="내 파티">`);
+            validParty.forEach((member, index) => {
+                const species = getMemberBattleSpecies(member);
+                if (!species) { return; }
+                options.push(`<option value="party:${index}">${species.displayKoName || species.koName} 저장값</option>`);
+            });
+            options.push(`</optgroup>`);
+        }
+
+        if (opponents.length > 0) {
+            options.push(`<optgroup label="상대 기본치">`);
+            opponents.forEach((pokemon) => {
+                options.push(`<option value="opponent:${pokemon.name}">${pokemon.koName} 중립/무포인트</option>`);
+            });
+            options.push(`</optgroup>`);
+        }
+
+        return options.join("");
+    }
+    function getMovePowerGuess(move) {
+        if (!move) {
+            return 80;
+        }
+        if (typeof move.power === "number") {
+            return move.power;
+        }
+        const moveKey = move.key;
+        if (DAMAGE_VERY_HIGH_POWER_MOVE_KEYS.has(moveKey)) {
+            return 120;
+        }
+        if (DAMAGE_HIGH_POWER_MOVE_KEYS.has(moveKey)) {
+            return 90;
+        }
+        if (DAMAGE_LOW_POWER_MOVE_KEYS.has(moveKey)) {
+            return 40;
+        }
+        return 80;
+    }
+    function getMoveCategoryGuess(move, attackStats) {
+        if (!move) {
+            return attackStats && attackStats.spa > attackStats.atk ? "special" : "physical";
+        }
+        if (move.category === "physical" || move.category === "special") {
+            return move.category;
+        }
+        const moveKey = move.key;
+        if (DAMAGE_PHYSICAL_MOVE_KEYS.has(moveKey)) {
+            return "physical";
+        }
+        if (DAMAGE_SPECIAL_MOVE_KEYS.has(moveKey)) {
+            return "special";
+        }
+        return attackStats && attackStats.spa > attackStats.atk ? "special" : "physical";
+    }
+    function getDamageMoveSpecies() {
+        const source = resolveDamageSource(refs.damageAttackSource ? refs.damageAttackSource.value : "");
+        return source ? source.species : null;
+    }
+    function syncDamageMoveInput() {
+        const species = getDamageMoveSpecies();
+        const resolved = species ? window.MoveData.resolveMoveForPokemon(species, refs.damageMoveName.dataset.selectedMove || refs.damageMoveName.value) : null;
+        if (!resolved) {
+            refs.damageMoveName.dataset.selectedMove = "";
+            return null;
+        }
+        refs.damageMoveName.value = resolved.koName;
+        refs.damageMoveName.dataset.selectedMove = resolved.key;
+        return resolved;
+    }
+    function applyDamageMoveDefaults(move) {
+        const source = resolveDamageSource(refs.damageAttackSource ? refs.damageAttackSource.value : "");
+        const stats = source && source.stats ? source.stats : null;
+        if (!move) {
+            refs.damageMoveNote.textContent = "기술명을 선택하면 타입, 분류, 위력을 자동 추정합니다. 자동값이 다르면 직접 수정해 주세요.";
+            return;
+        }
+        if (move.type) {
+            refs.damageMoveType.value = move.type;
+        }
+        if (move.category === "status") {
+            refs.damageMoveNote.textContent = `${move.koName}는 변화기라 기본적으로 데미지 계산 대상이 아닙니다. 필요하면 값을 직접 수정해 주세요.`;
+            return;
+        }
+        refs.damageMoveCategory.value = getMoveCategoryGuess(move, stats);
+        refs.damageMovePower.value = getMovePowerGuess(move);
+        refs.damageMoveNote.textContent = typeof move.power === "number" && move.category
+            ? `${move.koName} 메타데이터를 불러왔습니다.`
+            : `${move.koName} 기준 자동 추정값을 채웠습니다. 데이터가 없는 값은 직접 수정해 주세요.`;
+    }
+    function resolveDamageSource(token) {
+        const normalized = String(token || "");
+        if (!normalized) {
+            return null;
+        }
+
+        const [kind, rawValue] = normalized.split(":");
+        if (kind === "party") {
+            const validParty = getValidPartyMembers();
+            const member = validParty[Number(rawValue)];
+            const species = member ? getMemberBattleSpecies(member) : null;
+            if (!member || !species) {
+                return null;
+            }
+            return {
+                label: species.displayKoName || species.koName,
+                stats: window.SpeedModule.calculateLevel50Stats(species.baseStats, member),
+                species,
+                member,
+                note: `${species.displayKoName || species.koName} 저장된 실수치를 불러왔습니다.`
+            };
+        }
+
+        if (kind === "opponent") {
+            const species = window.PokeData.getPokemonByName(rawValue);
+            if (!species) {
+                return null;
+            }
+            return {
+                label: species.koName,
+                stats: buildNeutralStatProfile(species),
+                species,
+                member: null,
+                note: `${species.koName} 중립 성격 / 능력포인트 0 / 개체값 31 기준 실수치를 불러왔습니다.`
+            };
+        }
+
+        return null;
+    }
+    function updateDamageSourceNote(side, text) {
+        const node = side === "attack" ? refs.damageAttackSourceNote : refs.damageDefenseSourceNote;
+        if (!node) { return; }
+        node.textContent = text || "직접 실수치를 입력해 주세요.";
+    }
+    function applyDamageSource(side) {
+        const select = side === "attack" ? refs.damageAttackSource : refs.damageDefenseSource;
+        const source = resolveDamageSource(select ? select.value : "");
+
+        if (!source || !source.stats) {
+            updateDamageSourceNote(side, "");
+            if (side === "attack") {
+                refs.damageMoveName.dataset.selectedMove = "";
+                refs.damageMoveNote.textContent = "기술명을 선택하면 타입, 분류, 위력을 자동 추정합니다. 자동값이 다르면 직접 수정해 주세요.";
+            }
+            return;
+        }
+
+        if (side === "attack") {
+            refs.damageAttackAtk.value = source.stats.atk;
+            refs.damageAttackSpa.value = source.stats.spa;
+        } else {
+            refs.damageDefenseHp.value = source.stats.hp;
+            refs.damageDefenseDef.value = source.stats.def;
+            refs.damageDefenseSpd.value = source.stats.spd;
+        }
+        updateDamageSourceNote(side, source.note);
+    }
+    function resolveSelectedAbility(side) {
+        const source = resolveDamageSource(side === "attack" ? refs.damageAttackSource.value : refs.damageDefenseSource.value);
+        const control = side === "attack" ? refs.damageAttackAbility : refs.damageDefenseAbility;
+        if (!control) {
+            return "";
+        }
+        if (control.value !== "auto") {
+            return control.value || "";
+        }
+        return source && source.member ? (source.member.ability || "") : "";
+    }
+    function resolveSelectedItem(side) {
+        const source = resolveDamageSource(side === "attack" ? refs.damageAttackSource.value : refs.damageDefenseSource.value);
+        const control = side === "attack" ? refs.damageAttackItem : refs.damageDefenseItem;
+        if (!control) {
+            return "";
+        }
+        if (control.value !== "auto") {
+            return control.value || "";
+        }
+        return source && source.member ? (source.member.item || "") : "";
+    }
+    function resolveDamageMoveType() {
+        return String(refs.damageMoveType.value || "").toLowerCase();
+    }
+    function resolveEffectiveness(moveType) {
+        if (refs.damageEffectiveness.value !== "auto") {
+            return Number(refs.damageEffectiveness.value || 1) || 1;
+        }
+        const defenseSource = resolveDamageSource(refs.damageDefenseSource.value);
+        if (!defenseSource || !defenseSource.species || !moveType) {
+            return 1;
+        }
+        return window.TypeModule.getTypeMultiplier(moveType, defenseSource.species.types);
+    }
+    function resolveStabMultiplier(moveType, attackAbility) {
+        const stabMode = refs.damageStabMode.value || "auto";
+        const attackSource = resolveDamageSource(refs.damageAttackSource.value);
+        const attackTypes = attackSource && attackSource.species ? (attackSource.species.types || []) : [];
+        if (stabMode === "none") {
+            return 1;
+        }
+        if (stabMode === "stab") {
+            return 1.5;
+        }
+        if (stabMode === "adaptability") {
+            return 2;
+        }
+        const convertsType = attackAbility === "변환자재" || attackAbility === "리베로";
+        const hasStab = convertsType || attackTypes.includes(moveType);
+        if (!hasStab) {
+            return 1;
+        }
+        return attackAbility === "적응력" ? 2 : 1.5;
+    }
+    function getAttackModifierDetails(config) {
+        const modifiers = [];
+        const ability = config.attackAbility;
+        const item = config.attackItem;
+
+        if (config.stabMultiplier > 1) {
+            modifiers.push({ label: `자속 x${config.stabMultiplier.toFixed(2)}`, multiplier: config.stabMultiplier });
+        }
+        if (config.effectiveness !== 1) {
+            modifiers.push({ label: `상성 x${config.effectiveness.toFixed(2)}`, multiplier: config.effectiveness });
+        }
+        if (config.criticalHit) {
+            let critMultiplier = 1.5;
+            if (ability === "스나이퍼") {
+                critMultiplier *= 1.5;
+            }
+            modifiers.push({ label: `급소 x${critMultiplier.toFixed(2)}`, multiplier: critMultiplier });
+        }
+        if (config.weather === "sun") {
+            if (config.moveType === "fire") { modifiers.push({ label: "쾌청 x1.50", multiplier: 1.5 }); }
+            if (config.moveType === "water") { modifiers.push({ label: "쾌청 x0.50", multiplier: 0.5 }); }
+        }
+        if (config.weather === "rain") {
+            if (config.moveType === "water") { modifiers.push({ label: "비 x1.50", multiplier: 1.5 }); }
+            if (config.moveType === "fire") { modifiers.push({ label: "비 x0.50", multiplier: 0.5 }); }
+        }
+        if (config.screen === "reflect" && config.category === "physical") {
+            modifiers.push({ label: "리플렉터 x0.50", multiplier: 0.5 });
+        }
+        if (config.screen === "light-screen" && config.category === "special") {
+            modifiers.push({ label: "빛의장막 x0.50", multiplier: 0.5 });
+        }
+        if (config.attackerBurned && config.category === "physical" && ability !== "근성") {
+            modifiers.push({ label: "화상 x0.50", multiplier: 0.5 });
+        }
+        if (ability === "테크니션" && config.power <= 60) {
+            modifiers.push({ label: "테크니션 x1.50", multiplier: 1.5 });
+        }
+        if ((ability === "천하장사" || ability === "순수한힘") && config.category === "physical") {
+            modifiers.push({ label: `${ability} x2.00`, multiplier: 2 });
+        }
+        if (ability === "맹화" && config.attackerLowHp && config.moveType === "fire") {
+            modifiers.push({ label: "맹화 x1.50", multiplier: 1.5 });
+        }
+        if (ability === "급류" && config.attackerLowHp && config.moveType === "water") {
+            modifiers.push({ label: "급류 x1.50", multiplier: 1.5 });
+        }
+        if (ability === "심록" && config.attackerLowHp && config.moveType === "grass") {
+            modifiers.push({ label: "심록 x1.50", multiplier: 1.5 });
+        }
+        if (ability === "선파워" && config.weather === "sun" && config.category === "special") {
+            modifiers.push({ label: "선파워 x1.50", multiplier: 1.5 });
+        }
+        if (ability === "근성" && config.attackerStatus && config.category === "physical") {
+            modifiers.push({ label: "근성 x1.50", multiplier: 1.5 });
+        }
+        if (item === "구애머리띠" && config.category === "physical") {
+            modifiers.push({ label: "구애머리띠 x1.50", multiplier: 1.5 });
+        }
+        if (item === "구애안경" && config.category === "special") {
+            modifiers.push({ label: "구애안경 x1.50", multiplier: 1.5 });
+        }
+        if (item === "생명의구슬") {
+            modifiers.push({ label: "생명의구슬 x1.30", multiplier: 1.3 });
+        }
+        if (item === "전문가벨트" && config.effectiveness > 1) {
+            modifiers.push({ label: "전문가벨트 x1.20", multiplier: 1.2 });
+        }
+        if (item === "힘의머리띠" && config.category === "physical") {
+            modifiers.push({ label: "힘의머리띠 x1.10", multiplier: 1.1 });
+        }
+        if (item === "박식안경" && config.category === "special") {
+            modifiers.push({ label: "박식안경 x1.10", multiplier: 1.1 });
+        }
+        if (TYPE_BOOSTER_ITEMS[config.moveType] && item === TYPE_BOOSTER_ITEMS[config.moveType]) {
+            modifiers.push({ label: `${item} x1.20`, multiplier: 1.2 });
+        }
+        if (config.otherModifier !== 1) {
+            modifiers.push({ label: `기타 x${config.otherModifier.toFixed(2)}`, multiplier: config.otherModifier });
+        }
+
+        return modifiers;
+    }
+    function getDefenseModifierDetails(config) {
+        const modifiers = [];
+        const ability = config.defenseAbility;
+        const item = config.defenseItem;
+
+        if (ability === "두꺼운지방" && (config.moveType === "fire" || config.moveType === "ice")) {
+            modifiers.push({ label: "두꺼운지방 x0.50", multiplier: 0.5 });
+        }
+        if ((ability === "필터" || ability === "하드록" || ability === "프리즘아머") && config.effectiveness > 1) {
+            modifiers.push({ label: `${ability} x0.75`, multiplier: 0.75 });
+        }
+        if (ability === "멀티스케일" && config.defenderFullHp) {
+            modifiers.push({ label: "멀티스케일 x0.50", multiplier: 0.5 });
+        }
+        if (ability === "퍼코트" && config.category === "physical") {
+            modifiers.push({ label: "퍼코트 x0.50", multiplier: 0.5 });
+        }
+        if (item === "돌격조끼" && config.category === "special") {
+            modifiers.push({ label: "돌격조끼 x0.67", multiplier: 1 / 1.5 });
+        }
+        if (item === "진화의휘석") {
+            modifiers.push({ label: "진화의휘석 x0.67", multiplier: 1 / 1.5 });
+        }
+        if (RESIST_BERRY_TYPES[item] && RESIST_BERRY_TYPES[item] === config.moveType && config.effectiveness > 1) {
+            modifiers.push({ label: `${item} x0.50`, multiplier: 0.5 });
+        }
+
+        return modifiers;
+    }
+    function calculateCombinedMultiplier(modifiers) {
+        return modifiers.reduce((product, entry) => product * entry.multiplier, 1);
+    }
     function refreshSpeedSelects() {
         const validParty = getValidPartyMembers();
         const opponents = state.opponents.map((name) => window.PokeData.getPokemonByName(name)).filter(Boolean);
+        const damageOptions = buildDamageSourceOptions(validParty, opponents);
+        const previousAttackSource = refs.damageAttackSource ? refs.damageAttackSource.value : "";
+        const previousDefenseSource = refs.damageDefenseSource ? refs.damageDefenseSource.value : "";
         refs.mySpeedSelect.innerHTML = validParty.length > 0 ? validParty.map((member, index) => `<option value="${index}">${(getMemberBattleSpecies(member) || {}).displayKoName || (getMemberBattleSpecies(member) || {}).koName}</option>`).join("") : `<option value="">내 파티를 먼저 입력하세요</option>`;
         refs.enemySpeedSelect.innerHTML = opponents.length > 0 ? opponents.map((pokemon) => `<option value="${pokemon.name}">${pokemon.koName}</option>`).join("") : `<option value="">상대 포켓몬을 추가하세요</option>`;
+        if (refs.damageAttackSource && refs.damageDefenseSource) {
+            refs.damageAttackSource.innerHTML = damageOptions;
+            refs.damageDefenseSource.innerHTML = damageOptions;
+            refs.damageAttackSource.value = Array.from(refs.damageAttackSource.options).some((option) => option.value === previousAttackSource) ? previousAttackSource : "";
+            refs.damageDefenseSource.value = Array.from(refs.damageDefenseSource.options).some((option) => option.value === previousDefenseSource) ? previousDefenseSource : "";
+            updateDamageSourceNote("attack", resolveDamageSource(refs.damageAttackSource.value)?.note || "");
+            updateDamageSourceNote("defense", resolveDamageSource(refs.damageDefenseSource.value)?.note || "");
+            if (refs.damageAttackSource.value) {
+                applyDamageSource("attack");
+                const move = syncDamageMoveInput();
+                if (move) {
+                    applyDamageMoveDefaults(move);
+                }
+            }
+            if (refs.damageDefenseSource.value) { applyDamageSource("defense"); }
+        }
+    }
+    function calculateDamageRatio(power, attackStat, defenseStat, hpStat, randomFactor) {
+        return ((22 * power * attackStat) / ((defenseStat * 50) + 2) / hpStat) * randomFactor;
+    }
+    function classifyDamageRange(minRatio, maxRatio) {
+        if (minRatio >= 1) {
+            return "확정 1타";
+        }
+        if (maxRatio >= 1) {
+            return "난수 1타";
+        }
+        return "확정 2타 이상";
+    }
+    function calculateDamage() {
+        const selectedMoveKey = refs.damageMoveName.dataset.selectedMove || "";
+        const selectedMove = selectedMoveKey ? window.MoveData.getMove(selectedMoveKey) : null;
+        if (selectedMove && selectedMove.category === "status") {
+            setStatus("변화기는 데미지 계산 대상이 아닙니다. 공격기를 선택하거나 수치를 직접 입력해 주세요.", "error");
+            return;
+        }
+        const moveType = resolveDamageMoveType();
+        const category = refs.damageMoveCategory.value === "special" ? "special" : "physical";
+        const categoryLabel = category === "special" ? "특수" : "물리";
+        const power = clampNumber(refs.damageMovePower.value, 1, 999, 0);
+        const attackStat = clampNumber(category === "special" ? refs.damageAttackSpa.value : refs.damageAttackAtk.value, 1, 9999, 0);
+        const defenseStat = clampNumber(category === "special" ? refs.damageDefenseSpd.value : refs.damageDefenseDef.value, 1, 9999, 0);
+        const hpStat = clampNumber(refs.damageDefenseHp.value, 1, 9999, 0);
+        const otherModifier = Math.max(0, Number(refs.damageOtherModifier.value || 1) || 1);
+        const attackAbility = resolveSelectedAbility("attack");
+        const defenseAbility = resolveSelectedAbility("defense");
+        const attackItem = resolveSelectedItem("attack");
+        const defenseItem = resolveSelectedItem("defense");
+        const effectiveness = resolveEffectiveness(moveType);
+        const stabMultiplier = resolveStabMultiplier(moveType, attackAbility);
+
+        if (!moveType || !power || !attackStat || !defenseStat || !hpStat) {
+            setStatus("기술 타입, 위력, 공격측 실수치, 방어측 HP/방어 실수치를 모두 입력해 주세요.", "error");
+            return;
+        }
+
+        const config = {
+            moveType,
+            category,
+            power,
+            weather: refs.damageWeather.value || "",
+            screen: refs.damageScreen.value || "",
+            attackerLowHp: refs.damageAttackerLowHp.checked,
+            attackerStatus: refs.damageAttackerStatus.checked || refs.damageAttackerBurned.checked,
+            attackerBurned: refs.damageAttackerBurned.checked,
+            defenderFullHp: refs.damageDefenderFullHp.checked,
+            criticalHit: refs.damageCriticalHit.checked,
+            attackAbility,
+            defenseAbility,
+            attackItem,
+            defenseItem,
+            effectiveness,
+            stabMultiplier,
+            otherModifier
+        };
+        const attackModifiers = getAttackModifierDetails(config);
+        const defenseModifiers = getDefenseModifierDetails(config);
+        const allModifiers = attackModifiers.concat(defenseModifiers);
+        const totalModifier = calculateCombinedMultiplier(allModifiers);
+        const minRatio = calculateDamageRatio(power, attackStat, defenseStat, hpStat, DAMAGE_RANDOM_MIN) * totalModifier;
+        const maxRatio = calculateDamageRatio(power, attackStat, defenseStat, hpStat, DAMAGE_RANDOM_MAX) * totalModifier;
+        const minPercent = minRatio * 100;
+        const maxPercent = maxRatio * 100;
+        const minDamage = hpStat * minRatio;
+        const maxDamage = hpStat * maxRatio;
+        const verdict = classifyDamageRange(minRatio, maxRatio);
+        const typeLabel = window.TypeModule.toTypeLabel(moveType);
+        const modifierChips = [
+            `${categoryLabel} 계산`,
+            `${typeLabel} 타입`,
+            `위력 ${power}`,
+            `상성 x${effectiveness.toFixed(2)}`,
+            `총배율 x${totalModifier.toFixed(2)}`
+        ];
+        const notes = [];
+        if (defenseAbility === "옹골참" && refs.damageDefenderFullHp.checked && maxRatio >= 1) {
+            notes.push("방어측 특성이 옹골참이면 풀피 기준 1타를 버틸 수 있습니다.");
+        }
+        if (!resolveDamageSource(refs.damageDefenseSource.value) && refs.damageEffectiveness.value === "auto") {
+            notes.push("방어측 포켓몬을 불러오지 않은 상태라 상성 자동 계산은 1배로 처리했습니다.");
+        }
+        if (!resolveDamageSource(refs.damageAttackSource.value) && refs.damageStabMode.value === "auto") {
+            notes.push("공격측 포켓몬을 불러오지 않은 상태라 자속 자동 계산은 비적용으로 처리했습니다.");
+        }
+
+        refs.damageResult.className = "info-card";
+        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title"><strong>${verdict}</strong></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>최저 난수 0.85</strong><p class="recommend-reason">${minDamage.toFixed(1)} 데미지</p><p class="recommend-detail">HP의 ${minPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>최고 난수 1.00</strong><p class="recommend-reason">${maxDamage.toFixed(1)} 데미지</p><p class="recommend-detail">HP의 ${maxPercent.toFixed(2)}%</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}<p class="recommend-reason">기본식: 22 x 위력 x 공격실능 / ((방어실능 x 50) + 2) / HP실능 x 난수</p>${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
+        setStatus("데미지 계산을 갱신했습니다.", "success");
     }
     function compareSpeed() {
         const validParty = getValidPartyMembers();
@@ -1060,6 +1664,21 @@
         refs.resetEnemyBtn.addEventListener("click", resetOpponents);
         refs.enemyAnalyzeBtn.addEventListener("click", () => runRecommendation({ switchPage: true }));
         refs.compareSpeedBtn.addEventListener("click", compareSpeed);
+        refs.damageCalcBtn.addEventListener("click", calculateDamage);
+        refs.damageAttackSource.addEventListener("change", () => {
+            applyDamageSource("attack");
+            const move = syncDamageMoveInput();
+            if (move) {
+                applyDamageMoveDefaults(move);
+            }
+        });
+        refs.damageDefenseSource.addEventListener("change", () => applyDamageSource("defense"));
+        refs.damageMoveName.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                calculateDamage();
+            }
+        });
         refs.partyEditorSaveBtn.addEventListener("click", savePartySlot);
         refs.partyEditorBackBtn.addEventListener("click", closePartyEditor);
         refs.partyEditorFormToggle.addEventListener("click", (event) => {
@@ -1239,12 +1858,45 @@
         refs.enemySpeedSelect = document.getElementById("enemy-speed-select");
         refs.compareSpeedBtn = document.getElementById("compare-speed-btn");
         refs.speedResult = document.getElementById("speed-result");
+        refs.damageCalcBtn = document.getElementById("damage-calc-btn");
+        refs.damageAttackSource = document.getElementById("damage-attack-source");
+        refs.damageDefenseSource = document.getElementById("damage-defense-source");
+        refs.damageAttackSourceNote = document.getElementById("damage-attack-source-note");
+        refs.damageDefenseSourceNote = document.getElementById("damage-defense-source-note");
+        refs.damageAttackAtk = document.getElementById("damage-attack-atk");
+        refs.damageAttackSpa = document.getElementById("damage-attack-spa");
+        refs.damageDefenseHp = document.getElementById("damage-defense-hp");
+        refs.damageDefenseDef = document.getElementById("damage-defense-def");
+        refs.damageDefenseSpd = document.getElementById("damage-defense-spd");
+        refs.damageMoveName = document.getElementById("damage-move-name");
+        refs.damageMoveNote = document.getElementById("damage-move-note");
+        refs.damageMoveType = document.getElementById("damage-move-type");
+        refs.damageMoveCategory = document.getElementById("damage-move-category");
+        refs.damageMovePower = document.getElementById("damage-move-power");
+        refs.damageStabMode = document.getElementById("damage-stab-mode");
+        refs.damageEffectiveness = document.getElementById("damage-effectiveness");
+        refs.damageWeather = document.getElementById("damage-weather");
+        refs.damageScreen = document.getElementById("damage-screen");
+        refs.damageAttackAbility = document.getElementById("damage-attack-ability");
+        refs.damageDefenseAbility = document.getElementById("damage-defense-ability");
+        refs.damageAttackItem = document.getElementById("damage-attack-item");
+        refs.damageDefenseItem = document.getElementById("damage-defense-item");
+        refs.damageOtherModifier = document.getElementById("damage-other-modifier");
+        refs.damageAttackerLowHp = document.getElementById("damage-attacker-low-hp");
+        refs.damageAttackerStatus = document.getElementById("damage-attacker-status");
+        refs.damageAttackerBurned = document.getElementById("damage-attacker-burned");
+        refs.damageDefenderFullHp = document.getElementById("damage-defender-full-hp");
+        refs.damageCriticalHit = document.getElementById("damage-critical-hit");
+        refs.damageResult = document.getElementById("damage-result");
     }
     function init() {
         initRefs();
         initializeNatureInput();
+        refs.damageMoveType.innerHTML = window.TYPE_CHART_DATA.allTypes.map((type) => `<option value="${type}">${window.TypeModule.toTypeLabel(type)}</option>`).join("");
+        refs.damageMoveType.value = "normal";
         state.partySlots = Array.from({ length: PARTY_PRESET_COUNT }, (_, index) => createDefaultPartyBundle(index));
         applyCurrentParty(0);
+        attachDamageMoveAutocomplete();
         bindEvents();
         loadSavedParty();
         renderOpponentList();
