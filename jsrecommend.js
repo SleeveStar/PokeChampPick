@@ -998,11 +998,7 @@
             category: "style",
             seed: `${comboSeed}:combo:style`,
             chip: styleLabel,
-            variants: [
-                `${styleLabel} 성향이 분명해 세 마리를 함께 냈을 때 운영 흐름이 잘 이어집니다.`,
-                `전체적으로 ${styleLabel} 플랜이 뚜렷하게 보여 실전에서 굴리는 방식이 비교적 명확합니다.`,
-                `${styleLabel} 쪽으로 중심이 잡혀 있어 각 카드의 쓰임새가 자연스럽게 연결됩니다.`
-            ]
+            variants: getComboStyleVariants(styleLabel)
         });
         pushReasonCandidate(reasonCandidates, {
             enabled: stableMembers.length > 0,
@@ -1504,17 +1500,92 @@
         return getPrimaryStyleLabel(tags);
     }
 
+    function getComboStyleVariants(styleLabel) {
+        if (!styleLabel) {
+            return [];
+        }
+        if (styleLabel === "밸런스") {
+            return [
+                "한쪽에 과하게 치우치지 않아 기본 선출 안정감이 좋습니다.",
+                "극단적인 전개보다 넓은 대응 범위와 무난한 운영을 기대할 수 있습니다.",
+                "특정 한 축 올인보다 전반적인 대응력과 안정감을 우선한 조합입니다."
+            ];
+        }
+        return [
+            `${styleLabel} 성향이 분명해 세 마리를 함께 냈을 때 운영 흐름이 잘 이어집니다.`,
+            `전체적으로 ${styleLabel} 플랜이 뚜렷해 실전에서 굴리는 방식이 비교적 명확합니다.`,
+            `${styleLabel} 쪽으로 중심이 잡혀 있어 각 카드의 쓰임새가 자연스럽게 연결됩니다.`
+        ];
+    }
+
+    function getBattlePlanStyleVariants(styleLabel) {
+        if (!styleLabel) {
+            return [];
+        }
+        if (styleLabel === "밸런스") {
+            return [
+                "전체 조합은 한쪽에 치우치기보다 대면 대응과 운영 안정감을 함께 보는 편이 좋습니다.",
+                "이 조합은 특정 전개 강요보다 상황에 맞춰 선출 순서를 유연하게 잡는 편이 더 강합니다.",
+                "밸런스 조합이라 한 턴 이득보다 교체 순서와 대면 관리가 더 중요합니다."
+            ];
+        }
+        return [
+            `전체 조합은 ${styleLabel} 성향이라 턴 교환과 전개 순서를 미리 정해 두면 강점이 더 잘 살아납니다.`,
+            `${styleLabel} 흐름으로 굴릴 때 장점이 커서 턴 순서를 분명하게 잡는 편이 좋습니다.`,
+            `이 조합은 ${styleLabel} 플랜을 기준으로 잡아야 각 카드 가치가 가장 잘 드러납니다.`
+        ];
+    }
+
+    function chooseComboAnchors(combo) {
+        const members = combo || [];
+        if (members.length === 0) {
+            return { leadAnchor: null, pivotAnchor: null, cleanupAnchor: null };
+        }
+        if (members.length < 3) {
+            return {
+                leadAnchor: members.slice().sort((left, right) => right.leadFit - left.leadFit)[0] || null,
+                pivotAnchor: members.slice().sort((left, right) => right.pivotFit - left.pivotFit)[0] || null,
+                cleanupAnchor: members.slice().sort((left, right) => right.cleanupFit - left.cleanupFit)[0] || null
+            };
+        }
+
+        let best = null;
+        members.forEach((leadAnchor, leadIndex) => {
+            members.forEach((pivotAnchor, pivotIndex) => {
+                if (pivotIndex === leadIndex) {
+                    return;
+                }
+                members.forEach((cleanupAnchor, cleanupIndex) => {
+                    if (cleanupIndex === leadIndex || cleanupIndex === pivotIndex) {
+                        return;
+                    }
+                    const score = leadAnchor.leadFit + pivotAnchor.pivotFit + cleanupAnchor.cleanupFit;
+                    if (!best || score > best.score) {
+                        best = {
+                            score,
+                            leadAnchor,
+                            pivotAnchor,
+                            cleanupAnchor
+                        };
+                    }
+                });
+            });
+        });
+
+        return best || {
+            leadAnchor: members[0] || null,
+            pivotAnchor: members[1] || members[0] || null,
+            cleanupAnchor: members[2] || members[0] || null
+        };
+    }
+
     function buildComboSummary(combo, opponents) {
-        const leadAnchor = combo.slice().sort((left, right) => right.leadFit - left.leadFit)[0];
-        const pivotAnchor = combo.slice().sort((left, right) => right.pivotFit - left.pivotFit)[0];
-        const cleanupAnchor = combo.slice().sort((left, right) => right.cleanupFit - left.cleanupFit)[0];
+        const { leadAnchor, pivotAnchor, cleanupAnchor } = chooseComboAnchors(combo);
         return buildComboSummaryBundle(combo, opponents, leadAnchor, pivotAnchor, cleanupAnchor);
     }
 
     function evaluateCombo(combo, opponents) {
-        const leadAnchor = combo.slice().sort((left, right) => right.leadFit - left.leadFit)[0] || null;
-        const pivotAnchor = combo.slice().sort((left, right) => right.pivotFit - left.pivotFit)[0] || null;
-        const cleanupAnchor = combo.slice().sort((left, right) => right.cleanupFit - left.cleanupFit)[0] || null;
+        const { leadAnchor, pivotAnchor, cleanupAnchor } = chooseComboAnchors(combo);
         const summaryBundle = buildComboSummary(combo, opponents);
 
         return {
@@ -2110,11 +2181,7 @@
                 `${lead.species.koName} 선봉이 가장 무난하고 이후 운영 분기점도 만들기 쉽습니다.`
             ]));
         if (comboResult.styleLabel) {
-            lines.push(pickVariant(`${comboResult.combo.map((entry) => entry.species.name).join("|")}:plan:style`, [
-                `전체 조합은 ${comboResult.styleLabel} 성향이라 턴 교환과 전개 순서를 미리 정해 두면 강점이 더 잘 살아납니다.`,
-                `${comboResult.styleLabel} 흐름으로 굴릴 때 장점이 커서 턴 순서를 분명하게 잡는 편이 좋습니다.`,
-                `이 조합은 ${comboResult.styleLabel} 플랜을 기준으로 잡아야 각 카드 가치가 가장 잘 드러납니다.`
-            ]));
+            lines.push(pickVariant(`${comboResult.combo.map((entry) => entry.species.name).join("|")}:plan:style`, getBattlePlanStyleVariants(comboResult.styleLabel)));
         }
         lines.push(pickVariant(`${pivot.species.name}:${cleanup.species.name}:plan:midlate`, [
             `${pivot.species.koName}를 중반 축으로 두고 교체를 받아내며 판을 정리한 뒤 ${cleanup.species.koName}로 마무리 각을 보는 흐름이 가장 안정적입니다.`,
