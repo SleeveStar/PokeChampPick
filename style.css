@@ -1694,6 +1694,10 @@ select:focus {
     color: #1d7f74;
 }
 
+#damage-move-note {
+    margin-top: 8px;
+}
+
 .damage-result-grid {
     display: grid;
     gap: 12px;
