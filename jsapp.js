@@ -1337,12 +1337,12 @@
     }
     function getDamageStageShortLabel(source) {
         if (source === "attack-defense") {
-            return "공측 방랭";
+            return "공격측 방어 랭크업";
         }
         if (source === "defense-attack") {
-            return "상대 공랭";
+            return "상대 공격 랭크업";
         }
-        return "공랭";
+        return "공격 랭크업";
     }
     function getDamageAttackSourceMeta(moveKey, category) {
         if (usesAttackSideDefenseStat(moveKey)) {
@@ -1789,6 +1789,41 @@
     function calculateCombinedMultiplier(modifiers) {
         return modifiers.reduce((product, entry) => product * entry.multiplier, 1);
     }
+    function resolveAttackDecisionPowerPreview(selectedMove, category, attackContext, attackSourceMeta) {
+        if (!selectedMove || selectedMove.category === "status") {
+            return { value: null, note: "" };
+        }
+        if (attackSourceMeta.owner === "defense" && !resolveDamageBattleSpecies("defense")) {
+            return { value: null, note: "이 기술은 방어측 공격 실능을 참조하므로 방어측 입력 후 결정력이 표시됩니다." };
+        }
+        const power = clampNumber(refs.damageMovePower.value, 1, 999, 0);
+        if (!power || !attackContext.baseAttackStat) {
+            return { value: null, note: "" };
+        }
+        const attackAbility = resolveSelectedAbility("attack") || "";
+        const config = {
+            moveType: resolveDamageMoveType(),
+            category,
+            power,
+            weather: refs.damageWeather.value || "",
+            screen: refs.damageScreen.value || "",
+            attackerLowHp: refs.damageAttackerLowHp.checked,
+            attackerStatus: refs.damageAttackerStatus.checked || refs.damageAttackerBurned.checked,
+            attackerBurned: refs.damageAttackerBurned.checked,
+            criticalHit: refs.damageCriticalHit.checked,
+            attackAbility,
+            defenseAbility: resolveSelectedAbility("defense"),
+            attackItem: resolveSelectedItem("attack") || "",
+            defenseItem: resolveSelectedItem("defense"),
+            attackSource: attackSourceMeta.source,
+            effectiveness: resolveEffectiveness(resolveDamageMoveType()),
+            stabMultiplier: resolveStabMultiplier(resolveDamageMoveType(), attackAbility)
+        };
+        return {
+            value: Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config)),
+            note: ""
+        };
+    }
     function renderDamageMoveSummary() {
         const selectedMoveKey = refs.damageMoveName.dataset.selectedMove || "";
         const selectedMove = selectedMoveKey ? window.MoveData.getMove(selectedMoveKey) : null;
@@ -1858,40 +1893,20 @@
             const defenseAttackNatureModifier = getDamageNatureModifier("defense", "atk");
             const attackAbility = resolveSelectedAbility("attack") || "없음";
             const attackItem = resolveSelectedItem("attack") || "없음";
-            let decisionPower = null;
-            if (selectedMove && selectedMove.category !== "status") {
-                const config = {
-                    moveType: resolveDamageMoveType(),
-                    category,
-                    power: clampNumber(refs.damageMovePower.value, 1, 999, 0),
-                    weather: refs.damageWeather.value || "",
-                    screen: refs.damageScreen.value || "",
-                    attackerLowHp: refs.damageAttackerLowHp.checked,
-                    attackerStatus: refs.damageAttackerStatus.checked || refs.damageAttackerBurned.checked,
-                    attackerBurned: refs.damageAttackerBurned.checked,
-                    criticalHit: refs.damageCriticalHit.checked,
-                    attackAbility,
-                    defenseAbility: resolveSelectedAbility("defense"),
-                    attackItem,
-                    defenseItem: resolveSelectedItem("defense"),
-                    attackSource: attackSourceMeta.source,
-                    effectiveness: resolveEffectiveness(resolveDamageMoveType()),
-                    stabMultiplier: resolveStabMultiplier(resolveDamageMoveType(), attackAbility)
-                };
-                decisionPower = Math.round(attackContext.baseAttackStat * config.power * attackContext.stageMultiplier * getDecisionPowerModifier(config));
-            }
-            const attackChips = [`실공 ${attackStats.atk}`, `실특공 ${attackStats.spa}`, `실방 ${attackStats.def}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `특공 성격 x${formatDamageModifier(specialNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `랭크 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`, `특성 ${attackAbility}`, `아이템 ${attackItem}`];
+            const decisionPowerPreview = resolveAttackDecisionPowerPreview(selectedMove, category, attackContext, attackSourceMeta);
+            const decisionPower = decisionPowerPreview.value;
+            const attackChips = [`실공 ${attackStats.atk}`, `실특공 ${attackStats.spa}`, `실방 ${attackStats.def}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `특공 성격 x${formatDamageModifier(specialNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `공격 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`, `특성 ${attackAbility}`, `아이템 ${attackItem}`];
             if (attackSourceMeta.owner === "defense") {
-                attackChips.splice(6, 2, `상대 실공 ${defenseStats ? defenseStats.atk : "-"}`, `상대 공격 성격 x${formatDamageModifier(defenseAttackNatureModifier)}`, `상대 공랭 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
+                attackChips.splice(6, 2, `상대 실공 ${defenseStats ? defenseStats.atk : "-"}`, `상대 공격 성격 x${formatDamageModifier(defenseAttackNatureModifier)}`, `상대 공격 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
             }
             if (usesAttackSideDefenseStat(selectedMoveKey)) {
-                attackChips.splice(6, 2, `실방 ${attackContext.baseAttackStat}`, `방랭 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
+                attackChips.splice(6, 2, `실방 ${attackContext.baseAttackStat}`, `방어 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
             }
             if (decisionPower) {
                 attackChips.push(`결정력 ${decisionPower}`);
             }
             refs.damageAttackSummary.className = "damage-summary-card";
-            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${attackSourceMeta.summary} 실능을 사용합니다.</p><div class="damage-summary-stats">${renderMiniChips(attackChips, 2)}</div>`;
+            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${decisionPowerPreview.note || `${attackSourceMeta.summary} 실능을 사용합니다.`}</p><div class="damage-summary-stats">${renderMiniChips(attackChips, 2)}</div>`;
         }
 
         if (!defenseSpecies || !defenseStats) {
@@ -1911,9 +1926,9 @@
             const physicalBulk = calculateBulkScore(defenseStats.hp, defenseStats.def);
             const specialBulk = calculateBulkScore(defenseStats.hp, defenseStats.spd);
             const activeBulk = calculateBulkScore(defenseStats.hp, activeDefenseStat);
-            const defenseSummaryChips = [`HP ${defenseStats.hp}`, `실공 ${defenseStats.atk}`, `실방 ${defenseStats.def}`, `실특방 ${defenseStats.spd}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `특방 성격 x${formatDamageModifier(specialDefenseNatureModifier)}`, `방랭 ${formatStageLabel(defenseStage)} x${getStatStageMultiplier(defenseStage).toFixed(2)}`, `적용 ${getDamageStatLabel(defenseStatKey)} ${activeDefenseStat}`, `물리 내구 ${physicalBulk}`, `특수 내구 ${specialBulk}`, `현재 내구 ${activeBulk}`, `특성 ${defenseAbility}`, `아이템 ${defenseItem}`];
+            const defenseSummaryChips = [`HP ${defenseStats.hp}`, `실공 ${defenseStats.atk}`, `실방 ${defenseStats.def}`, `실특방 ${defenseStats.spd}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `특방 성격 x${formatDamageModifier(specialDefenseNatureModifier)}`, `방어 랭크업 ${formatStageLabel(defenseStage)} x${getStatStageMultiplier(defenseStage).toFixed(2)}`, `적용 ${getDamageStatLabel(defenseStatKey)} ${activeDefenseStat}`, `물리 내구 ${physicalBulk}`, `특수 내구 ${specialBulk}`, `현재 내구 ${activeBulk}`, `특성 ${defenseAbility}`, `아이템 ${defenseItem}`];
             if (usesDefenseSideAttackStat(selectedMoveKey)) {
-                defenseSummaryChips.splice(7, 0, `공랭 ${formatStageLabel(defenseAttackStage)} x${getStatStageMultiplier(defenseAttackStage).toFixed(2)}`, `속임수용 실공 ${activeDefenseAttackStat}`);
+                defenseSummaryChips.splice(7, 0, `공격 랭크업 ${formatStageLabel(defenseAttackStage)} x${getStatStageMultiplier(defenseAttackStage).toFixed(2)}`, `속임수용 실공 ${activeDefenseAttackStat}`);
             }
             refs.damageDefenseSummary.className = "damage-summary-card";
             refs.damageDefenseSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${defenseSpecies.displayKoName || defenseSpecies.koName}</strong><div class="type-row">${renderTypeBadges(defenseSpecies.types)}</div></div><p class="damage-summary-copy">${usesDefenseSidePhysicalDefense(selectedMoveKey) ? "특수기 기준 실방" : (defenseStatKey === "spd" ? "특수기 기준 실특방" : "물리기 기준 실방")}과 HP를 사용합니다.</p><div class="damage-summary-stats">${renderMiniChips(defenseSummaryChips, 2)}</div>`;
@@ -2086,7 +2101,7 @@
             `공격 ${attackStat}`,
             `방어 ${defenseStat}`,
             `${attackStageChipLabel} ${formatStageLabel(attackStage)}`,
-            `방랭 ${formatStageLabel(defenseStage)}`,
+            `방어 랭크업 ${formatStageLabel(defenseStage)}`,
             `상성 x${effectiveness.toFixed(2)}`,
             `총배율 x${totalModifier.toFixed(2)}`
         ];
@@ -2097,7 +2112,7 @@
             `결정력 ${decisionPower}`
         ];
         if (usesAttackSideDefenseStat(selectedMove.key)) {
-            statSummaryChips.unshift(`실방 ${attackContext.baseAttackStat}`, `방랭 x${attackContext.stageMultiplier.toFixed(2)}`);
+            statSummaryChips.unshift(`실방 ${attackContext.baseAttackStat}`, `방어 랭크업 x${attackContext.stageMultiplier.toFixed(2)}`);
         }
         const notes = [];
         if (defenseAbility === "옹골참" && maxRatio >= 1) {
