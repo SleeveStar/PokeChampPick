@@ -28351,6 +28351,11 @@
         getMovesForPokemon,
         searchMoves,
         resolveMoveForPokemon,
-        getMove: function (moveKey) { return moveKey ? MOVE_MAP[moveKey] || null : null; }
+        getMove: function (moveKey) {
+            if (!moveKey || !MOVE_MAP[moveKey]) {
+                return null;
+            }
+            return Object.assign({ key: moveKey }, MOVE_MAP[moveKey]);
+        }
     };
 })();

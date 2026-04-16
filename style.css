@@ -111,7 +111,7 @@ button {
     min-width: 0;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 50px;
     color: inherit;
     text-decoration: none;
 }
@@ -1454,6 +1454,15 @@ select:focus {
     width: 100%;
 }
 
+.recommend-title.is-split {
+    justify-content: space-between;
+}
+
+.damage-percent-range {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
 .recommend-reason,
 .combo-summary,
 .threat-text {
@@ -1530,16 +1539,48 @@ select:focus {
     margin: 18px 0 14px;
 }
 
-.damage-grid-meta {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    align-items: end;
+.damage-split-layout {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.58fr) minmax(0, 1fr);
+    margin: 18px 0 14px;
+}
+
+.damage-side-shell {
+    min-width: 0;
+    padding: 2px;
+    border-radius: 20px;
+}
+
+.attack-side-shell {
+    background: linear-gradient(160deg, rgba(224, 116, 88, 0.22), rgba(255, 255, 255, 0.65));
+}
+
+.defense-side-shell {
+    background: linear-gradient(160deg, rgba(72, 135, 207, 0.22), rgba(255, 255, 255, 0.65));
+}
+
+.damage-common-shell {
+    min-width: 0;
+}
+
+.damage-common-card {
+    height: 100%;
+    padding: 14px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(247, 250, 255, 0.98));
+    border: 1px solid rgba(86, 130, 160, 0.14);
+    box-shadow: 0 12px 28px rgba(39, 76, 101, 0.08);
 }
 
 .damage-grid-mods {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin: 0 0 12px;
 }
 
 .damage-side-card {
+    height: 100%;
     padding: 16px;
     border-radius: var(--radius-md);
     background: rgba(244, 249, 252, 0.96);
@@ -1548,21 +1589,109 @@ select:focus {
 
 .damage-side-head {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     margin-bottom: 12px;
 }
 
+.damage-side-head strong {
+    display: block;
+    font-size: 1.28rem;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
 .damage-stat-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 12px;
+}
+
+.damage-stat-grid-defense {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.damage-stat-grid > [hidden],
+.damage-stage-grid > [hidden] {
+    display: none !important;
+}
+
+.damage-stage-row {
+    margin-top: 12px;
+}
+
+.damage-stage-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.damage-side-config-grid {
     display: grid;
     gap: 12px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 12px;
 }
 
-.damage-stat-grid-defense {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+.damage-ev-field {
+    display: grid;
+    gap: 8px;
+}
+
+.damage-ev-actions {
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.damage-ev-btn {
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 0.86rem;
+}
+
+.damage-summary-card {
+    margin-top: 12px;
+    min-height: 78px;
+    border-radius: 14px;
+    border: 1px solid rgba(86, 130, 160, 0.12);
+    background: rgba(255, 255, 255, 0.96);
+    padding: 14px;
+    display: grid;
+    gap: 8px;
+}
+
+.damage-summary-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.damage-summary-title {
+    margin: 0;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.damage-summary-copy {
+    margin: 0;
+    color: var(--text-soft);
+    line-height: 1.55;
+}
+
+.damage-summary-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.damage-summary-card .mini-chip.is-accent {
+    background: rgba(47, 159, 146, 0.14);
+    color: #1d7f74;
 }
 
 .damage-result-grid {
@@ -1574,9 +1703,13 @@ select:focus {
 
 .damage-toggle-grid {
     display: grid;
-    gap: 10px 14px;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-bottom: 14px;
+    gap: 8px;
+    grid-template-columns: 1fr;
+    margin-bottom: 12px;
+}
+
+.damage-calc-btn {
+    width: 100%;
 }
 
 .speed-number {
@@ -1717,6 +1850,7 @@ select:focus {
     .layout-grid,
     .result-grid,
     .speed-grid,
+    .damage-split-layout,
     .damage-grid,
     .damage-toggle-grid,
     .damage-result-grid,
@@ -1745,9 +1879,19 @@ select:focus {
         align-items: flex-start;
     }
 
-    .damage-stat-grid,
-    .damage-stat-grid-defense {
+    .damage-split-layout {
         grid-template-columns: 1fr;
+    }
+
+    .damage-stat-grid,
+    .damage-stat-grid-defense,
+    .damage-side-config-grid,
+    .damage-stage-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .damage-ev-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .enemy-action-stack {

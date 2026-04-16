@@ -133,6 +133,12 @@
         "플카열매": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/yache-berry.png"
     };
     const ITEM_OPTIONS = Object.keys(CORE_ITEM_SPRITES).concat(MEGA_STONE_ITEMS, BERRY_ITEMS);
+    const DAMAGE_UNSUPPORTED_ITEMS = new Set([
+        "생명의구슬",
+        "구애머리띠",
+        "구애안경"
+    ]);
+    const DAMAGE_ITEM_OPTIONS = ITEM_OPTIONS.filter((itemName) => !DAMAGE_UNSUPPORTED_ITEMS.has(itemName));
     const ITEM_IMAGE_FALLBACK = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='18' fill='%23f7fbff'/%3E%3Cpath d='M25 33h46l-5 38H30z' fill='%23ffffff' stroke='%23d2dce4' stroke-width='4'/%3E%3Cpath d='M34 33c0-8 6-14 14-14s14 6 14 14' fill='none' stroke='%2398aec0' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M38 45h20' stroke='%23ef7588' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E";
     const refs = {};
     const state = {
@@ -232,6 +238,15 @@
         "psychic-fangs", "cross-poison", "x-scissor", "megahorn", "rage-fist", "shadow-claw",
         "aqua-tail", "acrobatics", "superpower", "high-horsepower", "earthquake", "flame-charge",
         "trailblaze", "beak-blast", "avalanche", "crabhammer", "wild-charge", "facade", "return"
+    ]);
+    const DAMAGE_DEFENSE_AS_ATTACK_MOVE_KEYS = new Set([
+        "body-press"
+    ]);
+    const DAMAGE_TARGET_ATTACK_AS_ATTACK_MOVE_KEYS = new Set([
+        "foul-play"
+    ]);
+    const DAMAGE_SPECIAL_DEFENSE_ON_DEFENSE_MOVE_KEYS = new Set([
+        "psyshock"
     ]);
     const DAMAGE_SPECIAL_MOVE_KEYS = new Set([
         "hydro-pump", "surf", "scald", "moonblast", "shadow-ball", "draco-meteor", "dragon-pulse",
@@ -1129,15 +1144,17 @@
                 refs.damageMoveName.value = entry.label;
                 refs.damageMoveName.dataset.selectedMove = entry.value;
                 applyDamageMoveDefaults(entry.move);
+                refreshDamageCalculator();
             },
             onInputChange: () => {
                 refs.damageMoveName.dataset.selectedMove = "";
+                applyDamageMoveDefaults(null);
+                refreshDamageCalculator();
             },
             onCommit: () => {
                 const move = syncDamageMoveInput();
-                if (move) {
-                    applyDamageMoveDefaults(move);
-                }
+                applyDamageMoveDefaults(move);
+                refreshDamageCalculator();
             }
         });
     }
@@ -1199,40 +1216,6 @@
         refs.typeCard.className = "info-card";
         refs.typeCard.innerHTML = `<div class="recommend-topline"><div class="recommend-title"><strong>${pokemon.koName}</strong></div><div class="type-row">${renderTypeBadges(pokemon.types)}</div></div><div class="combo-members"><div class="combo-member"><strong>약점</strong><div class="type-row">${summary.weaknesses.length > 0 ? summary.weaknesses.map((entry) => `<span class="type-badge" data-type="${entry.type}">${window.TypeModule.toTypeLabel(entry.type)} x${entry.multiplier}</span>`).join("") : "<span class='member-help'>눈에 띄는 약점이 적습니다.</span>"}</div></div><div class="combo-member"><strong>반감</strong><div class="type-row">${summary.resistances.length > 0 ? summary.resistances.map((entry) => `<span class="type-badge" data-type="${entry.type}">${window.TypeModule.toTypeLabel(entry.type)} x${entry.multiplier}</span>`).join("") : "<span class='member-help'>반감 타입이 많지 않습니다.</span>"}</div></div><div class="combo-member"><strong>무효</strong><div class="type-row">${summary.immunities.length > 0 ? summary.immunities.map((type) => `<span class="type-badge" data-type="${type}">${window.TypeModule.toTypeLabel(type)}</span>`).join("") : "<span class='member-help'>무효 타입이 없습니다.</span>"}</div></div></div>`;
     }
-    function buildNeutralStatProfile(species) {
-        if (!species || !species.baseStats) {
-            return null;
-        }
-        return window.SpeedModule.calculateLevel50Stats(species.baseStats, {
-            nature: "hardy",
-            level: DAMAGE_LEVEL,
-            evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
-            ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
-        });
-    }
-    function buildDamageSourceOptions(validParty, opponents) {
-        const options = [`<option value="">직접 입력</option>`];
-
-        if (validParty.length > 0) {
-            options.push(`<optgroup label="내 파티">`);
-            validParty.forEach((member, index) => {
-                const species = getMemberBattleSpecies(member);
-                if (!species) { return; }
-                options.push(`<option value="party:${index}">${species.displayKoName || species.koName} 저장값</option>`);
-            });
-            options.push(`</optgroup>`);
-        }
-
-        if (opponents.length > 0) {
-            options.push(`<optgroup label="상대 기본치">`);
-            opponents.forEach((pokemon) => {
-                options.push(`<option value="opponent:${pokemon.name}">${pokemon.koName} 중립/무포인트</option>`);
-            });
-            options.push(`</optgroup>`);
-        }
-
-        return options.join("");
-    }
     function getMovePowerGuess(move) {
         if (!move) {
             return 80;
@@ -1268,9 +1251,254 @@
         }
         return attackStats && attackStats.spa > attackStats.atk ? "special" : "physical";
     }
+    function buildDamageNatureOptions() {
+        return NATURE_ENTRIES.map((entry) => `<option value="${entry.value}">${entry.label || "무보정"}</option>`).join("");
+    }
+    function buildDamageStageOptions() {
+        return Array.from({ length: 13 }, (_, index) => {
+            const value = index - 6;
+            const label = value > 0 ? `+${value}` : String(value);
+            const selected = value === 0 ? " selected" : "";
+            return `<option value="${value}"${selected}>${label}</option>`;
+        }).join("");
+    }
+    function resolveDamagePokemon(side) {
+        const input = side === "attack" ? refs.damageAttackName : refs.damageDefenseName;
+        return input ? window.PokeData.resolvePokemon(input.dataset.selectedName || input.value) : null;
+    }
+    function syncDamagePokemonInput(side) {
+        const input = side === "attack" ? refs.damageAttackName : refs.damageDefenseName;
+        const resolved = resolveDamagePokemon(side);
+        if (!input) {
+            return null;
+        }
+        if (!resolved) {
+            input.dataset.selectedName = "";
+            return null;
+        }
+        input.value = resolved.displayKoName || resolved.koName;
+        input.dataset.selectedName = resolved.canonicalName || resolved.name;
+        return resolved;
+    }
+    function normalizeMegaStoneLabel(value) {
+        return String(value || "").replace(/\s+/g, "").replace(/^메가/, "");
+    }
+    function resolveMegaDamageSpecies(species, itemName) {
+        if (!species || !species.mega || !species.mega.isMegaCapable) {
+            return species;
+        }
+        const normalizedItem = normalizeMegaStoneLabel(itemName);
+        const normalizedName = normalizeMegaStoneLabel(species.displayKoName || species.koName);
+        if (!normalizedItem || !normalizedName || !normalizedItem.startsWith(normalizedName)) {
+            return species;
+        }
+        return window.PokeData.getPokemonByName(species.mega.megaName) || species;
+    }
+    function resolveDamageBattleSpecies(side) {
+        const species = resolveDamagePokemon(side);
+        if (!species) {
+            return null;
+        }
+        return resolveMegaDamageSpecies(species, resolveSelectedItem(side));
+    }
+    function resolveDamageNature(side) {
+        const control = side === "attack" ? refs.damageAttackNature : refs.damageDefenseNature;
+        return sanitizeNature(control ? control.value : "") || "hardy";
+    }
+    function usesAttackSideDefenseStat(moveKey) {
+        return DAMAGE_DEFENSE_AS_ATTACK_MOVE_KEYS.has(String(moveKey || ""));
+    }
+    function usesDefenseSideAttackStat(moveKey) {
+        return DAMAGE_TARGET_ATTACK_AS_ATTACK_MOVE_KEYS.has(String(moveKey || ""));
+    }
+    function usesDefenseSidePhysicalDefense(moveKey) {
+        return DAMAGE_SPECIAL_DEFENSE_ON_DEFENSE_MOVE_KEYS.has(String(moveKey || ""));
+    }
+    function resolveDamageAttackSource(moveKey, category) {
+        if (usesAttackSideDefenseStat(moveKey)) {
+            return "attack-defense";
+        }
+        if (usesDefenseSideAttackStat(moveKey)) {
+            return "defense-attack";
+        }
+        return category === "special" ? "attack-special" : "attack";
+    }
+    function resolveDamageDefenseStatKey(moveKey, category) {
+        if (usesDefenseSidePhysicalDefense(moveKey)) {
+            return "def";
+        }
+        return category === "special" ? "spd" : "def";
+    }
+    function getDamageStatLabel(statKey) {
+        if (statKey === "atk") { return "실공"; }
+        if (statKey === "spa") { return "실특공"; }
+        if (statKey === "spd") { return "실특방"; }
+        return "실방";
+    }
+    function getDamageStageShortLabel(source) {
+        if (source === "attack-defense") {
+            return "공측 방랭";
+        }
+        if (source === "defense-attack") {
+            return "상대 공랭";
+        }
+        return "공랭";
+    }
+    function getDamageAttackSourceMeta(moveKey, category) {
+        if (usesAttackSideDefenseStat(moveKey)) {
+            return {
+                source: "attack-defense",
+                statKey: "def",
+                owner: "attack",
+                summary: "방어 실능 기반 기술 기준",
+                appliedLabel: "적용 실방"
+            };
+        }
+        if (usesDefenseSideAttackStat(moveKey)) {
+            return {
+                source: "defense-attack",
+                statKey: "atk",
+                owner: "defense",
+                summary: "방어측 공격 실능 기반 기술 기준",
+                appliedLabel: "적용 상대 실공"
+            };
+        }
+        return {
+            source: resolveDamageAttackSource(moveKey, category),
+            statKey: category === "special" ? "spa" : "atk",
+            owner: "attack",
+            summary: category === "special" ? "특수기 기준" : "물리기 기준",
+            appliedLabel: category === "special" ? "적용 실특공" : "적용 실공"
+        };
+    }
+    function resolveDamageStage(side) {
+        const control = side === "attack"
+            ? refs.damageAttackStage
+            : (side === "attack-defense"
+                ? refs.damageAttackDefenseStage
+                : (side === "defense-attack" ? refs.damageDefenseAttackStage : refs.damageDefenseStage));
+        return clampNumber(control ? control.value : 0, -6, 6, 0);
+    }
+    function syncDamageSpecialControls() {
+        const moveKey = refs.damageMoveName.dataset.selectedMove || "";
+        const showDefenseAttackControls = usesDefenseSideAttackStat(moveKey);
+        if (refs.damageDefenseAttackEvField) {
+            refs.damageDefenseAttackEvField.hidden = !showDefenseAttackControls;
+        }
+        if (refs.damageDefenseAttackStageField) {
+            refs.damageDefenseAttackStageField.hidden = !showDefenseAttackControls;
+        }
+    }
+    function updateDamageAbilityOptions(side) {
+        const control = side === "attack" ? refs.damageAttackAbility : refs.damageDefenseAbility;
+        const species = resolveDamageBattleSpecies(side);
+        if (!control) {
+            return;
+        }
+        const abilities = getAvailableAbilities(species);
+        if (!species || abilities.length === 0) {
+            control.innerHTML = `<option value="">포켓몬을 먼저 선택해 주세요.</option>`;
+            control.value = "";
+            control.disabled = true;
+            return;
+        }
+        const previousValue = control.value || "auto";
+        const resolvedValue = previousValue === "auto" ? "auto" : (resolveAbilityValue(species, previousValue) || "auto");
+        control.innerHTML = [`<option value="auto">자동(${abilities[0]})</option>`]
+            .concat(abilities.map((ability) => `<option value="${ability}">${ability}</option>`))
+            .join("");
+        control.value = resolvedValue;
+        control.disabled = false;
+    }
+    function syncDamageAbilityOptions() {
+        updateDamageAbilityOptions("attack");
+        updateDamageAbilityOptions("defense");
+    }
+    function formatDamageModifier(value) {
+        return Number(value || 1).toFixed(1);
+    }
+    function formatStageLabel(stage) {
+        const value = Number(stage || 0);
+        return value > 0 ? `+${value}` : String(value);
+    }
+    function getDamageNatureModifier(side, statKey) {
+        return window.SpeedModule.getNatureModifier(resolveDamageNature(side), statKey);
+    }
+    function getStatStageMultiplier(stage) {
+        const normalized = clampNumber(stage, -6, 6, 0);
+        if (normalized >= 0) {
+            return (2 + normalized) / 2;
+        }
+        return 2 / (2 + Math.abs(normalized));
+    }
+    function applyStatStage(statValue, stage) {
+        return Math.max(1, Math.floor(statValue * getStatStageMultiplier(stage)));
+    }
+    function resolveAttackAppliedStage(moveKey) {
+        if (usesAttackSideDefenseStat(moveKey)) {
+            return resolveDamageStage("attack-defense");
+        }
+        if (usesDefenseSideAttackStat(moveKey)) {
+            return resolveDamageStage("defense-attack");
+        }
+        return resolveDamageStage("attack");
+    }
+    function resolveDamageOffenseStats(species, category) {
+        if (!species) {
+            return null;
+        }
+        const offenseEv = clampNumber(refs.damageAttackEv.value, 0, EV_MAX, 0);
+        const defenseEv = clampNumber(refs.damageAttackDefenseEv.value, 0, EV_MAX, 0);
+        return window.SpeedModule.calculateLevel50Stats(species.baseStats, {
+            nature: resolveDamageNature("attack"),
+            level: DAMAGE_LEVEL,
+            evs: {
+                hp: 0,
+                atk: offenseEv,
+                def: defenseEv,
+                spa: offenseEv,
+                spd: 0,
+                spe: 0
+            },
+            ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
+        });
+    }
+    function resolveDamageOffenseGuessStats(species) {
+        if (!species) {
+            return null;
+        }
+        const offenseEv = clampNumber(refs.damageAttackEv.value, 0, EV_MAX, 0);
+        const defenseEv = clampNumber(refs.damageAttackDefenseEv.value, 0, EV_MAX, 0);
+        return window.SpeedModule.calculateLevel50Stats(species.baseStats, {
+            nature: resolveDamageNature("attack"),
+            level: DAMAGE_LEVEL,
+            evs: { hp: 0, atk: offenseEv, def: defenseEv, spa: offenseEv, spd: 0, spe: 0 },
+            ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
+        });
+    }
+    function resolveDamageDefenseStats(species, category) {
+        if (!species) {
+            return null;
+        }
+        const hpEv = clampNumber(refs.damageDefenseHpEv.value, 0, EV_MAX, 0);
+        const attackEv = clampNumber(refs.damageDefenseAttackEv.value, 0, EV_MAX, 0);
+        const defenseEv = clampNumber(refs.damageDefenseEv.value, 0, EV_MAX, 0);
+        return window.SpeedModule.calculateLevel50Stats(species.baseStats, {
+            nature: resolveDamageNature("defense"),
+            level: DAMAGE_LEVEL,
+            evs: {
+                hp: hpEv,
+                atk: attackEv,
+                def: defenseEv,
+                spa: 0,
+                spd: defenseEv,
+                spe: 0
+            },
+            ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
+        });
+    }
     function getDamageMoveSpecies() {
-        const source = resolveDamageSource(refs.damageAttackSource ? refs.damageAttackSource.value : "");
-        return source ? source.species : null;
+        return resolveDamagePokemon("attack");
     }
     function syncDamageMoveInput() {
         const species = getDamageMoveSpecies();
@@ -1284,140 +1512,71 @@
         return resolved;
     }
     function applyDamageMoveDefaults(move) {
-        const source = resolveDamageSource(refs.damageAttackSource ? refs.damageAttackSource.value : "");
-        const stats = source && source.stats ? source.stats : null;
+        const attackSpecies = resolveDamagePokemon("attack");
+        const stats = attackSpecies ? resolveDamageOffenseGuessStats(attackSpecies) : null;
         if (!move) {
-            refs.damageMoveNote.textContent = "기술명을 선택하면 타입, 분류, 위력을 자동 추정합니다. 자동값이 다르면 직접 수정해 주세요.";
+            refs.damageMoveType.value = "normal";
+            refs.damageMoveCategory.value = "physical";
+            refs.damageMovePower.value = "80";
+            refs.damageMoveNote.textContent = attackSpecies
+                ? "기술명을 선택하면 타입, 분류, 위력을 자동으로 반영합니다."
+                : "공격측 포켓몬을 먼저 고르면 해당 포켓몬의 기술만 자동완성됩니다.";
             return;
         }
         if (move.type) {
             refs.damageMoveType.value = move.type;
         }
         if (move.category === "status") {
-            refs.damageMoveNote.textContent = `${move.koName}는 변화기라 기본적으로 데미지 계산 대상이 아닙니다. 필요하면 값을 직접 수정해 주세요.`;
+            refs.damageMoveCategory.value = "status";
+            refs.damageMovePower.value = String(getMovePowerGuess(move));
+            refs.damageMoveNote.textContent = `${move.koName}는 변화기라 데미지 계산을 진행하지 않습니다.`;
             return;
         }
-        refs.damageMoveCategory.value = getMoveCategoryGuess(move, stats);
-        refs.damageMovePower.value = getMovePowerGuess(move);
-        refs.damageMoveNote.textContent = typeof move.power === "number" && move.category
-            ? `${move.koName} 메타데이터를 불러왔습니다.`
-            : `${move.koName} 기준 자동 추정값을 채웠습니다. 데이터가 없는 값은 직접 수정해 주세요.`;
-    }
-    function resolveDamageSource(token) {
-        const normalized = String(token || "");
-        if (!normalized) {
-            return null;
-        }
-
-        const [kind, rawValue] = normalized.split(":");
-        if (kind === "party") {
-            const validParty = getValidPartyMembers();
-            const member = validParty[Number(rawValue)];
-            const species = member ? getMemberBattleSpecies(member) : null;
-            if (!member || !species) {
-                return null;
-            }
-            return {
-                label: species.displayKoName || species.koName,
-                stats: window.SpeedModule.calculateLevel50Stats(species.baseStats, member),
-                species,
-                member,
-                note: `${species.displayKoName || species.koName} 저장된 실수치를 불러왔습니다.`
-            };
-        }
-
-        if (kind === "opponent") {
-            const species = window.PokeData.getPokemonByName(rawValue);
-            if (!species) {
-                return null;
-            }
-            return {
-                label: species.koName,
-                stats: buildNeutralStatProfile(species),
-                species,
-                member: null,
-                note: `${species.koName} 중립 성격 / 능력포인트 0 / 개체값 31 기준 실수치를 불러왔습니다.`
-            };
-        }
-
-        return null;
-    }
-    function updateDamageSourceNote(side, text) {
-        const node = side === "attack" ? refs.damageAttackSourceNote : refs.damageDefenseSourceNote;
-        if (!node) { return; }
-        node.textContent = text || "직접 실수치를 입력해 주세요.";
-    }
-    function applyDamageSource(side) {
-        const select = side === "attack" ? refs.damageAttackSource : refs.damageDefenseSource;
-        const source = resolveDamageSource(select ? select.value : "");
-
-        if (!source || !source.stats) {
-            updateDamageSourceNote(side, "");
-            if (side === "attack") {
-                refs.damageMoveName.dataset.selectedMove = "";
-                refs.damageMoveNote.textContent = "기술명을 선택하면 타입, 분류, 위력을 자동 추정합니다. 자동값이 다르면 직접 수정해 주세요.";
-            }
-            return;
-        }
-
-        if (side === "attack") {
-            refs.damageAttackAtk.value = source.stats.atk;
-            refs.damageAttackSpa.value = source.stats.spa;
-        } else {
-            refs.damageDefenseHp.value = source.stats.hp;
-            refs.damageDefenseDef.value = source.stats.def;
-            refs.damageDefenseSpd.value = source.stats.spd;
-        }
-        updateDamageSourceNote(side, source.note);
+        const category = getMoveCategoryGuess(move, stats);
+        const power = getMovePowerGuess(move);
+        refs.damageMoveCategory.value = category;
+        refs.damageMovePower.value = String(power);
+        refs.damageMoveNote.textContent = `${move.koName} 기준으로 타입, 분류, 위력을 자동 적용했습니다.`;
     }
     function resolveSelectedAbility(side) {
-        const source = resolveDamageSource(side === "attack" ? refs.damageAttackSource.value : refs.damageDefenseSource.value);
         const control = side === "attack" ? refs.damageAttackAbility : refs.damageDefenseAbility;
         if (!control) {
             return "";
         }
-        if (control.value !== "auto") {
-            return control.value || "";
+        const species = resolveDamagePokemon(side);
+        const abilities = getAvailableAbilities(species);
+        if (!species || abilities.length === 0) {
+            return "";
         }
-        return source && source.member ? (source.member.ability || "") : "";
+        if (control.value !== "auto") {
+            return resolveAbilityValue(species, control.value) || "";
+        }
+        return abilities[0] || "";
     }
     function resolveSelectedItem(side) {
-        const source = resolveDamageSource(side === "attack" ? refs.damageAttackSource.value : refs.damageDefenseSource.value);
         const control = side === "attack" ? refs.damageAttackItem : refs.damageDefenseItem;
         if (!control) {
             return "";
         }
-        if (control.value !== "auto") {
-            return control.value || "";
+        const normalized = String(control.value || "").trim().toLowerCase();
+        if (!normalized) {
+            return "";
         }
-        return source && source.member ? (source.member.item || "") : "";
+        return DAMAGE_ITEM_OPTIONS.find((entry) => entry.toLowerCase() === normalized) || "";
     }
     function resolveDamageMoveType() {
         return String(refs.damageMoveType.value || "").toLowerCase();
     }
     function resolveEffectiveness(moveType) {
-        if (refs.damageEffectiveness.value !== "auto") {
-            return Number(refs.damageEffectiveness.value || 1) || 1;
-        }
-        const defenseSource = resolveDamageSource(refs.damageDefenseSource.value);
-        if (!defenseSource || !defenseSource.species || !moveType) {
+        const defenseSpecies = resolveDamageBattleSpecies("defense");
+        if (!defenseSpecies || !moveType) {
             return 1;
         }
-        return window.TypeModule.getTypeMultiplier(moveType, defenseSource.species.types);
+        return window.TypeModule.getTypeMultiplier(moveType, defenseSpecies.types);
     }
     function resolveStabMultiplier(moveType, attackAbility) {
-        const stabMode = refs.damageStabMode.value || "auto";
-        const attackSource = resolveDamageSource(refs.damageAttackSource.value);
-        const attackTypes = attackSource && attackSource.species ? (attackSource.species.types || []) : [];
-        if (stabMode === "none") {
-            return 1;
-        }
-        if (stabMode === "stab") {
-            return 1.5;
-        }
-        if (stabMode === "adaptability") {
-            return 2;
-        }
+        const attackSpecies = resolveDamageBattleSpecies("attack");
+        const attackTypes = attackSpecies ? (attackSpecies.types || []) : [];
         const convertsType = attackAbility === "변환자재" || attackAbility === "리베로";
         const hasStab = convertsType || attackTypes.includes(moveType);
         if (!hasStab) {
@@ -1425,10 +1584,109 @@
         }
         return attackAbility === "적응력" ? 2 : 1.5;
     }
+    function calculateBulkScore(hpStat, defenseStat) {
+        const hp = Math.max(1, Number(hpStat || 0));
+        const defense = Math.max(1, Number(defenseStat || 0));
+        return Math.round((hp * defense) / 0.411);
+    }
+    function getDecisionPowerModifier(config) {
+        const modifiers = [];
+        const ability = config.attackAbility;
+        const item = config.attackItem;
+        const usesOwnPhysicalAttack = config.attackSource === "attack";
+
+        if (config.stabMultiplier > 1) {
+            modifiers.push(config.stabMultiplier);
+        }
+        if (config.effectiveness !== 1) {
+            modifiers.push(config.effectiveness);
+        }
+        if (config.criticalHit) {
+            let critMultiplier = 1.5;
+            if (ability === "스나이퍼") {
+                critMultiplier *= 1.5;
+            }
+            modifiers.push(critMultiplier);
+        }
+        if (config.weather === "sun") {
+            if (config.moveType === "fire") { modifiers.push(1.5); }
+            if (config.moveType === "water") { modifiers.push(0.5); }
+        }
+        if (config.weather === "rain") {
+            if (config.moveType === "water") { modifiers.push(1.5); }
+            if (config.moveType === "fire") { modifiers.push(0.5); }
+        }
+        if (config.attackerBurned && config.category === "physical" && ability !== "근성") {
+            modifiers.push(0.5);
+        }
+        if (ability === "테크니션" && config.power <= 60) {
+            modifiers.push(1.5);
+        }
+        if ((ability === "천하장사" || ability === "순수한힘") && config.category === "physical" && usesOwnPhysicalAttack) {
+            modifiers.push(2);
+        }
+        if (ability === "맹화" && config.attackerLowHp && config.moveType === "fire") {
+            modifiers.push(1.5);
+        }
+        if (ability === "급류" && config.attackerLowHp && config.moveType === "water") {
+            modifiers.push(1.5);
+        }
+        if (ability === "심록" && config.attackerLowHp && config.moveType === "grass") {
+            modifiers.push(1.5);
+        }
+        if (ability === "선파워" && config.weather === "sun" && config.category === "special") {
+            modifiers.push(1.5);
+        }
+        if (ability === "근성" && config.attackerStatus && config.category === "physical" && usesOwnPhysicalAttack) {
+            modifiers.push(1.5);
+        }
+        if (item === "전문가벨트" && config.effectiveness > 1) {
+            modifiers.push(1.2);
+        }
+        if (item === "힘의머리띠" && config.category === "physical") {
+            modifiers.push(1.1);
+        }
+        if (item === "박식안경" && config.category === "special") {
+            modifiers.push(1.1);
+        }
+        if (TYPE_BOOSTER_ITEMS[config.moveType] && item === TYPE_BOOSTER_ITEMS[config.moveType]) {
+            modifiers.push(1.2);
+        }
+        const referencedSourceModifier = getReferencedAttackSourceModifier(config);
+        if (referencedSourceModifier) {
+            modifiers.push(referencedSourceModifier.multiplier);
+        }
+        return modifiers.reduce((product, multiplier) => product * multiplier, 1);
+    }
+    function resolveDamageAttackContext(moveKey, category, attackStats, defenseStats) {
+        const attackSourceMeta = getDamageAttackSourceMeta(moveKey, category);
+        const attackStage = resolveAttackAppliedStage(moveKey);
+        const attackStatOwner = attackSourceMeta.owner === "defense" ? defenseStats : attackStats;
+        const baseAttackStat = attackStatOwner ? attackStatOwner[attackSourceMeta.statKey] : 0;
+        const stageMultiplier = getStatStageMultiplier(attackStage);
+        const activeAttackStat = baseAttackStat ? applyStatStage(baseAttackStat, attackStage) : 0;
+        return {
+            meta: attackSourceMeta,
+            stage: attackStage,
+            stageMultiplier,
+            baseAttackStat,
+            activeAttackStat
+        };
+    }
+    function getReferencedAttackSourceModifier(config) {
+        if (config.attackSource !== "defense-attack") {
+            return null;
+        }
+        if (config.defenseAbility === "천하장사" || config.defenseAbility === "순수한힘") {
+            return { label: `${config.defenseAbility} x2.00`, multiplier: 2 };
+        }
+        return null;
+    }
     function getAttackModifierDetails(config) {
         const modifiers = [];
         const ability = config.attackAbility;
         const item = config.attackItem;
+        const usesOwnPhysicalAttack = config.attackSource === "attack";
 
         if (config.stabMultiplier > 1) {
             modifiers.push({ label: `자속 x${config.stabMultiplier.toFixed(2)}`, multiplier: config.stabMultiplier });
@@ -1463,7 +1721,7 @@
         if (ability === "테크니션" && config.power <= 60) {
             modifiers.push({ label: "테크니션 x1.50", multiplier: 1.5 });
         }
-        if ((ability === "천하장사" || ability === "순수한힘") && config.category === "physical") {
+        if ((ability === "천하장사" || ability === "순수한힘") && config.category === "physical" && usesOwnPhysicalAttack) {
             modifiers.push({ label: `${ability} x2.00`, multiplier: 2 });
         }
         if (ability === "맹화" && config.attackerLowHp && config.moveType === "fire") {
@@ -1478,17 +1736,8 @@
         if (ability === "선파워" && config.weather === "sun" && config.category === "special") {
             modifiers.push({ label: "선파워 x1.50", multiplier: 1.5 });
         }
-        if (ability === "근성" && config.attackerStatus && config.category === "physical") {
+        if (ability === "근성" && config.attackerStatus && config.category === "physical" && usesOwnPhysicalAttack) {
             modifiers.push({ label: "근성 x1.50", multiplier: 1.5 });
-        }
-        if (item === "구애머리띠" && config.category === "physical") {
-            modifiers.push({ label: "구애머리띠 x1.50", multiplier: 1.5 });
-        }
-        if (item === "구애안경" && config.category === "special") {
-            modifiers.push({ label: "구애안경 x1.50", multiplier: 1.5 });
-        }
-        if (item === "생명의구슬") {
-            modifiers.push({ label: "생명의구슬 x1.30", multiplier: 1.3 });
         }
         if (item === "전문가벨트" && config.effectiveness > 1) {
             modifiers.push({ label: "전문가벨트 x1.20", multiplier: 1.2 });
@@ -1502,10 +1751,10 @@
         if (TYPE_BOOSTER_ITEMS[config.moveType] && item === TYPE_BOOSTER_ITEMS[config.moveType]) {
             modifiers.push({ label: `${item} x1.20`, multiplier: 1.2 });
         }
-        if (config.otherModifier !== 1) {
-            modifiers.push({ label: `기타 x${config.otherModifier.toFixed(2)}`, multiplier: config.otherModifier });
+        const referencedSourceModifier = getReferencedAttackSourceModifier(config);
+        if (referencedSourceModifier) {
+            modifiers.push(referencedSourceModifier);
         }
-
         return modifiers;
     }
     function getDefenseModifierDetails(config) {
@@ -1519,7 +1768,7 @@
         if ((ability === "필터" || ability === "하드록" || ability === "프리즘아머") && config.effectiveness > 1) {
             modifiers.push({ label: `${ability} x0.75`, multiplier: 0.75 });
         }
-        if (ability === "멀티스케일" && config.defenderFullHp) {
+        if (ability === "멀티스케일") {
             modifiers.push({ label: "멀티스케일 x0.50", multiplier: 0.5 });
         }
         if (ability === "퍼코트" && config.category === "physical") {
@@ -1540,58 +1789,250 @@
     function calculateCombinedMultiplier(modifiers) {
         return modifiers.reduce((product, entry) => product * entry.multiplier, 1);
     }
+    function renderDamageMoveSummary() {
+        const selectedMoveKey = refs.damageMoveName.dataset.selectedMove || "";
+        const selectedMove = selectedMoveKey ? window.MoveData.getMove(selectedMoveKey) : null;
+        const attackSpecies = resolveDamageBattleSpecies("attack");
+        const defenseSpecies = resolveDamageBattleSpecies("defense");
+        if (!selectedMove) {
+            refs.damageMoveSummary.className = "damage-summary-card empty-card";
+            refs.damageMoveSummary.textContent = "기술을 선택하면 타입, 분류, 위력과 자동 상성이 표시됩니다.";
+            return;
+        }
+
+        const moveType = resolveDamageMoveType();
+        const category = refs.damageMoveCategory.value;
+        const categoryLabel = category === "special" ? "특수" : (category === "physical" ? "물리" : "변화");
+        const power = clampNumber(refs.damageMovePower.value, 0, 999, 0);
+        const attackAbility = resolveSelectedAbility("attack");
+        const effectiveness = resolveEffectiveness(moveType);
+        const stabMultiplier = category === "status" ? 1 : resolveStabMultiplier(moveType, attackAbility);
+        const chips = [
+            `${window.TypeModule.toTypeLabel(moveType)} 타입`,
+            categoryLabel,
+            power > 0 ? `위력 ${power}` : "위력 없음",
+            `상성 x${effectiveness.toFixed(2)}`,
+            `자속 x${stabMultiplier.toFixed(2)}`
+        ];
+        const notes = [];
+        if (!attackSpecies) {
+            notes.push("공격측 포켓몬을 입력하면 자속도 자동 판정됩니다.");
+        }
+        if (!defenseSpecies) {
+            notes.push("방어측 포켓몬을 입력하면 상성이 자동 판정됩니다.");
+        }
+        if (selectedMove.category === "status" || category === "status") {
+            notes.push("변화기는 데미지 계산 대상이 아닙니다.");
+        }
+        if (usesAttackSideDefenseStat(selectedMove.key)) {
+            notes.push("이 기술은 공격측 방어 실능과 방어 랭크를 참조합니다.");
+        }
+        if (usesDefenseSideAttackStat(selectedMove.key)) {
+            notes.push("이 기술은 방어측 실공과 공격 랭크를 참조합니다.");
+        }
+        if (usesDefenseSidePhysicalDefense(selectedMove.key)) {
+            notes.push("이 기술은 특수기지만 방어측 실방을 기준으로 계산합니다.");
+        }
+        refs.damageMoveSummary.className = "damage-summary-card";
+        refs.damageMoveSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${selectedMove.koName}</strong><div class="type-row">${renderMiniChips(chips, 2)}</div></div><p class="damage-summary-copy">${notes.length > 0 ? notes.join(" ") : "기술 타입과 방어측 포켓몬 기준으로 상성이 자동 적용됩니다."}</p>`;
+    }
+    function renderDamageSideSummary() {
+        const category = refs.damageMoveCategory.value === "special" ? "special" : "physical";
+        const attackSpecies = resolveDamageBattleSpecies("attack");
+        const defenseSpecies = resolveDamageBattleSpecies("defense");
+        const selectedMoveKey = refs.damageMoveName.dataset.selectedMove || "";
+        const selectedMove = selectedMoveKey ? window.MoveData.getMove(selectedMoveKey) : null;
+        const defenseStatKey = resolveDamageDefenseStatKey(selectedMoveKey, category);
+        const attackStats = attackSpecies ? resolveDamageOffenseStats(attackSpecies, category) : null;
+        const defenseStats = defenseSpecies ? resolveDamageDefenseStats(defenseSpecies, category) : null;
+        const attackContext = resolveDamageAttackContext(selectedMoveKey, category, attackStats, defenseStats);
+        const attackSourceMeta = attackContext.meta;
+
+        if (!attackSpecies || !attackStats) {
+            refs.damageAttackSummary.className = "damage-summary-card empty-card";
+            refs.damageAttackSummary.textContent = "포켓몬과 기술을 선택하면 공격 실능이 자동 계산됩니다.";
+        } else {
+            const attackNatureModifier = getDamageNatureModifier("attack", "atk");
+            const specialNatureModifier = getDamageNatureModifier("attack", "spa");
+            const defenseNatureModifier = getDamageNatureModifier("attack", "def");
+            const defenseAttackNatureModifier = getDamageNatureModifier("defense", "atk");
+            const attackAbility = resolveSelectedAbility("attack") || "없음";
+            const attackItem = resolveSelectedItem("attack") || "없음";
+            let decisionPower = null;
+            if (selectedMove && selectedMove.category !== "status") {
+                const config = {
+                    moveType: resolveDamageMoveType(),
+                    category,
+                    power: clampNumber(refs.damageMovePower.value, 1, 999, 0),
+                    weather: refs.damageWeather.value || "",
+                    screen: refs.damageScreen.value || "",
+                    attackerLowHp: refs.damageAttackerLowHp.checked,
+                    attackerStatus: refs.damageAttackerStatus.checked || refs.damageAttackerBurned.checked,
+                    attackerBurned: refs.damageAttackerBurned.checked,
+                    criticalHit: refs.damageCriticalHit.checked,
+                    attackAbility,
+                    defenseAbility: resolveSelectedAbility("defense"),
+                    attackItem,
+                    defenseItem: resolveSelectedItem("defense"),
+                    attackSource: attackSourceMeta.source,
+                    effectiveness: resolveEffectiveness(resolveDamageMoveType()),
+                    stabMultiplier: resolveStabMultiplier(resolveDamageMoveType(), attackAbility)
+                };
+                decisionPower = Math.round(attackContext.baseAttackStat * config.power * attackContext.stageMultiplier * getDecisionPowerModifier(config));
+            }
+            const attackChips = [`실공 ${attackStats.atk}`, `실특공 ${attackStats.spa}`, `실방 ${attackStats.def}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `특공 성격 x${formatDamageModifier(specialNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `랭크 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`, `특성 ${attackAbility}`, `아이템 ${attackItem}`];
+            if (attackSourceMeta.owner === "defense") {
+                attackChips.splice(6, 2, `상대 실공 ${defenseStats ? defenseStats.atk : "-"}`, `상대 공격 성격 x${formatDamageModifier(defenseAttackNatureModifier)}`, `상대 공랭 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
+            }
+            if (usesAttackSideDefenseStat(selectedMoveKey)) {
+                attackChips.splice(6, 2, `실방 ${attackContext.baseAttackStat}`, `방랭 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
+            }
+            if (decisionPower) {
+                attackChips.push(`결정력 ${decisionPower}`);
+            }
+            refs.damageAttackSummary.className = "damage-summary-card";
+            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${attackSourceMeta.summary} 실능을 사용합니다.</p><div class="damage-summary-stats">${renderMiniChips(attackChips, 2)}</div>`;
+        }
+
+        if (!defenseSpecies || !defenseStats) {
+            refs.damageDefenseSummary.className = "damage-summary-card empty-card";
+            refs.damageDefenseSummary.textContent = "포켓몬과 기술을 선택하면 방어 실능과 HP가 자동 계산됩니다.";
+        } else {
+            const defenseStage = resolveDamageStage("defense");
+            const defenseAttackStage = resolveDamageStage("defense-attack");
+            const baseDefenseStat = defenseStats[defenseStatKey];
+            const activeDefenseStat = applyStatStage(baseDefenseStat, defenseStage);
+            const activeDefenseAttackStat = applyStatStage(defenseStats.atk, defenseAttackStage);
+            const attackNatureModifier = getDamageNatureModifier("defense", "atk");
+            const defenseNatureModifier = getDamageNatureModifier("defense", "def");
+            const specialDefenseNatureModifier = getDamageNatureModifier("defense", "spd");
+            const defenseAbility = resolveSelectedAbility("defense") || "없음";
+            const defenseItem = resolveSelectedItem("defense") || "없음";
+            const physicalBulk = calculateBulkScore(defenseStats.hp, defenseStats.def);
+            const specialBulk = calculateBulkScore(defenseStats.hp, defenseStats.spd);
+            const activeBulk = calculateBulkScore(defenseStats.hp, activeDefenseStat);
+            const defenseSummaryChips = [`HP ${defenseStats.hp}`, `실공 ${defenseStats.atk}`, `실방 ${defenseStats.def}`, `실특방 ${defenseStats.spd}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `특방 성격 x${formatDamageModifier(specialDefenseNatureModifier)}`, `방랭 ${formatStageLabel(defenseStage)} x${getStatStageMultiplier(defenseStage).toFixed(2)}`, `적용 ${getDamageStatLabel(defenseStatKey)} ${activeDefenseStat}`, `물리 내구 ${physicalBulk}`, `특수 내구 ${specialBulk}`, `현재 내구 ${activeBulk}`, `특성 ${defenseAbility}`, `아이템 ${defenseItem}`];
+            if (usesDefenseSideAttackStat(selectedMoveKey)) {
+                defenseSummaryChips.splice(7, 0, `공랭 ${formatStageLabel(defenseAttackStage)} x${getStatStageMultiplier(defenseAttackStage).toFixed(2)}`, `속임수용 실공 ${activeDefenseAttackStat}`);
+            }
+            refs.damageDefenseSummary.className = "damage-summary-card";
+            refs.damageDefenseSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${defenseSpecies.displayKoName || defenseSpecies.koName}</strong><div class="type-row">${renderTypeBadges(defenseSpecies.types)}</div></div><p class="damage-summary-copy">${usesDefenseSidePhysicalDefense(selectedMoveKey) ? "특수기 기준 실방" : (defenseStatKey === "spd" ? "특수기 기준 실특방" : "물리기 기준 실방")}과 HP를 사용합니다.</p><div class="damage-summary-stats">${renderMiniChips(defenseSummaryChips, 2)}</div>`;
+        }
+    }
     function refreshSpeedSelects() {
         const validParty = getValidPartyMembers();
         const opponents = state.opponents.map((name) => window.PokeData.getPokemonByName(name)).filter(Boolean);
-        const damageOptions = buildDamageSourceOptions(validParty, opponents);
-        const previousAttackSource = refs.damageAttackSource ? refs.damageAttackSource.value : "";
-        const previousDefenseSource = refs.damageDefenseSource ? refs.damageDefenseSource.value : "";
         refs.mySpeedSelect.innerHTML = validParty.length > 0 ? validParty.map((member, index) => `<option value="${index}">${(getMemberBattleSpecies(member) || {}).displayKoName || (getMemberBattleSpecies(member) || {}).koName}</option>`).join("") : `<option value="">내 파티를 먼저 입력하세요</option>`;
         refs.enemySpeedSelect.innerHTML = opponents.length > 0 ? opponents.map((pokemon) => `<option value="${pokemon.name}">${pokemon.koName}</option>`).join("") : `<option value="">상대 포켓몬을 추가하세요</option>`;
-        if (refs.damageAttackSource && refs.damageDefenseSource) {
-            refs.damageAttackSource.innerHTML = damageOptions;
-            refs.damageDefenseSource.innerHTML = damageOptions;
-            refs.damageAttackSource.value = Array.from(refs.damageAttackSource.options).some((option) => option.value === previousAttackSource) ? previousAttackSource : "";
-            refs.damageDefenseSource.value = Array.from(refs.damageDefenseSource.options).some((option) => option.value === previousDefenseSource) ? previousDefenseSource : "";
-            updateDamageSourceNote("attack", resolveDamageSource(refs.damageAttackSource.value)?.note || "");
-            updateDamageSourceNote("defense", resolveDamageSource(refs.damageDefenseSource.value)?.note || "");
-            if (refs.damageAttackSource.value) {
-                applyDamageSource("attack");
-                const move = syncDamageMoveInput();
-                if (move) {
-                    applyDamageMoveDefaults(move);
-                }
+        refreshDamageCalculator();
+    }
+    function calculateBaseDamage(power, attackStat, defenseStat) {
+        const levelFactor = Math.floor((2 * DAMAGE_LEVEL) / 5) + 2;
+        return Math.floor(((levelFactor * power * attackStat) / Math.max(1, defenseStat)) / 50) + 2;
+    }
+    function calculateDamageRolls(baseDamage, totalModifier) {
+        const rolls = [];
+        for (let percent = 85; percent <= 100; percent += 1) {
+            const randomFactor = percent / 100;
+            if (totalModifier === 0) {
+                rolls.push(0);
+                continue;
             }
-            if (refs.damageDefenseSource.value) { applyDamageSource("defense"); }
+            rolls.push(Math.max(1, Math.floor(baseDamage * totalModifier * randomFactor)));
         }
+        return rolls;
     }
-    function calculateDamageRatio(power, attackStat, defenseStat, hpStat, randomFactor) {
-        return ((22 * power * attackStat) / ((defenseStat * 50) + 2) / hpStat) * randomFactor;
-    }
-    function classifyDamageRange(minRatio, maxRatio) {
-        if (minRatio >= 1) {
-            return "확정 1타";
+    function calculateKoChance(rolls, hpStat, hits) {
+        let totals = new Map([[0, 1]]);
+        for (let hit = 0; hit < hits; hit += 1) {
+            const nextTotals = new Map();
+            totals.forEach((count, total) => {
+                rolls.forEach((roll) => {
+                    const nextTotal = total + roll;
+                    nextTotals.set(nextTotal, (nextTotals.get(nextTotal) || 0) + count);
+                });
+            });
+            totals = nextTotals;
         }
-        if (maxRatio >= 1) {
-            return "난수 1타";
-        }
-        return "확정 2타 이상";
+        const totalCases = Math.pow(rolls.length, hits);
+        let koCases = 0;
+        totals.forEach((count, total) => {
+            if (total >= hpStat) {
+                koCases += count;
+            }
+        });
+        return totalCases > 0 ? (koCases / totalCases) : 0;
     }
-    function calculateDamage() {
+    function classifyDamageRange(rolls, hpStat) {
+        for (let hits = 1; hits <= 8; hits += 1) {
+            const chance = calculateKoChance(rolls, hpStat, hits);
+            if (chance >= 1) {
+                return `확정 ${hits}타`;
+            }
+            if (chance > 0) {
+                return `난수 ${hits}타 (${(chance * 100).toFixed(1)}%)`;
+            }
+        }
+        return "9타 이상";
+    }
+    function renderDamagePlaceholder(message) {
+        refs.damageResult.className = "info-card empty-card";
+        refs.damageResult.textContent = message;
+    }
+    function resetDamageCalculatorDefaults() {
+        refs.damageAttackEv.value = "32";
+        refs.damageAttackDefenseEv.value = "0";
+        refs.damageDefenseHpEv.value = "0";
+        refs.damageDefenseAttackEv.value = "0";
+        refs.damageDefenseEv.value = "0";
+        refs.damageAttackItem.value = "";
+        refs.damageDefenseItem.value = "";
+        refs.damageWeather.value = "";
+        refs.damageScreen.value = "";
+        refs.damageAttackerLowHp.checked = false;
+        refs.damageAttackerStatus.checked = false;
+        refs.damageAttackerBurned.checked = false;
+        refs.damageCriticalHit.checked = false;
+    }
+    function setDamageEvValue(inputId, action) {
+        const input = document.getElementById(inputId);
+        if (!input) {
+            return;
+        }
+        input.value = action === "max" ? String(EV_MAX) : "0";
+        refreshDamageCalculator();
+    }
+    function refreshDamageCalculator() {
+        syncDamageAbilityOptions();
+        syncDamageSpecialControls();
+        renderDamageMoveSummary();
+        renderDamageSideSummary();
         const selectedMoveKey = refs.damageMoveName.dataset.selectedMove || "";
         const selectedMove = selectedMoveKey ? window.MoveData.getMove(selectedMoveKey) : null;
-        if (selectedMove && selectedMove.category === "status") {
-            setStatus("변화기는 데미지 계산 대상이 아닙니다. 공격기를 선택하거나 수치를 직접 입력해 주세요.", "error");
+        if (!resolveDamagePokemon("attack") || !resolveDamagePokemon("defense") || !selectedMove) {
+            renderDamagePlaceholder("공격측, 방어측, 기술을 모두 선택하면 결과가 바로 표시됩니다.");
+            return;
+        }
+        if (selectedMove.category === "status" || refs.damageMoveCategory.value === "status") {
+            renderDamagePlaceholder("변화기는 데미지 계산 대상이 아닙니다. 공격기를 선택해 주세요.");
             return;
         }
         const moveType = resolveDamageMoveType();
         const category = refs.damageMoveCategory.value === "special" ? "special" : "physical";
         const categoryLabel = category === "special" ? "특수" : "물리";
         const power = clampNumber(refs.damageMovePower.value, 1, 999, 0);
-        const attackStat = clampNumber(category === "special" ? refs.damageAttackSpa.value : refs.damageAttackAtk.value, 1, 9999, 0);
-        const defenseStat = clampNumber(category === "special" ? refs.damageDefenseSpd.value : refs.damageDefenseDef.value, 1, 9999, 0);
-        const hpStat = clampNumber(refs.damageDefenseHp.value, 1, 9999, 0);
-        const otherModifier = Math.max(0, Number(refs.damageOtherModifier.value || 1) || 1);
+        const attackSpecies = resolveDamageBattleSpecies("attack");
+        const defenseSpecies = resolveDamageBattleSpecies("defense");
+        const attackStats = resolveDamageOffenseStats(attackSpecies, category);
+        const defenseStats = resolveDamageDefenseStats(defenseSpecies, category);
+        const attackContext = resolveDamageAttackContext(selectedMove.key, category, attackStats, defenseStats);
+        const attackSourceMeta = attackContext.meta;
+        const defenseStatKey = resolveDamageDefenseStatKey(selectedMove.key, category);
+        const attackStage = attackContext.stage;
+        const defenseStage = resolveDamageStage("defense");
+        const attackStat = attackContext.activeAttackStat;
+        const defenseStat = applyStatStage(defenseStats[defenseStatKey], defenseStage);
+        const hpStat = defenseStats.hp;
         const attackAbility = resolveSelectedAbility("attack");
         const defenseAbility = resolveSelectedAbility("defense");
         const attackItem = resolveSelectedItem("attack");
@@ -1600,7 +2041,7 @@
         const stabMultiplier = resolveStabMultiplier(moveType, attackAbility);
 
         if (!moveType || !power || !attackStat || !defenseStat || !hpStat) {
-            setStatus("기술 타입, 위력, 공격측 실수치, 방어측 HP/방어 실수치를 모두 입력해 주세요.", "error");
+            renderDamagePlaceholder("입력값을 다시 확인해 주세요.");
             return;
         }
 
@@ -1613,49 +2054,61 @@
             attackerLowHp: refs.damageAttackerLowHp.checked,
             attackerStatus: refs.damageAttackerStatus.checked || refs.damageAttackerBurned.checked,
             attackerBurned: refs.damageAttackerBurned.checked,
-            defenderFullHp: refs.damageDefenderFullHp.checked,
             criticalHit: refs.damageCriticalHit.checked,
             attackAbility,
             defenseAbility,
             attackItem,
             defenseItem,
+            attackSource: attackSourceMeta.source,
             effectiveness,
-            stabMultiplier,
-            otherModifier
+            stabMultiplier
         };
         const attackModifiers = getAttackModifierDetails(config);
         const defenseModifiers = getDefenseModifierDetails(config);
         const allModifiers = attackModifiers.concat(defenseModifiers);
         const totalModifier = calculateCombinedMultiplier(allModifiers);
-        const minRatio = calculateDamageRatio(power, attackStat, defenseStat, hpStat, DAMAGE_RANDOM_MIN) * totalModifier;
-        const maxRatio = calculateDamageRatio(power, attackStat, defenseStat, hpStat, DAMAGE_RANDOM_MAX) * totalModifier;
+        const attackStageChipLabel = getDamageStageShortLabel(attackSourceMeta.source);
+        const decisionPower = Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config));
+        const baseDamage = calculateBaseDamage(power, attackStat, defenseStat);
+        const rolls = calculateDamageRolls(baseDamage, totalModifier);
+        const minDamage = rolls[0];
+        const maxDamage = rolls[rolls.length - 1];
+        const minRatio = minDamage / hpStat;
+        const maxRatio = maxDamage / hpStat;
         const minPercent = minRatio * 100;
         const maxPercent = maxRatio * 100;
-        const minDamage = hpStat * minRatio;
-        const maxDamage = hpStat * maxRatio;
-        const verdict = classifyDamageRange(minRatio, maxRatio);
+        const verdict = classifyDamageRange(rolls, hpStat);
         const typeLabel = window.TypeModule.toTypeLabel(moveType);
         const modifierChips = [
             `${categoryLabel} 계산`,
             `${typeLabel} 타입`,
             `위력 ${power}`,
+            `공격 ${attackStat}`,
+            `방어 ${defenseStat}`,
+            `${attackStageChipLabel} ${formatStageLabel(attackStage)}`,
+            `방랭 ${formatStageLabel(defenseStage)}`,
             `상성 x${effectiveness.toFixed(2)}`,
             `총배율 x${totalModifier.toFixed(2)}`
         ];
+        const statSummaryChips = [
+            `적용 공격 ${attackStat}`,
+            `적용 방어 ${defenseStat}`,
+            `HP ${hpStat}`,
+            `결정력 ${decisionPower}`
+        ];
+        if (usesAttackSideDefenseStat(selectedMove.key)) {
+            statSummaryChips.unshift(`실방 ${attackContext.baseAttackStat}`, `방랭 x${attackContext.stageMultiplier.toFixed(2)}`);
+        }
         const notes = [];
-        if (defenseAbility === "옹골참" && refs.damageDefenderFullHp.checked && maxRatio >= 1) {
+        if (defenseAbility === "옹골참" && maxRatio >= 1) {
             notes.push("방어측 특성이 옹골참이면 풀피 기준 1타를 버틸 수 있습니다.");
         }
-        if (!resolveDamageSource(refs.damageDefenseSource.value) && refs.damageEffectiveness.value === "auto") {
-            notes.push("방어측 포켓몬을 불러오지 않은 상태라 상성 자동 계산은 1배로 처리했습니다.");
-        }
-        if (!resolveDamageSource(refs.damageAttackSource.value) && refs.damageStabMode.value === "auto") {
-            notes.push("공격측 포켓몬을 불러오지 않은 상태라 자속 자동 계산은 비적용으로 처리했습니다.");
+        if (typeof selectedMove.power !== "number") {
+            notes.push("가변 위력기이거나 데이터가 없는 기술은 등록된 기본 추정 위력을 사용했습니다.");
         }
 
         refs.damageResult.className = "info-card";
-        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title"><strong>${verdict}</strong></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>최저 난수 0.85</strong><p class="recommend-reason">${minDamage.toFixed(1)} 데미지</p><p class="recommend-detail">HP의 ${minPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>최고 난수 1.00</strong><p class="recommend-reason">${maxDamage.toFixed(1)} 데미지</p><p class="recommend-detail">HP의 ${maxPercent.toFixed(2)}%</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}<p class="recommend-reason">기본식: 22 x 위력 x 공격실능 / ((방어실능 x 50) + 2) / HP실능 x 난수</p>${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
-        setStatus("데미지 계산을 갱신했습니다.", "success");
+        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title is-split"><strong>${verdict}</strong><span class="mini-chip damage-percent-range">HP ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</span></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>결정력</strong><p class="recommend-reason">${minDamage} ~ ${maxDamage} 데미지</p><p class="recommend-detail">HP의 ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>사용 실능</strong><p class="recommend-reason">${renderMiniChips(statSummaryChips)}</p><p class="recommend-detail">현재 입력 기준으로 실제 계산에 들어간 수치입니다.</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
     }
     function compareSpeed() {
         const validParty = getValidPartyMembers();
@@ -1707,20 +2160,19 @@
         refs.resetEnemyBtn.addEventListener("click", resetOpponents);
         refs.enemyAnalyzeBtn.addEventListener("click", () => runRecommendation({ switchPage: true }));
         refs.compareSpeedBtn.addEventListener("click", compareSpeed);
-        refs.damageCalcBtn.addEventListener("click", calculateDamage);
-        refs.damageAttackSource.addEventListener("change", () => {
-            applyDamageSource("attack");
-            const move = syncDamageMoveInput();
-            if (move) {
-                applyDamageMoveDefaults(move);
-            }
-        });
-        refs.damageDefenseSource.addEventListener("change", () => applyDamageSource("defense"));
+        refs.damageCalcBtn.addEventListener("click", refreshDamageCalculator);
         refs.damageMoveName.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {
                 event.preventDefault();
-                calculateDamage();
+                const move = syncDamageMoveInput();
+                applyDamageMoveDefaults(move);
+                refreshDamageCalculator();
             }
+        });
+        refs.damageMoveName.addEventListener("change", () => {
+            const move = syncDamageMoveInput();
+            applyDamageMoveDefaults(move);
+            refreshDamageCalculator();
         });
         refs.partyEditorSaveBtn.addEventListener("click", savePartySlot);
         refs.partyEditorBackBtn.addEventListener("click", closePartyEditor);
@@ -1837,6 +2289,97 @@
             refs.enemySearch.value = pokemon.koName;
             refs.enemySearch.dataset.selectedName = pokemon.name;
         } });
+        attachPokemonAutocomplete(refs.damageAttackName, { onSelect: (pokemon) => {
+            refs.damageAttackName.value = pokemon.displayKoName || pokemon.koName;
+            refs.damageAttackName.dataset.selectedName = pokemon.canonicalName || pokemon.name;
+            refs.damageMoveName.value = "";
+            refs.damageMoveName.dataset.selectedMove = "";
+            applyDamageMoveDefaults(null);
+            refreshDamageCalculator();
+        } });
+        attachPokemonAutocomplete(refs.damageDefenseName, { onSelect: (pokemon) => {
+            refs.damageDefenseName.value = pokemon.displayKoName || pokemon.koName;
+            refs.damageDefenseName.dataset.selectedName = pokemon.canonicalName || pokemon.name;
+            refreshDamageCalculator();
+        } });
+        attachTextAutocomplete(refs.damageAttackItem, DAMAGE_ITEM_OPTIONS, {
+            onPick: (value) => {
+                refs.damageAttackItem.value = value;
+                refreshDamageCalculator();
+            },
+            onInputChange: () => refreshDamageCalculator(),
+            onCommit: (value) => {
+                refs.damageAttackItem.value = DAMAGE_ITEM_OPTIONS.find((entry) => entry.toLowerCase() === String(value || "").trim().toLowerCase()) || "";
+                refreshDamageCalculator();
+            }
+        });
+        attachTextAutocomplete(refs.damageDefenseItem, DAMAGE_ITEM_OPTIONS, {
+            onPick: (value) => {
+                refs.damageDefenseItem.value = value;
+                refreshDamageCalculator();
+            },
+            onInputChange: () => refreshDamageCalculator(),
+            onCommit: (value) => {
+                refs.damageDefenseItem.value = DAMAGE_ITEM_OPTIONS.find((entry) => entry.toLowerCase() === String(value || "").trim().toLowerCase()) || "";
+                refreshDamageCalculator();
+            }
+        });
+        [
+            refs.damageAttackName,
+            refs.damageDefenseName
+        ].forEach((input, index) => {
+            const side = index === 0 ? "attack" : "defense";
+            input.addEventListener("change", () => {
+                syncDamagePokemonInput(side);
+                if (side === "attack") {
+                    refs.damageMoveName.value = "";
+                    refs.damageMoveName.dataset.selectedMove = "";
+                    applyDamageMoveDefaults(null);
+                }
+                refreshDamageCalculator();
+            });
+            input.addEventListener("input", () => {
+                if (side === "attack") {
+                    refs.damageMoveName.dataset.selectedMove = "";
+                    applyDamageMoveDefaults(null);
+                }
+                refreshDamageCalculator();
+            });
+        });
+        [
+            refs.damageAttackNature,
+            refs.damageAttackEv,
+            refs.damageAttackDefenseEv,
+            refs.damageAttackStage,
+            refs.damageAttackDefenseStage,
+            refs.damageDefenseNature,
+            refs.damageDefenseHpEv,
+            refs.damageDefenseAttackEv,
+            refs.damageDefenseEv,
+            refs.damageDefenseAttackStage,
+            refs.damageDefenseStage,
+            refs.damageWeather,
+            refs.damageScreen,
+            refs.damageAttackAbility,
+            refs.damageDefenseAbility,
+            refs.damageAttackItem,
+            refs.damageDefenseItem,
+            refs.damageAttackerLowHp,
+            refs.damageAttackerStatus,
+            refs.damageAttackerBurned,
+            refs.damageCriticalHit
+        ].forEach((control) => {
+            const eventName = control.tagName === "INPUT" && control.type === "number" ? "input" : "change";
+            control.addEventListener(eventName, refreshDamageCalculator);
+            if (eventName !== "input" && control.tagName === "INPUT") {
+                control.addEventListener("input", refreshDamageCalculator);
+            }
+        });
+        document.querySelectorAll("[data-damage-ev-action]").forEach((button) => {
+            button.addEventListener("click", () => {
+                setDamageEvValue(button.dataset.damageEvTarget, button.dataset.damageEvAction);
+            });
+        });
         refs.enemySearch.addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); addOpponent(); } });
         window.addEventListener("resize", updatePageVisibility);
         document.addEventListener("click", (event) => {
@@ -1907,41 +2450,57 @@
         refs.compareSpeedBtn = document.getElementById("compare-speed-btn");
         refs.speedResult = document.getElementById("speed-result");
         refs.damageCalcBtn = document.getElementById("damage-calc-btn");
-        refs.damageAttackSource = document.getElementById("damage-attack-source");
-        refs.damageDefenseSource = document.getElementById("damage-defense-source");
-        refs.damageAttackSourceNote = document.getElementById("damage-attack-source-note");
-        refs.damageDefenseSourceNote = document.getElementById("damage-defense-source-note");
-        refs.damageAttackAtk = document.getElementById("damage-attack-atk");
-        refs.damageAttackSpa = document.getElementById("damage-attack-spa");
-        refs.damageDefenseHp = document.getElementById("damage-defense-hp");
-        refs.damageDefenseDef = document.getElementById("damage-defense-def");
-        refs.damageDefenseSpd = document.getElementById("damage-defense-spd");
+        refs.damageAttackName = document.getElementById("damage-attack-name");
+        refs.damageAttackNature = document.getElementById("damage-attack-nature");
+        refs.damageAttackEv = document.getElementById("damage-attack-ev");
+        refs.damageAttackDefenseEv = document.getElementById("damage-attack-defense-ev");
+        refs.damageAttackStage = document.getElementById("damage-attack-stage");
+        refs.damageAttackDefenseStage = document.getElementById("damage-attack-defense-stage");
+        refs.damageAttackSummary = document.getElementById("damage-attack-summary");
+        refs.damageDefenseName = document.getElementById("damage-defense-name");
+        refs.damageDefenseNature = document.getElementById("damage-defense-nature");
+        refs.damageDefenseHpEv = document.getElementById("damage-defense-hp-ev");
+        refs.damageDefenseAttackEvField = document.getElementById("damage-defense-attack-ev-field");
+        refs.damageDefenseAttackEv = document.getElementById("damage-defense-attack-ev");
+        refs.damageDefenseEv = document.getElementById("damage-defense-ev");
+        refs.damageDefenseAttackStageField = document.getElementById("damage-defense-attack-stage-field");
+        refs.damageDefenseAttackStage = document.getElementById("damage-defense-attack-stage");
+        refs.damageDefenseStage = document.getElementById("damage-defense-stage");
+        refs.damageDefenseSummary = document.getElementById("damage-defense-summary");
         refs.damageMoveName = document.getElementById("damage-move-name");
+        refs.damageMoveSummary = document.getElementById("damage-move-summary");
         refs.damageMoveNote = document.getElementById("damage-move-note");
         refs.damageMoveType = document.getElementById("damage-move-type");
         refs.damageMoveCategory = document.getElementById("damage-move-category");
         refs.damageMovePower = document.getElementById("damage-move-power");
-        refs.damageStabMode = document.getElementById("damage-stab-mode");
-        refs.damageEffectiveness = document.getElementById("damage-effectiveness");
         refs.damageWeather = document.getElementById("damage-weather");
         refs.damageScreen = document.getElementById("damage-screen");
         refs.damageAttackAbility = document.getElementById("damage-attack-ability");
         refs.damageDefenseAbility = document.getElementById("damage-defense-ability");
         refs.damageAttackItem = document.getElementById("damage-attack-item");
         refs.damageDefenseItem = document.getElementById("damage-defense-item");
-        refs.damageOtherModifier = document.getElementById("damage-other-modifier");
         refs.damageAttackerLowHp = document.getElementById("damage-attacker-low-hp");
         refs.damageAttackerStatus = document.getElementById("damage-attacker-status");
         refs.damageAttackerBurned = document.getElementById("damage-attacker-burned");
-        refs.damageDefenderFullHp = document.getElementById("damage-defender-full-hp");
         refs.damageCriticalHit = document.getElementById("damage-critical-hit");
         refs.damageResult = document.getElementById("damage-result");
     }
     function init() {
         initRefs();
         initializeNatureInput();
-        refs.damageMoveType.innerHTML = window.TYPE_CHART_DATA.allTypes.map((type) => `<option value="${type}">${window.TypeModule.toTypeLabel(type)}</option>`).join("");
-        refs.damageMoveType.value = "normal";
+        refs.damageAttackNature.innerHTML = buildDamageNatureOptions();
+        refs.damageDefenseNature.innerHTML = buildDamageNatureOptions();
+        refs.damageAttackStage.innerHTML = buildDamageStageOptions();
+        refs.damageAttackDefenseStage.innerHTML = buildDamageStageOptions();
+        refs.damageDefenseAttackStage.innerHTML = buildDamageStageOptions();
+        refs.damageDefenseStage.innerHTML = buildDamageStageOptions();
+        refs.damageAttackNature.value = "hardy";
+        refs.damageDefenseNature.value = "hardy";
+        refs.damageAttackStage.value = "0";
+        refs.damageAttackDefenseStage.value = "0";
+        refs.damageDefenseAttackStage.value = "0";
+        refs.damageDefenseStage.value = "0";
+        resetDamageCalculatorDefaults();
         state.partySlots = Array.from({ length: PARTY_PRESET_COUNT }, (_, index) => createDefaultPartyBundle(index));
         applyCurrentParty(0);
         attachDamageMoveAutocomplete();
@@ -1950,6 +2509,8 @@
         renderOpponentList();
         renderTypeCard();
         refreshSpeedSelects();
+        applyDamageMoveDefaults(null);
+        refreshDamageCalculator();
         updatePartyEditorVisibility();
         updatePageVisibility();
     }
