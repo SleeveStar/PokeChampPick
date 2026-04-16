@@ -1902,11 +1902,9 @@
             if (usesAttackSideDefenseStat(selectedMoveKey)) {
                 attackChips.splice(6, 2, `실방 ${attackContext.baseAttackStat}`, `방어 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
             }
-            if (decisionPower) {
-                attackChips.push(`결정력 ${decisionPower}`);
-            }
+            const decisionPowerLine = decisionPower ? `<p class="recommend-reason"><strong>결정력 ${decisionPower}</strong></p>` : "";
             refs.damageAttackSummary.className = "damage-summary-card";
-            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${decisionPowerPreview.note || `${attackSourceMeta.summary} 실능을 사용합니다.`}</p><div class="damage-summary-stats">${renderMiniChips(attackChips, 2)}</div>`;
+            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${decisionPowerPreview.note || `${attackSourceMeta.summary} 실능을 사용합니다.`}</p>${decisionPowerLine}<div class="damage-summary-stats">${renderMiniChips(attackChips, 2)}</div>`;
         }
 
         if (!defenseSpecies || !defenseStats) {
