@@ -1633,6 +1633,7 @@ select:focus {
     gap: 12px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 12px;
+    margin-bottom: 12px;
 }
 
 .damage-ev-field {
