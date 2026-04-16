@@ -316,9 +316,9 @@
                         <span>내 포켓몬 선택</span>
                         <select id="my-speed-select"></select>
                     </label>
-                    <label class="field">
-                        <span>상대 포켓몬 선택</span>
-                        <select id="enemy-speed-select"></select>
+                    <label class="field autocomplete-shell">
+                        <span>상대 포켓몬 입력</span>
+                        <input id="enemy-speed-name" type="text" autocomplete="off" placeholder="상대 포켓몬">
                     </label>
                 </div>
                 <div id="speed-result" class="info-card empty-card">
@@ -354,8 +354,8 @@
                                     <div class="damage-ev-field">
                                         <input id="damage-attack-ev" type="number" min="0" max="32" step="1" value="32">
                                         <div class="damage-ev-actions">
-                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-ev" data-damage-ev-action="min">최소</button>
-                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-ev" data-damage-ev-action="max">최대</button>
+                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-ev" data-damage-ev-action="min">MIN</button>
+                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-ev" data-damage-ev-action="max">MAX</button>
                                         </div>
                                     </div>
                                 </div>
@@ -364,8 +364,8 @@
                                     <div class="damage-ev-field">
                                         <input id="damage-attack-defense-ev" type="number" min="0" max="32" step="1" value="0">
                                         <div class="damage-ev-actions">
-                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-defense-ev" data-damage-ev-action="min">최소</button>
-                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-defense-ev" data-damage-ev-action="max">최대</button>
+                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-defense-ev" data-damage-ev-action="min">MIN</button>
+                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-attack-defense-ev" data-damage-ev-action="max">MAX</button>
                                         </div>
                                     </div>
                                 </div>
@@ -454,8 +454,8 @@
                                     <div class="damage-ev-field">
                                         <input id="damage-defense-hp-ev" type="number" min="0" max="32" step="1" value="0">
                                         <div class="damage-ev-actions">
-                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-hp-ev" data-damage-ev-action="min">최소</button>
-                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-hp-ev" data-damage-ev-action="max">최대</button>
+                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-hp-ev" data-damage-ev-action="min">MIN</button>
+                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-hp-ev" data-damage-ev-action="max">MAX</button>
                                         </div>
                                     </div>
                                 </div>
@@ -464,8 +464,8 @@
                                     <div class="damage-ev-field">
                                         <input id="damage-defense-attack-ev" type="number" min="0" max="32" step="1" value="0">
                                         <div class="damage-ev-actions">
-                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-attack-ev" data-damage-ev-action="min">최소</button>
-                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-attack-ev" data-damage-ev-action="max">최대</button>
+                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-attack-ev" data-damage-ev-action="min">MIN</button>
+                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-attack-ev" data-damage-ev-action="max">MAX</button>
                                         </div>
                                     </div>
                                 </div>
@@ -474,8 +474,8 @@
                                     <div class="damage-ev-field">
                                         <input id="damage-defense-ev" type="number" min="0" max="32" step="1" value="0">
                                         <div class="damage-ev-actions">
-                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-ev" data-damage-ev-action="min">최소</button>
-                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-ev" data-damage-ev-action="max">최대</button>
+                                            <button class="ghost-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-ev" data-damage-ev-action="min">MIN</button>
+                                            <button class="primary-btn damage-ev-btn" type="button" data-damage-ev-target="damage-defense-ev" data-damage-ev-action="max">MAX</button>
                                         </div>
                                     </div>
                                 </div>

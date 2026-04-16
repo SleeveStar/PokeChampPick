@@ -1934,9 +1934,7 @@
     }
     function refreshSpeedSelects() {
         const validParty = getValidPartyMembers();
-        const opponents = state.opponents.map((name) => window.PokeData.getPokemonByName(name)).filter(Boolean);
         refs.mySpeedSelect.innerHTML = validParty.length > 0 ? validParty.map((member, index) => `<option value="${index}">${(getMemberBattleSpecies(member) || {}).displayKoName || (getMemberBattleSpecies(member) || {}).koName}</option>`).join("") : `<option value="">내 파티를 먼저 입력하세요</option>`;
-        refs.enemySpeedSelect.innerHTML = opponents.length > 0 ? opponents.map((pokemon) => `<option value="${pokemon.name}">${pokemon.koName}</option>`).join("") : `<option value="">상대 포켓몬을 추가하세요</option>`;
         refreshDamageCalculator();
     }
     function calculateBaseDamage(power, attackStat, defenseStat) {
@@ -2127,7 +2125,7 @@
         const validParty = getValidPartyMembers();
         const myMember = validParty[Number(refs.mySpeedSelect.value)];
         const myPokemon = myMember ? getMemberBattleSpecies(myMember) : null;
-        const enemyPokemon = refs.enemySpeedSelect.value ? window.PokeData.getPokemonByName(refs.enemySpeedSelect.value) : null;
+        const enemyPokemon = refs.enemySpeedName ? window.PokeData.resolvePokemon(refs.enemySpeedName.dataset.selectedName || refs.enemySpeedName.value) : null;
         if (!myPokemon || !enemyPokemon) { setStatus("스피드 비교를 위해 내 포켓몬과 상대 포켓몬을 각각 선택해 주세요.", "error"); return; }
         const comparison = window.SpeedModule.compareSpeed(myPokemon, myMember, enemyPokemon);
         const enemyPreset = enemyPokemon.speedPreset ? enemyPokemon.speedPreset.label : "기본 추정";
@@ -2302,6 +2300,10 @@
             refs.enemySearch.value = pokemon.koName;
             refs.enemySearch.dataset.selectedName = pokemon.name;
         } });
+        attachPokemonAutocomplete(refs.enemySpeedName, { onSelect: (pokemon) => {
+            refs.enemySpeedName.value = pokemon.displayKoName || pokemon.koName;
+            refs.enemySpeedName.dataset.selectedName = pokemon.canonicalName || pokemon.name;
+        } });
         attachPokemonAutocomplete(refs.damageAttackName, { onSelect: (pokemon) => {
             refs.damageAttackName.value = pokemon.displayKoName || pokemon.koName;
             refs.damageAttackName.dataset.selectedName = pokemon.canonicalName || pokemon.name;
@@ -2459,7 +2461,7 @@
         refs.overallSummary = document.getElementById("overall-summary");
         refs.planSummary = document.getElementById("plan-summary");
         refs.mySpeedSelect = document.getElementById("my-speed-select");
-        refs.enemySpeedSelect = document.getElementById("enemy-speed-select");
+        refs.enemySpeedName = document.getElementById("enemy-speed-name");
         refs.compareSpeedBtn = document.getElementById("compare-speed-btn");
         refs.speedResult = document.getElementById("speed-result");
         refs.damageCalcBtn = document.getElementById("damage-calc-btn");
