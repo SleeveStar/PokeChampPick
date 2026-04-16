@@ -1397,7 +1397,7 @@
         }
         const abilities = getAvailableAbilities(species);
         if (!species || abilities.length === 0) {
-            control.innerHTML = `<option value="">포켓몬을 먼저 선택해 주세요.</option>`;
+            control.innerHTML = `<option value="">포켓몬 선택</option>`;
             control.value = "";
             control.disabled = true;
             return;
