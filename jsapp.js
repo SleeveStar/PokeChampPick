@@ -493,9 +493,34 @@
         });
     }
     function closeMobileMenu() { state.mobileMenuOpen = false; updatePageVisibility(); }
-    function setCurrentPage(pageName) {
+    function isKnownPage(pageName) {
+        return refs.pagePanels.some((panel) => panel.dataset.page === pageName);
+    }
+    function syncPageHistory(pageName, replaceState) {
+        if (!window.history || typeof window.history.pushState !== "function") {
+            return;
+        }
+        const nextState = Object.assign({}, window.history.state || {}, { page: pageName });
+        if (replaceState) {
+            window.history.replaceState(nextState, "", window.location.href);
+            return;
+        }
+        if (window.history.state && window.history.state.page === pageName) {
+            return;
+        }
+        window.history.pushState(nextState, "", window.location.href);
+    }
+    function setCurrentPage(pageName, options) {
+        const config = options || {};
+        if (!isKnownPage(pageName)) {
+            return;
+        }
+        const isSamePage = state.currentPage === pageName;
         state.currentPage = pageName;
         closeMobileMenu();
+        if (!config.skipHistory && (!isSamePage || config.replaceState)) {
+            syncPageHistory(pageName, Boolean(config.replaceState));
+        }
         if (isMobileViewport()) {
             scrollToCurrentPagePanel();
         }
@@ -1980,17 +2005,29 @@
         });
         return totalCases > 0 ? (koCases / totalCases) : 0;
     }
-    function classifyDamageRange(rolls, hpStat) {
+    function analyzeDamageRange(rolls, hpStat) {
         for (let hits = 1; hits <= 8; hits += 1) {
             const chance = calculateKoChance(rolls, hpStat, hits);
             if (chance >= 1) {
-                return `확정 ${hits}타`;
+                return {
+                    label: `확정 ${hits}타`,
+                    hits,
+                    chance
+                };
             }
             if (chance > 0) {
-                return `난수 ${hits}타 (${(chance * 100).toFixed(1)}%)`;
+                return {
+                    label: `난수 ${hits}타 (${(chance * 100).toFixed(1)}%)`,
+                    hits,
+                    chance
+                };
             }
         }
-        return "9타 이상";
+        return {
+            label: "9타 이상",
+            hits: 9,
+            chance: 0
+        };
     }
     function renderDamagePlaceholder(message) {
         refs.damageResult.className = "info-card empty-card";
@@ -2094,7 +2131,10 @@
         const maxRatio = maxDamage / hpStat;
         const minPercent = minRatio * 100;
         const maxPercent = maxRatio * 100;
-        const verdict = classifyDamageRange(rolls, hpStat);
+        const rangeAnalysis = analyzeDamageRange(rolls, hpStat);
+        const verdict = rangeAnalysis.label;
+        const verdictMinPercent = minPercent * rangeAnalysis.hits;
+        const verdictMaxPercent = maxPercent * rangeAnalysis.hits;
         const typeLabel = window.TypeModule.toTypeLabel(moveType);
         const modifierChips = [
             `${categoryLabel} 계산`,
@@ -2125,7 +2165,7 @@
         }
 
         refs.damageResult.className = "info-card";
-        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title is-split"><strong>${verdict}</strong><span class="mini-chip damage-percent-range">HP ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</span></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>결정력</strong><p class="recommend-reason">${minDamage} ~ ${maxDamage} 데미지</p><p class="recommend-detail">HP의 ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>사용 실능</strong><p class="recommend-reason">${renderMiniChips(statSummaryChips)}</p><p class="recommend-detail">현재 입력 기준으로 실제 계산에 들어간 수치입니다.</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
+        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title is-split"><strong>${verdict}</strong><span class="mini-chip damage-percent-range">HP ${verdictMinPercent.toFixed(2)}% ~ ${verdictMaxPercent.toFixed(2)}%</span></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>결정력</strong><p class="recommend-reason">${minDamage} ~ ${maxDamage} 데미지</p><p class="recommend-detail">1타 기준 HP의 ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>사용 실능</strong><p class="recommend-reason">${renderMiniChips(statSummaryChips)}</p><p class="recommend-detail">현재 입력 기준으로 실제 계산에 들어간 수치입니다.</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
     }
     function compareSpeed() {
         const validParty = getValidPartyMembers();
@@ -2207,6 +2247,10 @@
         refs.pageNav.addEventListener("click", (event) => {
             const button = event.target.closest("[data-page-target]");
             if (button) { setCurrentPage(button.dataset.pageTarget); }
+        });
+        window.addEventListener("popstate", (event) => {
+            const nextPage = event.state && isKnownPage(event.state.page) ? event.state.page : "party";
+            setCurrentPage(nextPage, { skipHistory: true });
         });
         refs.partySwitcher.addEventListener("click", (event) => {
             const button = event.target.closest("[data-party-index]");
@@ -2530,10 +2574,10 @@
         renderOpponentList();
         renderTypeCard();
         refreshSpeedSelects();
+        setCurrentPage(isKnownPage(window.history.state && window.history.state.page) ? window.history.state.page : "party", { replaceState: true });
         applyDamageMoveDefaults(null);
         refreshDamageCalculator();
         updatePartyEditorVisibility();
-        updatePageVisibility();
     }
     window.addEventListener("DOMContentLoaded", init);
 })();
