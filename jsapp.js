@@ -1500,6 +1500,12 @@
     function getDamageMoveSpecies() {
         return resolveDamagePokemon("attack");
     }
+    function setDamageMoveNote(message) {
+        if (!refs.damageMoveNote) {
+            return;
+        }
+        refs.damageMoveNote.textContent = message;
+    }
     function syncDamageMoveInput() {
         const species = getDamageMoveSpecies();
         const resolved = species ? window.MoveData.resolveMoveForPokemon(species, refs.damageMoveName.dataset.selectedMove || refs.damageMoveName.value) : null;
@@ -1518,9 +1524,9 @@
             refs.damageMoveType.value = "normal";
             refs.damageMoveCategory.value = "physical";
             refs.damageMovePower.value = "80";
-            refs.damageMoveNote.textContent = attackSpecies
+            setDamageMoveNote(attackSpecies
                 ? "기술명을 선택하면 타입, 분류, 위력을 자동으로 반영합니다."
-                : "공격측 포켓몬을 먼저 고르면 해당 포켓몬의 기술만 자동완성됩니다.";
+                : "공격측 포켓몬을 먼저 고르면 해당 포켓몬의 기술만 자동완성됩니다.");
             return;
         }
         if (move.type) {
@@ -1529,14 +1535,14 @@
         if (move.category === "status") {
             refs.damageMoveCategory.value = "status";
             refs.damageMovePower.value = String(getMovePowerGuess(move));
-            refs.damageMoveNote.textContent = `${move.koName}는 변화기라 데미지 계산을 진행하지 않습니다.`;
+            setDamageMoveNote(`${move.koName}는 변화기라 데미지 계산을 진행하지 않습니다.`);
             return;
         }
         const category = getMoveCategoryGuess(move, stats);
         const power = getMovePowerGuess(move);
         refs.damageMoveCategory.value = category;
         refs.damageMovePower.value = String(power);
-        refs.damageMoveNote.textContent = `${move.koName} 기준으로 타입, 분류, 위력을 자동 적용했습니다.`;
+        setDamageMoveNote(`${move.koName} 기준으로 타입, 분류, 위력을 자동 적용했습니다.`);
     }
     function resolveSelectedAbility(side) {
         const control = side === "attack" ? refs.damageAttackAbility : refs.damageDefenseAbility;
