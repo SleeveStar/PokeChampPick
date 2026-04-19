@@ -27804,6 +27804,7 @@
         "guillotine",
         "facade",
         "scary-face",
+        "sucker-punch",
         "dig",
         "metal-sound",
         "giga-impact",
