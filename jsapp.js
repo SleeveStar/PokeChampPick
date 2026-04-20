@@ -275,6 +275,11 @@
         "mach-punch", "quick-attack", "fake-out", "accelerock", "jet-punch", "vacuum-wave",
         "ice-shard", "trailblaze", "flame-charge", "water-shuriken"
     ]);
+    const SKILL_LINK_MULTI_HIT_MOVE_KEYS = new Set([
+        "arm-thrust", "bone-rush", "bullet-seed", "comet-punch", "double-slap",
+        "fury-attack", "fury-swipes", "icicle-spear", "pin-missile", "rock-blast",
+        "scale-shot", "spike-cannon", "tail-slap"
+    ]);
     const TYPE_ICON_PATHS = {
         normal: "types/Normal%20type.svg",
         fire: "types/Fire%20type.svg",
@@ -1405,13 +1410,11 @@
         return clampNumber(control ? control.value : 0, -6, 6, 0);
     }
     function syncDamageSpecialControls() {
-        const moveKey = refs.damageMoveName.dataset.selectedMove || "";
-        const showDefenseAttackControls = usesDefenseSideAttackStat(moveKey);
         if (refs.damageDefenseAttackEvField) {
-            refs.damageDefenseAttackEvField.hidden = !showDefenseAttackControls;
+            refs.damageDefenseAttackEvField.hidden = false;
         }
         if (refs.damageDefenseAttackStageField) {
-            refs.damageDefenseAttackStageField.hidden = !showDefenseAttackControls;
+            refs.damageDefenseAttackStageField.hidden = false;
         }
     }
     function updateDamageAbilityOptions(side) {
@@ -1614,6 +1617,12 @@
             return 1;
         }
         return attackAbility === "적응력" ? 2 : 1.5;
+    }
+    function resolveDamageHitCount(moveKey, attackAbility) {
+        if (attackAbility === "스킬링크" && SKILL_LINK_MULTI_HIT_MOVE_KEYS.has(String(moveKey || ""))) {
+            return 5;
+        }
+        return 1;
     }
     function calculateBulkScore(hpStat, defenseStat) {
         const hp = Math.max(1, Number(hpStat || 0));
@@ -1832,6 +1841,7 @@
             return { value: null, note: "" };
         }
         const attackAbility = resolveSelectedAbility("attack") || "";
+        const hitsPerUse = resolveDamageHitCount(selectedMove.key, attackAbility);
         const config = {
             moveType: resolveDamageMoveType(),
             category,
@@ -1851,7 +1861,7 @@
             stabMultiplier: resolveStabMultiplier(resolveDamageMoveType(), attackAbility)
         };
         return {
-            value: Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config)),
+            value: Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config) * hitsPerUse),
             note: ""
         };
     }
@@ -1871,12 +1881,14 @@
         const categoryLabel = category === "special" ? "특수" : (category === "physical" ? "물리" : "변화");
         const power = clampNumber(refs.damageMovePower.value, 0, 999, 0);
         const attackAbility = resolveSelectedAbility("attack");
+        const hitsPerUse = resolveDamageHitCount(selectedMove.key, attackAbility);
         const effectiveness = resolveEffectiveness(moveType);
         const stabMultiplier = category === "status" ? 1 : resolveStabMultiplier(moveType, attackAbility);
         const chips = [
             `${window.TypeModule.toTypeLabel(moveType)} 타입`,
             categoryLabel,
             power > 0 ? `위력 ${power}` : "위력 없음",
+            hitsPerUse > 1 ? `연타 ${hitsPerUse}타` : "단일타",
             `상성 x${effectiveness.toFixed(2)}`,
             `자속 x${stabMultiplier.toFixed(2)}`
         ];
@@ -1898,6 +1910,9 @@
         }
         if (usesDefenseSidePhysicalDefense(selectedMove.key)) {
             notes.push("이 기술은 특수기지만 방어측 실방을 기준으로 계산합니다.");
+        }
+        if (hitsPerUse > 1) {
+            notes.push(`스킬링크 기준으로 1회 사용당 ${hitsPerUse}타 총합 데미지를 계산합니다.`);
         }
         refs.damageMoveSummary.className = "damage-summary-card";
         refs.damageMoveSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${selectedMove.koName}</strong><div class="type-row">${renderMiniChips(chips, 2)}</div></div><p class="damage-summary-copy">${notes.length > 0 ? notes.join(" ") : "기술 타입과 방어측 포켓몬 기준으로 상성이 자동 적용됩니다."}</p>`;
@@ -1984,31 +1999,65 @@
         }
         return rolls;
     }
-    function calculateKoChance(rolls, hpStat, hits) {
+    function buildRollDistribution(rolls) {
+        const distribution = new Map();
+        if (!rolls || rolls.length === 0) {
+            distribution.set(0, 1);
+            return distribution;
+        }
+        const weight = 1 / rolls.length;
+        rolls.forEach((roll) => {
+            distribution.set(roll, (distribution.get(roll) || 0) + weight);
+        });
+        return distribution;
+    }
+    function convolveDamageDistribution(baseDistribution, nextDistribution) {
+        const totals = new Map();
+        baseDistribution.forEach((baseChance, baseTotal) => {
+            nextDistribution.forEach((nextChance, nextTotal) => {
+                const combinedTotal = baseTotal + nextTotal;
+                totals.set(combinedTotal, (totals.get(combinedTotal) || 0) + (baseChance * nextChance));
+            });
+        });
+        return totals;
+    }
+    function buildDamageDistribution(rolls, hitsPerUse) {
+        const rollDistribution = buildRollDistribution(rolls);
+        let totals = new Map([[0, 1]]);
+        for (let hit = 0; hit < hitsPerUse; hit += 1) {
+            totals = convolveDamageDistribution(totals, rollDistribution);
+        }
+        return totals;
+    }
+    function getDamageDistributionRange(distribution) {
+        let min = Infinity;
+        let max = -Infinity;
+        distribution.forEach((_chance, total) => {
+            min = Math.min(min, total);
+            max = Math.max(max, total);
+        });
+        return {
+            min: Number.isFinite(min) ? min : 0,
+            max: Number.isFinite(max) ? max : 0
+        };
+    }
+    function calculateKoChance(damageDistribution, hpStat, hits) {
         let totals = new Map([[0, 1]]);
         for (let hit = 0; hit < hits; hit += 1) {
-            const nextTotals = new Map();
-            totals.forEach((count, total) => {
-                rolls.forEach((roll) => {
-                    const nextTotal = total + roll;
-                    nextTotals.set(nextTotal, (nextTotals.get(nextTotal) || 0) + count);
-                });
-            });
-            totals = nextTotals;
+            totals = convolveDamageDistribution(totals, damageDistribution);
         }
-        const totalCases = Math.pow(rolls.length, hits);
-        let koCases = 0;
-        totals.forEach((count, total) => {
+        let koChance = 0;
+        totals.forEach((chance, total) => {
             if (total >= hpStat) {
-                koCases += count;
+                koChance += chance;
             }
         });
-        return totalCases > 0 ? (koCases / totalCases) : 0;
+        return koChance;
     }
-    function analyzeDamageRange(rolls, hpStat) {
+    function analyzeDamageRange(damageDistribution, hpStat) {
         for (let hits = 1; hits <= 8; hits += 1) {
-            const chance = calculateKoChance(rolls, hpStat, hits);
-            if (chance >= 1) {
+            const chance = calculateKoChance(damageDistribution, hpStat, hits);
+            if (chance >= 0.999999) {
                 return {
                     label: `확정 ${hits}타`,
                     hits,
@@ -2093,6 +2142,7 @@
         const defenseItem = resolveSelectedItem("defense");
         const effectiveness = resolveEffectiveness(moveType);
         const stabMultiplier = resolveStabMultiplier(moveType, attackAbility);
+        const hitsPerUse = resolveDamageHitCount(selectedMove.key, attackAbility);
 
         if (!moveType || !power || !attackStat || !defenseStat || !hpStat) {
             renderDamagePlaceholder("입력값을 다시 확인해 주세요.");
@@ -2122,16 +2172,18 @@
         const allModifiers = attackModifiers.concat(defenseModifiers);
         const totalModifier = calculateCombinedMultiplier(allModifiers);
         const attackStageChipLabel = getDamageStageShortLabel(attackSourceMeta.source);
-        const decisionPower = Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config));
+        const decisionPower = Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config) * hitsPerUse);
         const baseDamage = calculateBaseDamage(power, attackStat, defenseStat);
         const rolls = calculateDamageRolls(baseDamage, totalModifier);
-        const minDamage = rolls[0];
-        const maxDamage = rolls[rolls.length - 1];
+        const damageDistribution = buildDamageDistribution(rolls, hitsPerUse);
+        const damageRange = getDamageDistributionRange(damageDistribution);
+        const minDamage = damageRange.min;
+        const maxDamage = damageRange.max;
         const minRatio = minDamage / hpStat;
         const maxRatio = maxDamage / hpStat;
         const minPercent = minRatio * 100;
         const maxPercent = maxRatio * 100;
-        const rangeAnalysis = analyzeDamageRange(rolls, hpStat);
+        const rangeAnalysis = analyzeDamageRange(damageDistribution, hpStat);
         const verdict = rangeAnalysis.label;
         const verdictMinPercent = minPercent * rangeAnalysis.hits;
         const verdictMaxPercent = maxPercent * rangeAnalysis.hits;
@@ -2140,6 +2192,7 @@
             `${categoryLabel} 계산`,
             `${typeLabel} 타입`,
             `위력 ${power}`,
+            hitsPerUse > 1 ? `연타 ${hitsPerUse}타` : "단일타",
             `공격 ${attackStat}`,
             `방어 ${defenseStat}`,
             `${attackStageChipLabel} ${formatStageLabel(attackStage)}`,
@@ -2153,11 +2206,19 @@
             `HP ${hpStat}`,
             `결정력 ${decisionPower}`
         ];
+        if (usesDefenseSideAttackStat(selectedMove.key)) {
+            statSummaryChips.unshift(`상대 실공 ${attackContext.baseAttackStat}`, `상대 공격 랭크업 x${attackContext.stageMultiplier.toFixed(2)}`);
+        }
         if (usesAttackSideDefenseStat(selectedMove.key)) {
             statSummaryChips.unshift(`실방 ${attackContext.baseAttackStat}`, `방어 랭크업 x${attackContext.stageMultiplier.toFixed(2)}`);
         }
         const notes = [];
-        if (defenseAbility === "옹골참" && maxRatio >= 1) {
+        if (hitsPerUse > 1) {
+            notes.push(`스킬링크 기준 1회 사용당 ${hitsPerUse}타 총합 데미지로 판정했습니다.`);
+        }
+        if (defenseAbility === "옹골참" && hitsPerUse > 1) {
+            notes.push("옹골참은 첫타만 버티므로 연타 총합 판정에서는 별도 생존 보정을 넣지 않았습니다.");
+        } else if (defenseAbility === "옹골참" && maxRatio >= 1) {
             notes.push("방어측 특성이 옹골참이면 풀피 기준 1타를 버틸 수 있습니다.");
         }
         if (typeof selectedMove.power !== "number") {
@@ -2165,7 +2226,7 @@
         }
 
         refs.damageResult.className = "info-card";
-        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title is-split"><strong>${verdict}</strong><span class="mini-chip damage-percent-range">HP ${verdictMinPercent.toFixed(2)}% ~ ${verdictMaxPercent.toFixed(2)}%</span></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>결정력</strong><p class="recommend-reason">${minDamage} ~ ${maxDamage} 데미지</p><p class="recommend-detail">1타 기준 HP의 ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>사용 실능</strong><p class="recommend-reason">${renderMiniChips(statSummaryChips)}</p><p class="recommend-detail">현재 입력 기준으로 실제 계산에 들어간 수치입니다.</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
+        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title is-split"><strong>${verdict}</strong><span class="mini-chip damage-percent-range">HP ${verdictMinPercent.toFixed(2)}% ~ ${verdictMaxPercent.toFixed(2)}%</span></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>결정력</strong><p class="recommend-reason">${minDamage} ~ ${maxDamage} 데미지</p><p class="recommend-detail">${hitsPerUse > 1 ? `${hitsPerUse}타 총합` : "1회 사용"} 기준 HP의 ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>사용 실능</strong><p class="recommend-reason">${renderMiniChips(statSummaryChips)}</p><p class="recommend-detail">현재 입력 기준으로 실제 계산에 들어간 수치입니다.</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
     }
     function compareSpeed() {
         const validParty = getValidPartyMembers();
