@@ -28304,10 +28304,31 @@
     ]
 };
 
+    function getBaseMovePoolKey(key) {
+        const normalized = String(key || "");
+        if (!normalized.includes("-mega")) {
+            return "";
+        }
+        return normalized.replace(/-mega(?:-[^-]+)?$/, "");
+    }
+
+    function sortMoveKeys(moveKeys) {
+        return Array.from(new Set(moveKeys)).sort((left, right) => {
+            const leftName = (MOVE_MAP[left] && MOVE_MAP[left].koName) || left;
+            const rightName = (MOVE_MAP[right] && MOVE_MAP[right].koName) || right;
+            return leftName.localeCompare(rightName, "ko");
+        });
+    }
+
     function getMovesForPokemon(pokemon) {
         const key = typeof pokemon === "string" ? pokemon : (pokemon && pokemon.name) || "";
         if (!key) { return []; }
-        const moves = POKEMON_MOVES[key] || (key.includes("-mega") ? (POKEMON_MOVES[key.split("-mega")[0]] || []) : []);
+        const directMoves = Array.isArray(POKEMON_MOVES[key]) ? POKEMON_MOVES[key] : [];
+        const baseKey = getBaseMovePoolKey(key);
+        const inheritedMoves = baseKey && Array.isArray(POKEMON_MOVES[baseKey]) ? POKEMON_MOVES[baseKey] : [];
+        const moves = inheritedMoves.length > 0
+            ? sortMoveKeys(directMoves.concat(inheritedMoves))
+            : directMoves;
         return moves.map((moveKey) => Object.assign({ key: moveKey }, MOVE_MAP[moveKey] || { koName: moveKey, type: "" }));
     }
 

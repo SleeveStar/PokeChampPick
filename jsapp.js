@@ -485,6 +485,7 @@
     function isMobileViewport() { return window.matchMedia("(max-width: 860px)").matches; }
     function updatePageVisibility() {
         document.body.classList.toggle("page-party", state.currentPage === "party");
+        document.body.classList.toggle("page-calculator", state.currentPage === "calculator");
         refs.pagePanels.forEach((panel) => { panel.hidden = panel.dataset.page !== state.currentPage; });
         refs.pageNavLinks.forEach((button) => button.classList.toggle("is-active", button.dataset.pageTarget === state.currentPage));
         refs.pageNav.classList.toggle("is-open", state.mobileMenuOpen);
@@ -615,15 +616,15 @@
         refs.planSummary.innerHTML = [
             `<div class="plan-card"><strong>기본 플랜</strong><div class="type-row">${renderMiniChips([`선봉 ${plan.opener}`, `운영 ${plan.pivot}`, `마무리 ${plan.cleanup}`], 3)}</div>${plan.strategySummary && plan.strategySummary.length > 0 ? `<div class="type-row">${renderMiniChips(plan.strategySummary.map((item) => item.label).slice(0, 2), 2)}</div>` : ""}${(plan.lines || []).slice(0, 2).map((line) => `<p class="recommend-reason">${line}</p>`).join("")}</div>`,
             ...(plan.entryForecasts || []).map((entry) => {
-                return `<div class="plan-card"><strong>${entry.title}</strong><div class="type-row">${renderMiniChips([entry.styleLabel || "", entry.leadName ? `선봉 ${entry.leadName}` : "", typeof entry.confidence === "number" ? `가능성 ${entry.confidence.toFixed(1)}` : ""], 3)}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips, 2)}</div>` : ""}<p class="recommend-reason">예상 3마리: <strong>${entry.names}</strong></p>${entry.pivotName ? `<p class="recommend-reason">중반 축: <strong>${entry.pivotName}</strong></p>` : ""}${entry.cleanupName ? `<p class="recommend-reason">후반 축: <strong>${entry.cleanupName}</strong></p>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails, undefined, 1)}</div>`;
+                return `<div class="plan-card"><strong>${entry.title}</strong><div class="type-row">${renderMiniChips([entry.styleLabel || "", entry.leadName ? `선봉 ${entry.leadName}` : "", typeof entry.confidence === "number" ? `가능성 ${entry.confidence.toFixed(1)}` : ""], 3)}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips, 2)}</div>` : ""}<p class="recommend-reason">상황별 3마리 후보: <strong>${entry.names}</strong></p>${entry.pivotName ? `<p class="recommend-reason">중반 후보: <strong>${entry.pivotName}</strong></p>` : ""}${entry.cleanupName ? `<p class="recommend-reason">후반 후보: <strong>${entry.cleanupName}</strong></p>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails, undefined, 1)}</div>`;
             }),
             ...(plan.coreResponses || []).map((entry) => {
-                return `<div class="plan-card"><strong>${entry.coreNames} 코어 대응</strong><div class="type-row">${renderMiniChips([entry.styleLabel || "", entry.responseLead ? `선봉 ${entry.responseLead}` : "", entry.responseCleanup ? `마무리 ${entry.responseCleanup}` : ""], 3)}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips, 2)}</div>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails, undefined, 1)}<p class="recommend-reason">추천 3마리: <strong>${(entry.responseCombo || []).join(", ")}</strong></p>${entry.responsePivot ? `<p class="recommend-reason">운영 중심축: <strong>${entry.responsePivot}</strong></p>` : ""}${entry.responseReason ? `<p class="recommend-reason">${entry.responseReason}</p>` : ""}${renderReasonLines(entry.responseReasonDetails, undefined, 1)}</div>`;
+                return `<div class="plan-card"><strong>${entry.coreNames} 후보 대응</strong><div class="type-row">${renderMiniChips([entry.styleLabel || "", entry.responseLead ? `선봉 ${entry.responseLead}` : "", entry.responseCleanup ? `마무리 ${entry.responseCleanup}` : ""], 3)}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips, 2)}</div>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails, undefined, 1)}<p class="recommend-reason">추천 3마리: <strong>${(entry.responseCombo || []).join(", ")}</strong></p>${entry.responsePivot ? `<p class="recommend-reason">운영 후보: <strong>${entry.responsePivot}</strong></p>` : ""}${entry.responseReason ? `<p class="recommend-reason">${entry.responseReason}</p>` : ""}${renderReasonLines(entry.responseReasonDetails, undefined, 1)}</div>`;
             }),
             ...(plan.leadResponses || []).map((entry) => {
                 const primary = entry.primary ? (entry.primary.moveName ? `${entry.primary.name}(${entry.primary.moveName})` : entry.primary.name) : "";
                 const backup = entry.backup ? (entry.backup.moveName ? `${entry.backup.name}(${entry.backup.moveName})` : entry.backup.name) : "";
-                return `<div class="plan-card"><strong>${entry.opponentName} 예상 선봉</strong><div class="type-row">${renderMiniChips([entry.opponentLabel || ""], 1)}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips, 2)}</div>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails, undefined, 1)}${primary ? `<p class="recommend-reason">권장 선봉: <strong>${primary}</strong></p>` : ""}${entry.primary && entry.primary.reason ? `<p class="recommend-reason">${entry.primary.reason}</p>` : ""}${renderReasonLines(entry.primary && entry.primary.reasonDetails, undefined, 1)}${backup ? `<p class="recommend-reason">백업 운영축: <strong>${backup}</strong></p>` : ""}${entry.backup && entry.backup.reason ? `<p class="recommend-reason">${entry.backup.reason}</p>` : ""}${renderReasonLines(entry.backup && entry.backup.reasonDetails, undefined, 1)}</div>`;
+                return `<div class="plan-card"><strong>${entry.opponentName} 예상 선봉</strong><div class="type-row">${renderMiniChips([entry.opponentLabel || ""], 1)}</div>${entry.evidenceChips && entry.evidenceChips.length > 0 ? `<div class="type-row">${renderMiniChips(entry.evidenceChips, 2)}</div>` : ""}${entry.reason ? `<p class="recommend-reason">${entry.reason}</p>` : ""}${renderReasonLines(entry.reasonDetails, undefined, 1)}${primary ? `<p class="recommend-reason">권장 선봉: <strong>${primary}</strong></p>` : ""}${entry.primary && entry.primary.reason ? `<p class="recommend-reason">${entry.primary.reason}</p>` : ""}${renderReasonLines(entry.primary && entry.primary.reasonDetails, undefined, 1)}${backup ? `<p class="recommend-reason">백업 운영 후보: <strong>${backup}</strong></p>` : ""}${entry.backup && entry.backup.reason ? `<p class="recommend-reason">${entry.backup.reason}</p>` : ""}${renderReasonLines(entry.backup && entry.backup.reasonDetails, undefined, 1)}</div>`;
             }),
             ...(plan.threatResponses || []).map((entry) => {
                 const answers = (entry.answers || []).map((answer) => answer.moveName ? `${answer.name}(${answer.moveName})` : answer.name).join(", ");
@@ -1002,7 +1003,14 @@
                 close();
             }));
         }
-        input.addEventListener("input", () => { input.dataset.selectedName = ""; activeIndex = -1; renderResults(window.PokeData.searchPokemon(input.value, 7)); });
+        input.addEventListener("input", () => {
+            input.dataset.selectedName = "";
+            activeIndex = -1;
+            renderResults(window.PokeData.searchPokemon(input.value, 7));
+            if (typeof options.onInputChange === "function") {
+                options.onInputChange(input.value);
+            }
+        });
         input.addEventListener("focus", () => { if (input.value.trim()) { renderResults(window.PokeData.searchPokemon(input.value, 7)); } });
         input.addEventListener("keydown", (event) => {
             if (dropdown.hidden) { return; }
@@ -1525,6 +1533,43 @@
             ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
         });
     }
+    function calculateDamageInputStats(side, species) {
+        if (!species) {
+            return null;
+        }
+        if (side === "attack") {
+            return resolveDamageOffenseStats(species);
+        }
+        return resolveDamageDefenseStats(species);
+    }
+    function renderDamageBasicInfo(side) {
+        const target = side === "attack" ? refs.damageAttackBasic : refs.damageDefenseBasic;
+        if (!target) {
+            return;
+        }
+        const species = resolveDamageBattleSpecies(side);
+        const stats = calculateDamageInputStats(side, species);
+        if (!species || !stats) {
+            target.className = "damage-basic-card empty-card";
+            target.textContent = "타입과 현재 실능";
+            return;
+        }
+        const nature = resolveDamageNature(side);
+        const natureEffect = window.SpeedModule.NATURE_EFFECTS[nature] || window.SpeedModule.NATURE_EFFECTS.hardy;
+        const statChips = [
+            ["H", "hp", stats.hp],
+            ["A", "atk", stats.atk],
+            ["B", "def", stats.def],
+            ["C", "spa", stats.spa],
+            ["D", "spd", stats.spd],
+            ["S", "spe", stats.spe]
+        ];
+        target.className = "damage-basic-card";
+        target.innerHTML = `<div class="damage-basic-types">${renderTypeBadges(species.types)}</div><div class="damage-basic-stats">${statChips.map(([label, statKey, value]) => {
+            const tone = natureEffect.up === statKey ? "is-up" : (natureEffect.down === statKey ? "is-down" : "");
+            return `<span class="${tone}"><b>${label}:</b> ${value}</span>`;
+        }).join("")}</div>`;
+    }
     function getDamageMoveSpecies() {
         return resolveDamagePokemon("attack");
     }
@@ -1755,6 +1800,9 @@
         if (config.screen === "light-screen" && config.category === "special") {
             modifiers.push({ label: "빛의장막 x0.50", multiplier: 0.5 });
         }
+        if (config.screen === "aurora-veil") {
+            modifiers.push({ label: "오로라베일 x0.50", multiplier: 0.5 });
+        }
         if (config.attackerBurned && config.category === "physical" && ability !== "근성") {
             modifiers.push({ label: "화상 x0.50", multiplier: 0.5 });
         }
@@ -1857,7 +1905,7 @@
             attackItem: resolveSelectedItem("attack") || "",
             defenseItem: resolveSelectedItem("defense"),
             attackSource: attackSourceMeta.source,
-            effectiveness: resolveEffectiveness(resolveDamageMoveType()),
+            effectiveness: 1,
             stabMultiplier: resolveStabMultiplier(resolveDamageMoveType(), attackAbility)
         };
         return {
@@ -1933,24 +1981,20 @@
             refs.damageAttackSummary.className = "damage-summary-card empty-card";
             refs.damageAttackSummary.textContent = "포켓몬과 기술을 선택하면 공격 실능이 자동 계산됩니다.";
         } else {
-            const attackNatureModifier = getDamageNatureModifier("attack", "atk");
-            const specialNatureModifier = getDamageNatureModifier("attack", "spa");
-            const defenseNatureModifier = getDamageNatureModifier("attack", "def");
-            const defenseAttackNatureModifier = getDamageNatureModifier("defense", "atk");
             const attackAbility = resolveSelectedAbility("attack") || "없음";
             const attackItem = resolveSelectedItem("attack") || "없음";
             const decisionPowerPreview = resolveAttackDecisionPowerPreview(selectedMove, category, attackContext, attackSourceMeta);
             const decisionPower = decisionPowerPreview.value;
-            const attackChips = [`실공 ${attackStats.atk}`, `실특공 ${attackStats.spa}`, `실방 ${attackStats.def}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `특공 성격 x${formatDamageModifier(specialNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `공격 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`, `특성 ${attackAbility}`, `아이템 ${attackItem}`];
+            const attackChips = [`적용 ${attackContext.activeAttackStat || "-"}`, `랭크 ${formatStageLabel(attackContext.stage)}`, `특성 ${attackAbility}`, `도구 ${attackItem}`];
             if (attackSourceMeta.owner === "defense") {
-                attackChips.splice(6, 2, `상대 실공 ${defenseStats ? defenseStats.atk : "-"}`, `상대 공격 성격 x${formatDamageModifier(defenseAttackNatureModifier)}`, `상대 공격 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
+                attackChips.unshift(`상대 실공 ${defenseStats ? defenseStats.atk : "-"}`);
             }
             if (usesAttackSideDefenseStat(selectedMoveKey)) {
-                attackChips.splice(6, 2, `실방 ${attackContext.baseAttackStat}`, `방어 랭크업 ${formatStageLabel(attackContext.stage)} x${attackContext.stageMultiplier.toFixed(2)}`, `${attackSourceMeta.appliedLabel} ${attackContext.activeAttackStat || "-"}`);
+                attackChips.unshift(`실방 ${attackContext.baseAttackStat}`);
             }
             const decisionPowerLine = decisionPower ? `<p class="recommend-reason"><strong>결정력 ${decisionPower}</strong></p>` : "";
             refs.damageAttackSummary.className = "damage-summary-card";
-            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${decisionPowerPreview.note || `${attackSourceMeta.summary} 실능을 사용합니다.`}</p>${decisionPowerLine}<div class="damage-summary-stats">${renderMiniChips(attackChips, 2)}</div>`;
+            refs.damageAttackSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${attackSpecies.displayKoName || attackSpecies.koName}</strong><div class="type-row">${renderTypeBadges(attackSpecies.types)}</div></div><p class="damage-summary-copy">${decisionPowerPreview.note || attackSourceMeta.summary}</p>${decisionPowerLine}<div class="damage-summary-stats">${renderMiniChips(attackChips, 4)}</div>`;
         }
 
         if (!defenseSpecies || !defenseStats) {
@@ -1962,20 +2006,15 @@
             const baseDefenseStat = defenseStats[defenseStatKey];
             const activeDefenseStat = applyStatStage(baseDefenseStat, defenseStage);
             const activeDefenseAttackStat = applyStatStage(defenseStats.atk, defenseAttackStage);
-            const attackNatureModifier = getDamageNatureModifier("defense", "atk");
-            const defenseNatureModifier = getDamageNatureModifier("defense", "def");
-            const specialDefenseNatureModifier = getDamageNatureModifier("defense", "spd");
             const defenseAbility = resolveSelectedAbility("defense") || "없음";
             const defenseItem = resolveSelectedItem("defense") || "없음";
-            const physicalBulk = calculateBulkScore(defenseStats.hp, defenseStats.def);
-            const specialBulk = calculateBulkScore(defenseStats.hp, defenseStats.spd);
             const activeBulk = calculateBulkScore(defenseStats.hp, activeDefenseStat);
-            const defenseSummaryChips = [`HP ${defenseStats.hp}`, `실공 ${defenseStats.atk}`, `실방 ${defenseStats.def}`, `실특방 ${defenseStats.spd}`, `공격 성격 x${formatDamageModifier(attackNatureModifier)}`, `방어 성격 x${formatDamageModifier(defenseNatureModifier)}`, `특방 성격 x${formatDamageModifier(specialDefenseNatureModifier)}`, `방어 랭크업 ${formatStageLabel(defenseStage)} x${getStatStageMultiplier(defenseStage).toFixed(2)}`, `적용 ${getDamageStatLabel(defenseStatKey)} ${activeDefenseStat}`, `물리 내구 ${physicalBulk}`, `특수 내구 ${specialBulk}`, `현재 내구 ${activeBulk}`, `특성 ${defenseAbility}`, `아이템 ${defenseItem}`];
+            const defenseSummaryChips = [`HP ${defenseStats.hp}`, `적용 ${getDamageStatLabel(defenseStatKey)} ${activeDefenseStat}`, `내구 ${activeBulk}`, `특성 ${defenseAbility}`, `도구 ${defenseItem}`];
             if (usesDefenseSideAttackStat(selectedMoveKey)) {
-                defenseSummaryChips.splice(7, 0, `공격 랭크업 ${formatStageLabel(defenseAttackStage)} x${getStatStageMultiplier(defenseAttackStage).toFixed(2)}`, `속임수용 실공 ${activeDefenseAttackStat}`);
+                defenseSummaryChips.unshift(`속임수 실공 ${activeDefenseAttackStat}`, `공격 랭크 ${formatStageLabel(defenseAttackStage)}`);
             }
             refs.damageDefenseSummary.className = "damage-summary-card";
-            refs.damageDefenseSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${defenseSpecies.displayKoName || defenseSpecies.koName}</strong><div class="type-row">${renderTypeBadges(defenseSpecies.types)}</div></div><p class="damage-summary-copy">${usesDefenseSidePhysicalDefense(selectedMoveKey) ? "특수기 기준 실방" : (defenseStatKey === "spd" ? "특수기 기준 실특방" : "물리기 기준 실방")}과 HP를 사용합니다.</p><div class="damage-summary-stats">${renderMiniChips(defenseSummaryChips, 2)}</div>`;
+            refs.damageDefenseSummary.innerHTML = `<div class="damage-summary-head"><strong class="damage-summary-title">${defenseSpecies.displayKoName || defenseSpecies.koName}</strong><div class="type-row">${renderTypeBadges(defenseSpecies.types)}</div></div><p class="damage-summary-copy">${usesDefenseSidePhysicalDefense(selectedMoveKey) ? "특수기 기준 실방" : (defenseStatKey === "spd" ? "특수기 기준 실특방" : "물리기 기준 실방")}</p><div class="damage-summary-stats">${renderMiniChips(defenseSummaryChips, 5)}</div>`;
         }
     }
     function refreshSpeedSelects() {
@@ -2079,7 +2118,7 @@
         };
     }
     function renderDamagePlaceholder(message) {
-        refs.damageResult.className = "info-card empty-card";
+        refs.damageResult.className = "damage-result-compact empty-card";
         refs.damageResult.textContent = message;
     }
     function resetDamageCalculatorDefaults() {
@@ -2109,6 +2148,8 @@
         syncDamageAbilityOptions();
         syncDamageSpecialControls();
         renderDamageMoveSummary();
+        renderDamageBasicInfo("attack");
+        renderDamageBasicInfo("defense");
         renderDamageSideSummary();
         const selectedMoveKey = refs.damageMoveName.dataset.selectedMove || "";
         const selectedMove = selectedMoveKey ? window.MoveData.getMove(selectedMoveKey) : null;
@@ -2172,7 +2213,7 @@
         const allModifiers = attackModifiers.concat(defenseModifiers);
         const totalModifier = calculateCombinedMultiplier(allModifiers);
         const attackStageChipLabel = getDamageStageShortLabel(attackSourceMeta.source);
-        const decisionPower = Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier(config) * hitsPerUse);
+        const decisionPower = Math.round(attackContext.baseAttackStat * power * attackContext.stageMultiplier * getDecisionPowerModifier({ ...config, effectiveness: 1 }) * hitsPerUse);
         const baseDamage = calculateBaseDamage(power, attackStat, defenseStat);
         const rolls = calculateDamageRolls(baseDamage, totalModifier);
         const damageDistribution = buildDamageDistribution(rolls, hitsPerUse);
@@ -2225,8 +2266,14 @@
             notes.push("가변 위력기이거나 데이터가 없는 기술은 등록된 기본 추정 위력을 사용했습니다.");
         }
 
-        refs.damageResult.className = "info-card";
-        refs.damageResult.innerHTML = `<div class="recommend-topline"><div class="recommend-title is-split"><strong>${verdict}</strong><span class="mini-chip damage-percent-range">HP ${verdictMinPercent.toFixed(2)}% ~ ${verdictMaxPercent.toFixed(2)}%</span></div><div class="type-row">${renderMiniChips(modifierChips)}</div></div><div class="damage-result-grid"><div class="combo-member"><strong>결정력</strong><p class="recommend-reason">${minDamage} ~ ${maxDamage} 데미지</p><p class="recommend-detail">${hitsPerUse > 1 ? `${hitsPerUse}타 총합` : "1회 사용"} 기준 HP의 ${minPercent.toFixed(2)}% ~ ${maxPercent.toFixed(2)}%</p></div><div class="combo-member"><strong>사용 실능</strong><p class="recommend-reason">${renderMiniChips(statSummaryChips)}</p><p class="recommend-detail">현재 입력 기준으로 실제 계산에 들어간 수치입니다.</p></div></div>${allModifiers.length > 0 ? `<p class="recommend-reason">적용 보정: <strong>${allModifiers.map((entry) => entry.label).join(" / ")}</strong></p>` : `<p class="recommend-reason">적용 보정: <strong>없음</strong></p>`}${notes.map((note) => `<p class="recommend-detail">${note}</p>`).join("")}`;
+        const compactResultChips = [
+            `HP ${minPercent.toFixed(1)}% ~ ${maxPercent.toFixed(1)}%`,
+            `결정력 ${decisionPower}`,
+            `상성 x${effectiveness.toFixed(2)}`,
+            `총배율 x${totalModifier.toFixed(2)}`
+        ];
+        refs.damageResult.className = "damage-result-compact";
+        refs.damageResult.innerHTML = `<div class="damage-result-verdict"><strong>${verdict}</strong><span>${verdictMinPercent.toFixed(1)}% ~ ${verdictMaxPercent.toFixed(1)}%</span></div><p class="damage-result-main">${minDamage} ~ ${maxDamage}</p><p class="damage-result-sub">${hitsPerUse > 1 ? `${hitsPerUse}타 총합` : "1회 사용"} 기준 데미지</p><div class="type-row">${renderMiniChips(compactResultChips, 2)}</div>${allModifiers.length > 0 ? `<p class="damage-result-note">${allModifiers.map((entry) => entry.label).join(" / ")}</p>` : `<p class="damage-result-note">적용 보정 없음</p>`}${notes.slice(0, 1).map((note) => `<p class="damage-result-note">${note}</p>`).join("")}`;
     }
     function compareSpeed() {
         const validParty = getValidPartyMembers();
@@ -2269,7 +2316,7 @@
         if (config.switchPage) {
             setCurrentPage("result");
         }
-        setStatus("추천 결과를 갱신했습니다. 상대 클릭으로 타입 보조와 스피드 비교도 함께 확인해 보세요.", "success");
+        setStatus("추천 결과를 갱신했습니다. 계산기 화면에서는 데미지 계산만 집중해서 확인할 수 있습니다.", "success");
     }
     function bindEvents() {
         refs.savePartyBtn.addEventListener("click", saveParty);
@@ -2422,12 +2469,12 @@
             refs.damageMoveName.dataset.selectedMove = "";
             applyDamageMoveDefaults(null);
             refreshDamageCalculator();
-        } });
+        }, onInputChange: () => refreshDamageCalculator() });
         attachPokemonAutocomplete(refs.damageDefenseName, { onSelect: (pokemon) => {
             refs.damageDefenseName.value = pokemon.displayKoName || pokemon.koName;
             refs.damageDefenseName.dataset.selectedName = pokemon.canonicalName || pokemon.name;
             refreshDamageCalculator();
-        } });
+        }, onInputChange: () => refreshDamageCalculator() });
         attachTextAutocomplete(refs.damageAttackItem, DAMAGE_ITEM_OPTIONS, {
             onPick: (value) => {
                 refs.damageAttackItem.value = value;
@@ -2495,11 +2542,9 @@
             refs.damageAttackerBurned,
             refs.damageCriticalHit
         ].forEach((control) => {
-            const eventName = control.tagName === "INPUT" && control.type === "number" ? "input" : "change";
-            control.addEventListener(eventName, refreshDamageCalculator);
-            if (eventName !== "input" && control.tagName === "INPUT") {
-                control.addEventListener("input", refreshDamageCalculator);
-            }
+            ["input", "change"].forEach((eventName) => {
+                control.addEventListener(eventName, refreshDamageCalculator);
+            });
         });
         document.querySelectorAll("[data-damage-ev-action]").forEach((button) => {
             button.addEventListener("click", () => {
@@ -2583,6 +2628,7 @@
         refs.damageAttackStage = document.getElementById("damage-attack-stage");
         refs.damageAttackDefenseStage = document.getElementById("damage-attack-defense-stage");
         refs.damageAttackSummary = document.getElementById("damage-attack-summary");
+        refs.damageAttackBasic = document.getElementById("damage-attack-basic");
         refs.damageDefenseName = document.getElementById("damage-defense-name");
         refs.damageDefenseNature = document.getElementById("damage-defense-nature");
         refs.damageDefenseHpEv = document.getElementById("damage-defense-hp-ev");
@@ -2593,6 +2639,7 @@
         refs.damageDefenseAttackStage = document.getElementById("damage-defense-attack-stage");
         refs.damageDefenseStage = document.getElementById("damage-defense-stage");
         refs.damageDefenseSummary = document.getElementById("damage-defense-summary");
+        refs.damageDefenseBasic = document.getElementById("damage-defense-basic");
         refs.damageMoveName = document.getElementById("damage-move-name");
         refs.damageMoveSummary = document.getElementById("damage-move-summary");
         refs.damageMoveNote = document.getElementById("damage-move-note");

@@ -94,6 +94,12 @@
         "mach-punch", "quick-attack", "fake-out", "accelerock", "jet-punch", "vacuum-wave",
         "ice-shard", "trailblaze", "flame-charge"
     ]);
+    const CURRENT_META_CONTEXT = {
+        formatLabel: "Pokémon Champions Regular Roster M-A",
+        seasonLabel: "Champions M-A",
+        updatedLabel: "2026-04",
+        sourceLabel: "Bulbapedia, Game8, GameWith, AppMedia"
+    };
     const META_SPECIES_PROFILES = {
         garchomp: {
             weight: 1.45,
@@ -236,13 +242,216 @@
             hints: ["메가보스로 운용", "물리 대면 강함", "바디프레스 축"]
         }
     };
+    const CURRENT_META_OVERRIDES = {
+        glimmora: {
+            weight: 1.3,
+            leadBias: 0.92,
+            coreBias: 0.72,
+            label: "챔피언스 설치선봉",
+            hints: ["Regular Roster M-A 입국", "스텔스록/독압정", "초반 역할 수행"]
+        },
+        garchomp: {
+            weight: 1.42,
+            leadBias: 1.2,
+            coreBias: 1.08,
+            label: "챔피언스 기준축",
+            hints: ["Regular Roster M-A 입국", "고속 지면 압박", "스카프/기띠/선봉 가능성"]
+        },
+        primarina: {
+            weight: 1.24,
+            leadBias: 0.2,
+            coreBias: 1.2,
+            label: "챔피언스 밸런스축",
+            hints: ["물/페어리 완충", "중반 안정성", "특수 압박"]
+        },
+        archaludon: {
+            weight: 1.24,
+            leadBias: 0.38,
+            coreBias: 1.16,
+            label: "챔피언스 강철축",
+            hints: ["행동 보장", "스텔스록/벽 가능성", "강철/드래곤 완충"]
+        },
+        kangaskhan: {
+            weight: 1.32,
+            leadBias: 0.82,
+            coreBias: 1.08,
+            label: "메가 대면축",
+            hints: ["메가캥카 입국", "대면 화력", "초반 압박"]
+        },
+        charizard: {
+            weight: 1.3,
+            leadBias: 0.72,
+            coreBias: 1.12,
+            label: "메가 날씨축",
+            hints: ["메가리자몽 입국", "불꽃 화력", "날씨 압박"]
+        },
+        lopunny: {
+            weight: 1.24,
+            leadBias: 0.78,
+            coreBias: 0.98,
+            label: "메가 템포축",
+            hints: ["메가이어롭 입국", "고속 대면", "초반 템포"]
+        },
+        tyranitar: {
+            weight: 1.22,
+            leadBias: 0.36,
+            coreBias: 1.12,
+            label: "모래/메가축",
+            hints: ["Regular Roster M-A 입국", "높은 종합내구", "바위/악 압박"]
+        },
+        incineroar: {
+            weight: 1.18,
+            leadBias: 0.34,
+            coreBias: 1.14,
+            label: "사이클 완충축",
+            hints: ["Regular Roster M-A 입국", "위협/턴조정", "중반 안정성"]
+        },
+        greninja: {
+            weight: 1.2,
+            leadBias: 0.84,
+            coreBias: 0.98,
+            label: "고속 범용축",
+            hints: ["Regular Roster M-A 입국", "넓은 기술폭", "선봉 템포"]
+        },
+        dragapult: {
+            weight: 1.22,
+            leadBias: 0.86,
+            coreBias: 1.02,
+            label: "초고속 압박축",
+            hints: ["Regular Roster M-A 입국", "스피드 기준점", "물리/특수 양면"]
+        },
+        dondozo: {
+            weight: 1.16,
+            leadBias: 0.12,
+            coreBias: 1.16,
+            label: "고내구 물축",
+            hints: ["Regular Roster M-A 입국", "물리 완충", "장기전 압박"]
+        },
+        umbreon: {
+            weight: 1.18,
+            leadBias: 0.18,
+            coreBias: 1.1,
+            label: "고내구 보조축",
+            hints: ["AppMedia 주목 일반 포켓몬", "받아내기와 보조", "장기전 안정성"]
+        },
+        toxapex: {
+            weight: 1.16,
+            leadBias: 0.08,
+            coreBias: 1.12,
+            label: "독막이 완충축",
+            hints: ["AppMedia 주목 일반 포켓몬", "독/물 완충", "사이클 장기전"]
+        },
+        basculegion: {
+            weight: 1.18,
+            leadBias: 0.22,
+            coreBias: 1.08,
+            label: "물리 마무리축",
+            hints: ["AppMedia 주목 일반 포켓몬", "물/고스트 압박", "후반 정리"]
+        },
+        sneasler: {
+            weight: 1.2,
+            leadBias: 0.72,
+            coreBias: 1,
+            label: "고속 상태압박축",
+            hints: ["AppMedia 주목 일반 포켓몬", "빠른 격투/독", "초반 대면 압박"]
+        },
+        espathra: {
+            weight: 1.16,
+            leadBias: 0.38,
+            coreBias: 1.04,
+            label: "전개 에이스축",
+            hints: ["AppMedia 주목 일반 포켓몬", "가속/부스트", "대응 강요"]
+        },
+        meganium: {
+            weight: 1.18,
+            leadBias: 0.2,
+            coreBias: 1.14,
+            label: "메가 날씨연계축",
+            hints: ["AppMedia 샘플 비팟", "메가메가니움", "웨더볼/솔라빔 연계"]
+        },
+        froslass: {
+            weight: 1.16,
+            leadBias: 0.76,
+            coreBias: 0.86,
+            label: "메가 전개선봉",
+            hints: ["AppMedia 전개 샘플", "오로라베일", "초반 시동"]
+        },
+        lucario: {
+            weight: 1.18,
+            leadBias: 0.5,
+            coreBias: 1.08,
+            label: "메가 마무리축",
+            hints: ["AppMedia 전개 샘플", "메가루카리오", "고화력 마무리"]
+        },
+        torkoal: {
+            weight: 1.14,
+            leadBias: 0.84,
+            coreBias: 0.86,
+            label: "쾌청 시동축",
+            hints: ["AppMedia 날씨 샘플", "가뭄/스텔스록/하품", "리자몽Y·이상해꽃 연계"]
+        },
+        pelipper: {
+            weight: 1.14,
+            leadBias: 0.78,
+            coreBias: 0.9,
+            label: "비 시동축",
+            hints: ["AppMedia 날씨 샘플", "비/순풍/유턴", "핫삼 보완"]
+        },
+        venusaur: {
+            weight: 1.16,
+            leadBias: 0.28,
+            coreBias: 1.08,
+            label: "쾌청 연계축",
+            hints: ["AppMedia 쾌청 샘플", "엽록소/수면가루", "리자몽Y 연계"]
+        }
+    };
     const COMMUNITY_META_CORE_PROFILES = [
+        {
+            id: "appmedia-sun-torkoal-charizard-venusaur",
+            members: ["torkoal", "charizard", "venusaur"],
+            weight: 2.55,
+            sourceLabel: "AppMedia 날씨 샘플",
+            sourceDetail: "코터스+메가리자몽Y+이상해꽃 쾌청 선출",
+            notes: ["가뭄 시동", "메가리자몽Y 화력", "엽록소 이상해꽃"]
+        },
+        {
+            id: "appmedia-rain-pelipper-meganium-scizor",
+            members: ["pelipper", "meganium", "scizor"],
+            weight: 2.35,
+            sourceLabel: "AppMedia 날씨 샘플",
+            sourceDetail: "패리퍼+메가메가니움+핫삼 비 선출",
+            notes: ["비 시동", "메가메가니움 웨더볼", "핫삼 불꽃 약점 완화"]
+        },
+        {
+            id: "appmedia-sand-hippowdon-tyranitar-garchomp",
+            members: ["hippowdon", "tyranitar", "garchomp"],
+            weight: 2.2,
+            sourceLabel: "AppMedia 날씨 샘플",
+            sourceDetail: "하마돈/마기라스 기반 모래 운영",
+            notes: ["모래 시동", "물리 완충", "지면/바위 압박"]
+        },
+        {
+            id: "appmedia-screen-froslass-azumarill-hydreigon",
+            members: ["froslass", "azumarill", "hydreigon"],
+            weight: 2.05,
+            sourceLabel: "AppMedia 전개 샘플",
+            sourceDetail: "메가눈여아 벽 전개 후 마릴리/삼삼드래 압박",
+            notes: ["오로라베일", "후속 전개", "물리·특수 분산"]
+        },
+        {
+            id: "appmedia-setup-hippowdon-mimikyu-lucario",
+            members: ["hippowdon", "mimikyu", "lucario"],
+            weight: 2.05,
+            sourceLabel: "AppMedia 전개 샘플",
+            sourceDetail: "하마돈 기점 후 따라큐/메가루카리오 전개",
+            notes: ["설치/하품", "탈 행동 보장", "메가루카리오 마무리"]
+        },
         {
             id: "gw-lopunny-garchomp-primarina",
             members: ["lopunny", "garchomp", "primarina"],
             weight: 2.4,
             sourceLabel: "GameWith 최강 파티",
-            sourceDetail: "메가이어롭 축 기본 선출",
+            sourceDetail: "메가이어롭 상황별 선출 후보",
             notes: ["대면 압박", "스카프 한카리아스", "물리받이 보완용 누리레느"]
         },
         {
@@ -250,7 +459,7 @@
             members: ["kangaskhan", "volcarona", "greninja"],
             weight: 2.1,
             sourceLabel: "GameWith 최강 파티",
-            sourceDetail: "메가캥카 축 기본 선출",
+            sourceDetail: "메가캥카 상황별 선출 후보",
             notes: ["메가캥카 대면", "불카모스 후출", "개굴닌자 범용 정리"]
         },
         {
@@ -258,7 +467,7 @@
             members: ["garchomp", "primarina", "corviknight"],
             weight: 2.2,
             sourceLabel: "GameWith 사용률 동반 출전",
-            sourceDetail: "한카리아스 기준 빈출 동반 축",
+            sourceDetail: "한카리아스 기준 빈출 동반 후보",
             notes: ["상위 사용률 코어", "타입 보완 우수", "63싱글 범용성"]
         },
         {
@@ -266,15 +475,15 @@
             members: ["charizard", "hippowdon", "primarina"],
             weight: 1.95,
             sourceLabel: "GameWith 사용률 동반 출전",
-            sourceDetail: "리자몽 중심 빈출 축",
-            notes: ["리자몽 축", "하마돈 지원", "누리레느 보완"]
+            sourceDetail: "리자몽 중심 빈출 후보",
+            notes: ["리자몽 후보", "하마돈 지원", "누리레느 보완"]
         },
         {
             id: "gw-garchomp-espathra-clefable",
             members: ["garchomp", "espathra", "clefable"],
             weight: 1.85,
             sourceLabel: "GameWith 최강 파티",
-            sourceDetail: "클레스퍼트라-픽시 전개 축",
+            sourceDetail: "클레스퍼트라-픽시 전개 후보",
             notes: ["스텔스록 시동", "배턴 전개", "에이스 보조"]
         },
         {
@@ -282,7 +491,7 @@
             members: ["charizard", "hippowdon", "scizor"],
             weight: 2.25,
             sourceLabel: "Game8 강한 파티 4선",
-            sourceDetail: "리자몽Y 구축 핵심 3축",
+            sourceDetail: "리자몽Y 구축 핵심 3후보",
             notes: ["리자몽Y 중심", "하마돈 전개", "메가핫삼 연계"]
         },
         {
@@ -290,23 +499,23 @@
             members: ["kangaskhan", "gengar", "primarina"],
             weight: 2.05,
             sourceLabel: "Game8 강한 파티 4선",
-            sourceDetail: "메가캥카 구축 핵심 3축",
-            notes: ["메가캥카 축", "팬텀 압박", "누리레느 보완"]
+            sourceDetail: "메가캥카 구축 핵심 3후보",
+            notes: ["메가캥카 후보", "팬텀 압박", "누리레느 보완"]
         },
         {
             id: "g8-scizor-rotom-wash-garchomp",
             members: ["scizor", "rotom-wash", "garchomp"],
             weight: 2,
             sourceLabel: "Game8 강한 파티 4선",
-            sourceDetail: "메가핫삼 구축 핵심 3축",
-            notes: ["메가핫삼 축", "워시로토무 피벗", "한카리아스 압박"]
+            sourceDetail: "메가핫삼 구축 핵심 3후보",
+            notes: ["메가핫삼 후보", "워시로토무 피벗", "한카리아스 압박"]
         },
         {
             id: "g8-primarina-aegislash-hydreigon",
             members: ["primarina", "aegislash", "hydreigon"],
             weight: 1.7,
             sourceLabel: "Game8 레이트 2000+ 파티",
-            sourceDetail: "상위권 밸런스 샘플 축",
+            sourceDetail: "상위권 밸런스 샘플 후보",
             notes: ["누리레느 밸런스", "킬가르도 피벗", "삼삼드래 보완"]
         },
         {
@@ -314,7 +523,7 @@
             members: ["garchomp", "primarina", "rotom-wash"],
             weight: 1.55,
             sourceLabel: "한국 커뮤니티 실전 예시",
-            sourceDetail: "국내 유저 승률 체감 축",
+            sourceDetail: "국내 유저 승률 체감 후보",
             notes: ["한카리아스 밸런스", "누리레느 채용 빈도", "워시로토무 보완"]
         },
         {
@@ -322,7 +531,7 @@
             members: ["glimmora", "kangaskhan", "aegislash"],
             weight: 1.85,
             sourceLabel: "한국 커뮤니티 2000점 샘플",
-            sourceDetail: "킬라플로르 선출 시 핵심 3축",
+            sourceDetail: "킬라플로르 선출 시 핵심 3후보",
             notes: ["킬라플로르 선봉", "메가캥카 동반", "킬가르도 후속"]
         },
         {
@@ -339,7 +548,7 @@
             weight: 1.72,
             sourceLabel: "한국 커뮤니티 2000점 샘플",
             sourceDetail: "대면 보완용 대체 선출",
-            notes: ["메가캥카 축", "킬가르도 대응", "삼삼드래 마무리"]
+            notes: ["메가캥카 후보", "킬가르도 대응", "삼삼드래 마무리"]
         }
     ];
     const SPECIES_META_NOTES = {
@@ -637,7 +846,7 @@
             ]
         },
         charizard: {
-            sourceChip: "메가축 기반",
+            sourceChip: "메가 후보 기반",
             leadBias: 0.45,
             coreBias: 0.34,
             entry: [
@@ -652,7 +861,7 @@
             ]
         },
         kangaskhan: {
-            sourceChip: "메가캥카 축",
+            sourceChip: "메가캥카 후보",
             leadBias: 0.38,
             coreBias: 0.29,
             entry: [
@@ -662,12 +871,12 @@
             ],
             lead: [
                 "메가캥카는 초반 대면 화력 자체가 좋아 선봉으로 열어도 무난하고, 엔트리 추측에서도 앞에 설 가능성을 크게 봐야 합니다.",
-                "캥카는 뒤에 남아도 강하지만 상대를 바로 눌러야 하는 판에선 선봉 카드로도 충분히 자연스러워 유력 엔트리 후보입니다.",
+                "캥카는 뒤에 남아도 강하지만 상대를 바로 눌러야 하는 판에선 선봉 카드로도 충분히 자연스러운 상황별 엔트리 후보입니다.",
                 "메가캥카 축은 실제 샘플 파티에서 선봉·중반 둘 다 자주 보여, 팀 프리뷰만으로 위치를 단정하긴 어렵지만 출전 가능성은 높게 봐야 합니다."
             ]
         },
         lopunny: {
-            sourceChip: "메가이어롭 축",
+            sourceChip: "메가이어롭 후보",
             leadBias: 0.42,
             coreBias: 0.18,
             entry: [
@@ -682,7 +891,7 @@
             ]
         },
         scizor: {
-            sourceChip: "메가핫삼 축",
+            sourceChip: "메가핫삼 후보",
             leadBias: 0.06,
             coreBias: 0.22,
             entry: [
@@ -727,7 +936,7 @@
             ]
         },
         rotom: {
-            sourceChip: "보완축 기반",
+            sourceChip: "보완 카드 기반",
             leadBias: 0.06,
             coreBias: 0.2,
             entry: [
@@ -754,6 +963,99 @@
                 "삼삼드래는 선봉 가능성도 있지만, 실제로는 후속 압박이나 마무리 역할이 더 자연스러워 뒤에 남을 확률을 조금 더 높게 봅니다.",
                 "상대가 느린 밸런스 조합이면 삼삼드래를 앞에서 던질 수 있지만, 일반적으로는 중반 카드로 보는 편이 더 맞습니다.",
                 "삼삼드래는 첫 카드보다 보완형 특수 압박에 가까워, 엔트리 추측에서도 후속 후보로 읽히는 경우가 많습니다."
+            ]
+        }
+    };
+    const CURRENT_SOURCE_SIGNALS = {
+        glimmora: {
+            sourceChip: "M-A 입국",
+            leadBias: 0.74,
+            coreBias: 0.2,
+            entry: [
+                `${CURRENT_META_CONTEXT.formatLabel} 입국 목록에 있는 킬라플로르는 설치 시동 카드로 역할이 분명해, 상대 엔트리에 보이면 선봉 가능성을 높게 봅니다.`,
+                `현재 ${CURRENT_META_CONTEXT.seasonLabel} 기준에서는 킬라플로르가 초반 바닥 설치와 후속 메가/고화력 에이스 연결을 맡는 그림이 자연스럽습니다.`
+            ],
+            lead: [
+                "킬라플로르는 역할이 선명한 설치 선봉이라 뒤에 숨기기보다 초반부터 나와 판을 깔 가능성이 큽니다.",
+                "독압정과 스텔스록을 남기는 가치가 커서 상대 첫 카드 후보로 우선 올려두는 편이 맞습니다."
+            ]
+        },
+        garchomp: {
+            sourceChip: "M-A 기준 후보",
+            leadBias: 0.58,
+            coreBias: 0.26,
+            entry: [
+                "한카리아스는 챔피언스 입국 목록 안에서도 스피드와 지면 일관성이 좋아 팀 프리뷰 기준점으로 잡기 쉽습니다.",
+                "스카프, 기합의띠, 설치/대면형을 모두 상정해야 해서 선봉과 후반 마무리 양쪽 가능성을 열어 둬야 합니다."
+            ],
+            lead: [
+                "한카리아스는 초반부터 속도와 지진 압박을 걸기 좋아 선봉 후보로 가장 먼저 올려둘 만합니다.",
+                "상대 조합에 땅 일관성이 보이면 한카리아스 선봉으로 바로 템포를 잡는 그림이 자연스럽습니다."
+            ]
+        },
+        kangaskhan: {
+            sourceChip: "메가 입국",
+            leadBias: 0.46,
+            coreBias: 0.3,
+            entry: [
+                "메가캥카는 챔피언스 메가 환경에서 대면 화력과 범용성이 높아 실제 선출 후보로 강하게 잡힙니다.",
+                "캥카가 보이면 메가 슬롯을 여기에 쓸 가능성까지 포함해 초반 대면 압박을 먼저 상정하는 편이 안전합니다."
+            ],
+            lead: [
+                "메가캥카는 첫 턴부터 교환 이득을 만들 수 있어 선봉으로 열어도 자연스럽습니다.",
+                "뒤에 남아도 강하지만 상대를 바로 눌러야 하는 판에서는 선봉 캥카 가능성을 크게 봐야 합니다."
+            ]
+        },
+        charizard: {
+            sourceChip: "메가 입국",
+            leadBias: 0.4,
+            coreBias: 0.32,
+            entry: [
+                "리자몽은 메가X/Y 양쪽 가능성 때문에 챔피언스 팀 프리뷰에서 가장 먼저 형태를 의심해야 하는 카드입니다.",
+                "메가리자몽Y의 날씨 화력과 메가리자몽X의 물리 전개가 모두 열려 있어 단일 대응으로 고정하기 어렵습니다."
+            ],
+            lead: [
+                "리자몽은 상대가 수동적인 조합이면 초반부터 나와 메가 화력을 강요할 수 있습니다.",
+                "선봉 여부보다도 한 번 나오는 순간 날씨나 용춤 전개가 열릴 수 있다는 점을 먼저 봐야 합니다."
+            ]
+        },
+        torkoal: {
+            sourceChip: "AppMedia 쾌청",
+            leadBias: 0.5,
+            coreBias: 0.16,
+            entry: [
+                "AppMedia 샘플에서 코터스는 쾌청 시동과 스텔스록, 하품을 함께 맡는 카드로 제시돼 선봉 가능성이 높습니다.",
+                "코터스가 보이면 리자몽Y나 이상해꽃 같은 쾌청 활용 카드와 묶인 전개를 먼저 의식하는 편이 자연스럽습니다."
+            ],
+            lead: [
+                "코터스는 날씨와 설치를 먼저 깔수록 가치가 커 초반 시동 후보로 보는 편이 맞습니다.",
+                "상대가 쾌청 활용 포켓몬을 같이 들고 있으면 코터스 선봉 가능성은 더 올라갑니다."
+            ]
+        },
+        pelipper: {
+            sourceChip: "AppMedia 비",
+            leadBias: 0.46,
+            coreBias: 0.18,
+            entry: [
+                "AppMedia 비 샘플에서 패리퍼는 비, 순풍, 유턴을 통해 후속 전개를 여는 시동 카드로 제시됩니다.",
+                "패리퍼가 있으면 단순 물타점보다 비로 불꽃 약점을 줄이고 후속을 안전하게 연결하는 구도를 먼저 봐야 합니다."
+            ],
+            lead: [
+                "패리퍼는 비와 순풍을 빨리 켜야 가치가 커 첫 카드 후보로 자연스럽습니다.",
+                "후속에 핫삼이나 메가메가니움 같은 카드가 보이면 패리퍼 선봉 시나리오가 더 설득력 있습니다."
+            ]
+        },
+        froslass: {
+            sourceChip: "AppMedia 전개",
+            leadBias: 0.44,
+            coreBias: 0.16,
+            entry: [
+                "AppMedia 전개 샘플에서 메가눈여아는 오로라베일 시동 역할로 제시돼, 보이면 벽 전개를 먼저 의식해야 합니다.",
+                "눈여아는 직접 화력보다 후속 에이스가 안전하게 들어오는 판을 만드는 쪽에 가치가 있습니다."
+            ],
+            lead: [
+                "눈여아는 벽을 먼저 깔아야 후속 가치가 커지는 카드라 선봉 추정이 자연스럽습니다.",
+                "상대 뒤에 마릴리나 삼삼드래 같은 후속 압박 카드가 있으면 오로라베일 전개 가능성이 높습니다."
             ]
         }
     };
@@ -863,7 +1165,8 @@
     }
 
     function getMetaProfile(species) {
-        return META_SPECIES_PROFILES[getMetaSpeciesKey(species)] || null;
+        const key = getMetaSpeciesKey(species);
+        return CURRENT_META_OVERRIDES[key] || META_SPECIES_PROFILES[key] || null;
     }
 
     function getSpeciesMetaNotes(species) {
@@ -871,7 +1174,8 @@
     }
 
     function getSpeciesSourceSignals(species) {
-        return SPECIES_SOURCE_SIGNALS[getMetaSpeciesKey(species)] || null;
+        const key = getMetaSpeciesKey(species);
+        return CURRENT_SOURCE_SIGNALS[key] || SPECIES_SOURCE_SIGNALS[key] || null;
     }
 
     function getMetaWeight(species) {
@@ -880,7 +1184,7 @@
     }
 
     function getMetaInfluenceFactor(species) {
-        return 0.82 + (getMetaWeight(species) * 0.18);
+        return 0.72 + (getMetaWeight(species) * 0.28);
     }
 
     function summarizeMetaOpponents(opponents, max) {
@@ -997,9 +1301,54 @@
         list.push({
             score: Number(config.score) || 0,
             category: config.category || "misc",
-            text: pickVariant(config.seed || config.category || "misc", config.variants || []),
-            chip: config.chip || ""
+            text: softenSelectionAxisLanguage(pickVariant(config.seed || config.category || "misc", config.variants || [])),
+            chip: softenSelectionAxisLanguage(config.chip || "")
         });
+    }
+
+    function softenSelectionAxisLanguage(value) {
+        if (!value) {
+            return "";
+        }
+        return String(value)
+            .replace(/고정 축/g, "고정 선출")
+            .replace(/핵심 3축/g, "핵심 3후보")
+            .replace(/중심축/g, "중심 카드")
+            .replace(/핵심 축/g, "핵심 후보")
+            .replace(/역할 축/g, "역할 후보")
+            .replace(/메가축/g, "메가 후보")
+            .replace(/운영축/g, "운영 카드")
+            .replace(/대응축/g, "대응 카드")
+            .replace(/보완축/g, "보완 카드")
+            .replace(/빠른축/g, "빠른후보")
+            .replace(/내구축/g, "내구후보")
+            .replace(/거의 반드시/g, "높은 확률로")
+            .replace(/반드시 한 번은/g, "한 번쯤은")
+            .replace(/가장 먼저 상정할 만합니다/g, "우선 후보로 상정할 만합니다")
+            .replace(/ 축은/g, " 후보는")
+            .replace(/ 축이/g, " 후보가")
+            .replace(/ 축을/g, " 후보를")
+            .replace(/ 축으로/g, " 카드로")
+            .replace(/ 축에서/g, " 플랜에서")
+            .replace(/ 축까지/g, " 카드까지")
+            .replace(/ 축과/g, " 카드와")
+            .replace(/ 축도/g, " 카드도")
+            .replace(/ 축/g, " 카드");
+    }
+
+    function composeNaturalText(parts) {
+        const filtered = (parts || []).filter(Boolean);
+        if (filtered.length <= 1) {
+            return softenSelectionAxisLanguage(filtered.join(""));
+        }
+        return filtered.map((text, index) => {
+            const normalized = softenSelectionAxisLanguage(text).trim();
+            if (index === 0) {
+                return normalized;
+            }
+            const connector = index === 1 ? " 여기에 " : " 또한 ";
+            return connector + normalized.replace(/^[다또그리고\s]+/, "");
+        }).join("");
     }
 
     function buildReasonBundle(seed, candidates, primaryLimit, detailLimit, chipLimit) {
@@ -1037,9 +1386,9 @@
             .slice(0, detailLimit || 0);
 
         return {
-            summary: primary.map((candidate) => candidate.text).join(" "),
-            details: secondary.map((candidate) => candidate.text),
-            chips: unique(primary.concat(secondary).map((candidate) => candidate.chip).filter(Boolean)).slice(0, chipLimit || 4)
+            summary: composeNaturalText(primary.map((candidate) => candidate.text)),
+            details: secondary.map((candidate) => softenSelectionAxisLanguage(candidate.text)),
+            chips: unique(primary.concat(secondary).map((candidate) => softenSelectionAxisLanguage(candidate.chip)).filter(Boolean)).slice(0, chipLimit || 4)
         };
     }
 
@@ -1367,7 +1716,7 @@
             sourceSignals ? sourceSignals.sourceChip : "",
             typeProfile.immunityCount > 0 ? `무효 ${typeProfile.immunityCount}` : "",
             typeProfile.quadWeakCount > 0 ? `4배약점 ${typeProfile.quadWeakCount}` : ""
-        ].filter(Boolean);
+        ].filter(Boolean).map((chip) => softenSelectionAxisLanguage(chip));
 
         const reasonCandidates = [];
         pushReasonCandidate(reasonCandidates, {
@@ -1377,9 +1726,9 @@
             seed: `${species.name}:meta`,
             chip: metaProfile ? metaProfile.label : "",
             variants: [
-                `현재 커뮤니티와 사용률 기준으로 ${metaProfile ? metaProfile.hints.slice(0, 2).join(", ") : "상위 메타"} 축이라 실제 선출 빈도를 높게 봐야 합니다.`,
-                `최근 메타 의견을 보면 ${metaProfile ? metaProfile.hints[0] : "이 포켓몬"} 쪽 평가가 높아 유력 카드로 남을 가능성이 큽니다.`,
-                `사용률 상위권에서 반복해서 언급되는 축이라 상대가 실제로 꺼낼 가능성을 한 단계 높게 보는 편이 맞습니다.`
+                `${CURRENT_META_CONTEXT.formatLabel} 기준으로 ${metaProfile ? metaProfile.hints.slice(0, 2).join(", ") : "상위 메타"} 축이라 실제 선출 빈도를 높게 봐야 합니다.`,
+                `${CURRENT_META_CONTEXT.updatedLabel} 초기 입국 메타를 보면 ${metaProfile ? metaProfile.hints[0] : "이 포켓몬"} 쪽 평가가 높아 유력 카드로 남을 가능성이 큽니다.`,
+                `${CURRENT_META_CONTEXT.sourceLabel} 기준 입국 목록과 샘플 코어에서 반복해서 보이는 축이라 상대가 실제로 꺼낼 가능성을 한 단계 높게 보는 편이 맞습니다.`
             ]
         });
         pushReasonCandidate(reasonCandidates, {
@@ -2401,7 +2750,7 @@
             seed: `${candidate.opponent.name}:${response.entry.species.name}:${mode}:pivotfit`,
             chip: `운영 ${response.entry.pivotFit.toFixed(1)}`,
             variants: [
-                `운영 적합도도 높아 한 번 받아낸 뒤 중반 축으로 이어 주기 좋습니다.`,
+                `운영 적합도도 높아 한 번 받아낸 뒤 중반 후보로 이어 주기 좋습니다.`,
                 `후속 운영 카드 성격이 강해 선봉이 꼬여도 흐름을 정리하는 역할을 맡기 좋습니다.`,
                 `단순 백업이 아니라 중반 교체전까지 맡길 수 있는 카드라 가치가 높습니다.`
             ]
@@ -3242,9 +3591,9 @@
                     seed: `${coreSeed}:core:meta`,
                     chip: "메타상위 포함",
                     variants: [
-                        `${metaNames.join(", ")}처럼 현재 메타에서 선출 빈도가 높은 카드가 포함돼 실제 채용 가능성을 높게 볼 만합니다.`,
-                        `최근 사용률과 커뮤니티 의견을 보면 ${metaNames.join(", ")} 축은 실제 경기에서도 자주 보여 이 코어 가능성이 올라갑니다.`,
-                        `${metaNames.join(", ")}가 들어 있어 단순 상성보다 실제 메타 빈도까지 고려하면 더 유력한 코어입니다.`
+                        `${metaNames.join(", ")}처럼 ${CURRENT_META_CONTEXT.formatLabel}에서 주목도가 높은 카드가 포함돼 실제 채용 가능성을 높게 볼 만합니다.`,
+                        `${CURRENT_META_CONTEXT.sourceLabel} 기준으로 ${metaNames.join(", ")} 축은 초기 구축 샘플에서도 자주 언급돼 이 코어 가능성이 올라갑니다.`,
+                        `${metaNames.join(", ")}가 들어 있어 단순 상성보다 입국 메타의 초기 채용 흐름까지 고려하면 더 유력한 코어입니다.`
                     ]
                 });
                 pushReasonCandidate(coreReasonCandidates, {
@@ -3315,7 +3664,7 @@
                     `빠른축 ${fastCount}`,
                     `내구축 ${bulkyCount}`,
                     `가능성 ${ (likelihoodScore + likelyLeadBonus).toFixed(1) }`
-                ].filter(Boolean);
+                ].filter(Boolean).map((chip) => softenSelectionAxisLanguage(chip));
                 let responseReason = "";
                 let responseReasonDetails = [];
                 let responseReasonChips = [];
@@ -3353,7 +3702,7 @@
                     pressureScore,
                     communityCoreLabel: topCommunityCore ? topCommunityCore.sourceLabel : "",
                     communityCoreNames: topCommunityCore ? topCommunityCore.memberKoNames : [],
-                    communityCoreDetail: topCommunityCore ? topCommunityCore.sourceDetail : "",
+                    communityCoreDetail: topCommunityCore ? softenSelectionAxisLanguage(topCommunityCore.sourceDetail) : "",
                     predictedLead: leadCandidate ? leadCandidate.opponent.koName : "",
                     predictedPivot: pivotCandidate ? pivotCandidate.opponent.koName : "",
                     predictedCleanup: cleanerCandidate ? cleanerCandidate.opponent.koName : "",
@@ -3390,19 +3739,19 @@
         }
 
         if (lead) {
-            summary.push(`선봉은 ${lead.species.koName}처럼 초반 압박과 스피드 주도권을 함께 챙길 수 있는 카드부터 고려하는 편이 좋습니다.`);
+            summary.push(`선봉은 ${lead.species.koName}부터 보는 편이 자연스럽습니다. 초반에 정보를 확인하면서도 바로 압박을 걸 수 있어 첫 턴 선택지가 덜 좁아집니다.`);
         }
         if (comboResult) {
-            summary.push(`${comboResult.combo.map((entry) => entry.species.koName).join(", ")} 조합은 역할 분담, 상성 커버, 후속 마무리 흐름이 가장 안정적으로 맞물립니다.`);
+            summary.push(`${comboResult.combo.map((entry) => entry.species.koName).join(", ")} 조합은 선봉, 중반 완충, 후반 정리 역할이 비교적 분명해 실제 3선출로 옮겼을 때 운영 순서가 깔끔합니다.`);
         }
         if (metaTargets.length > 0) {
-            summary.push(`현재 메타에서 자주 보이는 ${metaTargets.join(", ")} 축까지 의식하면 이번 추천 조합 쪽이 비교적 안정적입니다.`);
+            summary.push(`${CURRENT_META_CONTEXT.formatLabel}에서 주목되는 ${metaTargets.join(", ")} 축까지 의식해도 이번 추천 조합이 크게 흔들리지 않습니다.`);
         }
         if (notableOpponents.length > 0) {
             summary.push(`${notableOpponents.join(", ")}처럼 실제 체감상 까다로운 포켓몬까지 고려하면 운영 순서를 미리 정해 두는 편이 좋습니다.`);
         }
         if (sourceBackedOpponents.length > 0) {
-            summary.push(`${sourceBackedOpponents.join(", ")} 쪽은 최근 샘플 파티와 사용 후기에서도 실제 선출 빈도가 높게 읽혀, 엔트리 추측에서 우선순위를 높게 두는 편이 맞습니다.`);
+            summary.push(`${sourceBackedOpponents.join(", ")} 쪽은 Game8, GameWith, AppMedia의 육성론·샘플 구축에서도 우선 대응 대상으로 읽혀 엔트리 추측 우선순위를 높게 둡니다.`);
         }
         if (communityCores.length > 0) {
             summary.push(`${communityCores[0].label} 같은 ${communityCores[0].sourceLabel} 기준 빈출 코어와도 겹쳐 상대 선출 방향을 어느 정도 좁혀 볼 수 있습니다.`);
@@ -3411,7 +3760,7 @@
             summary.push(`특히 ${threats[0].koName} 대면은 교체 순서와 받아줄 포켓몬을 미리 정해 두는 편이 안전합니다.`);
         }
 
-        return summary.join(" ");
+        return composeNaturalText(summary);
     }
 
     function buildEntryForecasts(coreScenarios, likelyOpponentLeads) {
@@ -3477,7 +3826,7 @@
             const bundle = buildReasonBundle(`${scenario.names}:forecast`, reasonCandidates, 2, 2, 4);
 
             return {
-                title: `유력 엔트리 ${index + 1}`,
+                title: `상황별 엔트리 후보 ${index + 1}`,
                 names: scenario.names,
                 styleLabel: scenario.styleLabel || "",
                 leadName,
@@ -3608,7 +3957,7 @@
             lines.push(pickVariant(`${comboResult.combo.map((entry) => entry.species.name).join("|")}:plan:style`, getBattlePlanStyleVariants(comboResult.styleLabel)));
         }
         lines.push(pickVariant(`${pivot.species.name}:${cleanup.species.name}:plan:midlate`, [
-            `${pivot.species.koName}를 중반 축으로 두고 교체를 받아내며 판을 정리한 뒤 ${cleanup.species.koName}로 마무리 각을 보는 흐름이 가장 안정적입니다.`,
+            `${pivot.species.koName}를 중반 후보로 두고 교체를 받아내며 판을 정리한 뒤 ${cleanup.species.koName}로 마무리 각을 보는 흐름이 가장 안정적입니다.`,
             `${pivot.species.koName}가 중반 교환을 정리하고 ${cleanup.species.koName}가 남은 판을 끝내는 구조가 가장 깔끔합니다.`,
             `중반은 ${pivot.species.koName}로 버티고 후반은 ${cleanup.species.koName} 결정력으로 정리하는 흐름이 좋습니다.`
         ]));
@@ -3626,7 +3975,7 @@
             cleanup: cleanup.species.koName,
             styleLabel: comboResult.styleLabel || "",
             strategySummary: comboResult.strategySummary || [],
-            lines,
+            lines: lines.map((line) => softenSelectionAxisLanguage(line)),
             entryForecasts,
             coreResponses,
             leadResponses,

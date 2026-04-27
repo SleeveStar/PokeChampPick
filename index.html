@@ -252,7 +252,7 @@
                 </div>
             </section>
 
-            <section class="panel-card page-panel" data-page="calculator" aria-labelledby="type-title">
+            <section class="panel-card page-panel calculator-aux-panel" data-page="calculator-tools" aria-labelledby="type-title">
                 <div class="section-head compact">
                     <div>
                         <h2 id="type-title">타입 확인</h2>
@@ -304,7 +304,7 @@
                 </div>
             </section>
 
-            <section class="panel-card panel-span-2 page-panel" data-page="calculator" aria-labelledby="speed-title">
+            <section class="panel-card panel-span-2 page-panel calculator-aux-panel" data-page="calculator-tools" aria-labelledby="speed-title">
                 <div class="section-head">
                     <div>
                         <h2 id="speed-title">스피드 비교</h2>
@@ -326,7 +326,7 @@
                 </div>
             </section>
 
-            <section class="panel-card panel-span-2 page-panel" data-page="calculator" aria-labelledby="damage-title">
+            <section class="panel-card panel-span-2 page-panel damage-calculator-panel" data-page="calculator" aria-labelledby="damage-title">
                 <div class="section-head">
                     <div>
                         <h2 id="damage-title">데미지 계산기</h2>
@@ -340,10 +340,13 @@
                                 <strong>공격측</strong>
                                 <span class="mini-meta">기술에 맞춰 실공 또는 실특공을 자동 적용합니다.</span>
                             </div>
-                            <label class="field autocomplete-shell">
-                                <span>포켓몬 이름</span>
-                                <input id="damage-attack-name" type="text" autocomplete="off" placeholder="포켓몬">
-                            </label>
+                            <div class="damage-name-row">
+                                <label class="field autocomplete-shell damage-name-field">
+                                    <span>포켓몬 이름</span>
+                                    <input id="damage-attack-name" type="text" autocomplete="off" placeholder="포켓몬">
+                                </label>
+                                <div id="damage-attack-basic" class="damage-basic-card empty-card">타입과 현재 실능</div>
+                            </div>
                             <div class="damage-stat-grid">
                                 <label class="field">
                                     <span>성격</span>
@@ -422,6 +425,7 @@
                                         <option value="">없음</option>
                                         <option value="reflect">리플렉터</option>
                                         <option value="light-screen">빛의장막</option>
+                                        <option value="aurora-veil">오로라베일</option>
                                     </select>
                                 </label>
                             </div>
@@ -432,6 +436,9 @@
                                 <label class="checkbox-field"><input id="damage-critical-hit" type="checkbox"><span>급소</span></label>
                             </div>
                             <button id="damage-calc-btn" class="accent-btn damage-calc-btn" type="button">계산하기</button>
+                            <div id="damage-result" class="damage-result-compact empty-card">
+                                공격측, 방어측, 기술을 입력하면 결과가 바로 표시됩니다.
+                            </div>
                         </div>
                     </div>
                     <div class="damage-side-shell defense-side-shell">
@@ -440,10 +447,13 @@
                                 <strong>방어측</strong>
                                 <span class="mini-meta">기술에 맞춰 실방 또는 실특방을 자동 적용합니다.</span>
                             </div>
-                            <label class="field autocomplete-shell">
-                                <span>포켓몬 이름</span>
-                                <input id="damage-defense-name" type="text" autocomplete="off" placeholder="포켓몬">
-                            </label>
+                            <div class="damage-name-row">
+                                <label class="field autocomplete-shell damage-name-field">
+                                    <span>포켓몬 이름</span>
+                                    <input id="damage-defense-name" type="text" autocomplete="off" placeholder="포켓몬">
+                                </label>
+                                <div id="damage-defense-basic" class="damage-basic-card empty-card">타입과 현재 실능</div>
+                            </div>
                             <div class="damage-stat-grid damage-stat-grid-defense">
                                 <label class="field">
                                     <span>성격</span>
@@ -509,9 +519,6 @@
                 <input id="damage-move-type" type="hidden" value="normal">
                 <input id="damage-move-category" type="hidden" value="physical">
                 <input id="damage-move-power" type="hidden" value="80">
-                <div id="damage-result" class="info-card empty-card">
-                    공격측, 방어측, 기술을 입력하면 결과가 바로 표시됩니다.
-                </div>
             </section>
         </main>
     </div>
